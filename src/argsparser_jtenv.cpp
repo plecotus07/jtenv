@@ -55,14 +55,14 @@ bool ArgsParserC::Parse ()
 
   return true;
 }
-// +++ -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 void ArgsParserC::DisplayHelp ()
 {
  std::cout << "  jtpm [-v | --version] [-h | --help] [ADDR] [COMMAND]\n\n";
  std::cout << "    -v, --version                      - Display version.\n";
  std::cout << "    -h, --help                         - Display help.\n";
 }
-// +++ -------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 void ArgsParserC::DisplayVersion ()
 {
   std::cout << jtenv::GetFullName() << " - v" << jtenv::GetVersion() << std::endl;
