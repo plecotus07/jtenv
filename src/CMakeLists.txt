@@ -11,7 +11,7 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/config_jtenv.cpp.in
                 ${CMAKE_BINARY_DIR}/config_jtenv.cpp
                 @ONLY)
 
-add_executable (jtenv main.cpp ${CMAKE_BINARY_DIR}/config_jtenv.cpp)
+add_executable (jtenv main.cpp argsparser_jtenv.cpp ${CMAKE_BINARY_DIR}/config_jtenv.cpp)
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 target_link_libraries(jtenv
   ${Boost_FILESYSTEM_LIBRARY}
@@ -23,7 +23,6 @@ find_package(Catch REQUIRED)
 add_executable (utjtenv EXCLUDE_FROM_ALL test.cpp)
 target_include_directories(utjtenv PRIVATE ${Catch_INCLUDE_DIRS})
 target_compile_options(utjtenv PRIVATE ${COMPILE_OPTIONS})
-
 
 add_test (NAME test_jtenv
           COMMAND ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}/utjtenv)
