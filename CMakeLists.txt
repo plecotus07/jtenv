@@ -16,7 +16,7 @@ add_subdirectory("src")
 add_custom_target(tests COMMAND ${CMAKE_CTEST_COMMAND}
                   DEPENDS utjtenv)
 
-configure_file(${CMAKE_SOURCE_DIR}/uninstall.cmake.in
+configure_file(${CMAKE_SOURCE_DIR}/cmake/uninstall.cmake.in
                ${CMAKE_BINARY_DIR}/cmake/uninstall.cmake
                @ONLY)
 
