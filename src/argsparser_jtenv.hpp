@@ -5,23 +5,21 @@
 #include <vector>
 #include <string>
 // +++ -------------------------------------------------------------------------
-namespace jtenv
-{
-  class ArgsParserC
-  {
-    public:
-      ArgsParserC (int aArgc, char* aArgv[]);
+namespace jtenv {
+// +++ -------------------------------------------------------------------------
+class ArgsParser {
+	public:
+		ArgsParser (int aArgc, char* aArgv[]);
 
-      bool Parse ();
+		bool Parse ();
 
-    protected:
-      void DisplayHelp ();
-      void DisplayVersion ();
+	protected:
+		void DisplayHelp ();
+		void DisplayVersion ();
 
-      std::vector<std::string> m_args;
-      std::string              m_exeFile;
+		std::vector<std::string> m_args;
 
-  };
+};
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------

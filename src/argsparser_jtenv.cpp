@@ -4,67 +4,57 @@
 // +++ -------------------------------------------------------------------------
 #include <iostream>
 // +++ -------------------------------------------------------------------------
-namespace jtenv
-{
+namespace jtenv {
 // +++ -------------------------------------------------------------------------
-//      ArgsParserC
-// -----------------------------------------------------------------------------
-ArgsParserC::ArgsParserC (int aArgc, char* aArgv[]) : m_args{},
-                                                      m_exeFile{}
+ArgsParser::ArgsParser (int aArgc, char* aArgv[]) :
+	m_args{}
 {
-  m_exeFile = aArgv[0];
-  for (int i = 1; i < aArgc; ++i)
-  {
-    m_args.push_back(aArgv[i]);
-  }
+	for (int i = 1; i < aArgc; ++i) {
+		m_args.push_back(aArgv[i]);
+	}
 }
 // -----------------------------------------------------------------------------
-bool ArgsParserC::Parse ()
+bool ArgsParser::Parse ()
 {
-  bool displayHelp {m_args.empty()};
-  bool displayVersion {false};
+	bool displayHelp {m_args.empty()};
+	bool displayVersion {false};
 
-  for (auto arg : m_args)
-  {
-    if ( (arg == "-h")
-         || (arg == "--help") )
-    {
-      displayHelp = true;
-      break;
-    }
-    else if ( (arg == "-v")
-              || (arg == "--version") )
-    {
-      displayVersion = true;
-      break;
-    }
-  }
+	for (auto arg : m_args) {
+		if ( (arg == "-h")
+		        || (arg == "--help") ) {
+			displayHelp = true;
+			break;
+		}
+		else if ( (arg == "-v")
+		          || (arg == "--version") ) {
+			displayVersion = true;
+			break;
+		}
+	}
 
-  if (displayHelp)
-  {
-    DisplayHelp();
-    return true;
-  }
+	if (displayHelp) {
+		DisplayHelp();
+		return true;
+	}
 
-  if (displayVersion)
-  {
-    DisplayVersion();
-    return true;
-  }
+	if (displayVersion) {
+		DisplayVersion();
+		return true;
+	}
 
-  return true;
+	return true;
 }
 // -----------------------------------------------------------------------------
-void ArgsParserC::DisplayHelp ()
+void ArgsParser::DisplayHelp ()
 {
- std::cout << "  jtpm [-v | --version] [-h | --help] [ADDR] [COMMAND]\n\n";
- std::cout << "    -v, --version                      - Display version.\n";
- std::cout << "    -h, --help                         - Display help.\n";
+	std::cout << "  jtpm [-v | --version] [-h | --help] [ADDR] [COMMAND]\n\n"
+	             "    -v, --version                      - Display version.\n"
+	             "    -h, --help                         - Display help.\n";
 }
 // -----------------------------------------------------------------------------
-void ArgsParserC::DisplayVersion ()
+void ArgsParser::DisplayVersion ()
 {
-  std::cout << jtenv::GetFullName() << " - v" << jtenv::GetVersion() << std::endl;
+	std::cout << jtenv::GetFullName() << " - v" << jtenv::GetVersion() << '\n';
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

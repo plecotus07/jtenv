@@ -11,7 +11,7 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/projectconf_jtenv.cpp.in
                 ${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
                 @ONLY)
 
-add_executable (jtenv main.cpp argsparser_jtenv.cpp ${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp)
+add_executable (jtenv main.cpp argsparser_jtenv.cpp ${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp config_jkpp.cpp filesystem_jkpp.cpp)
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 target_link_libraries(jtenv
   ${Boost_FILESYSTEM_LIBRARY}

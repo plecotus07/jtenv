@@ -1,18 +1,15 @@
 // +++ -------------------------------------------------------------------------
-#ifndef _projectconf_jtenv_hpp_
-#define _projectconf_jtenv_hpp_
+#ifndef FILESYSTEM_JKPP_H
+#define FILESYSTEM_JKPP_H
 // +++ -------------------------------------------------------------------------
 #include <string>
 // +++ -------------------------------------------------------------------------
-namespace jtenv {
-/// Get full name
-/// \return Name
-std::string GetFullName ();
-/// Get version.
-/// \return Version
-std::string GetVersion ();
+namespace jkpp {
 // +++ -------------------------------------------------------------------------
-} /// ccms3
+std::string getExecDirPath ();
+std::string getHomeDirPath ();
 // +++ -------------------------------------------------------------------------
-#endif // _projectconf_jtenv_hpp_
+} // jkpp
 // +++ -------------------------------------------------------------------------
+#endif // FILESYSTEM_JKPP_H
+#// +++ -------------------------------------------------------------------------

@@ -3,8 +3,8 @@
 // +++ -------------------------------------------------------------------------
 int main (int aArgc, char* aArgv[])
 {
-	jtenv::ArgsParserC parser{aArgc, aArgv};
+	jtenv::ArgsParser parser{aArgc, aArgv};
 
-  return parser.Parse();
+	return parser.Parse();
 }
 // +++ -------------------------------------------------------------------------

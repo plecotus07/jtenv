@@ -4,22 +4,20 @@
 // +++ -------------------------------------------------------------------------
 #include <string>
 // +++ -------------------------------------------------------------------------
-namespace jtenv
-{
-  class AddressC
-  {
-    public:
-      AddressC (const std::string& aAddress);
-      AddressC (const std::string& aWsName,
-                const std::string& aProjName);
+namespace jtenv {
+class AddressC {
+	public:
+		AddressC (const std::string& aAddress);
+		AddressC (const std::string& aWsName,
+		          const std::string& aProjName);
 
-      std::string GetPath () const;
+		std::string GetPath () const;
 
-    protected:
-      std::string m_wsName;
-      std::string m_projName;
+	protected:
+		std::string m_wsName;
+		std::string m_projName;
 
-  };
+};
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
