@@ -26,7 +26,7 @@ bool ArgsParser::Parse ()
 			break;
 		}
 		else if ( (arg == "-v")
-		          || (arg == "--version") ) {
+		        || (arg == "--version") ) {
 			displayVersion = true;
 			break;
 		}
