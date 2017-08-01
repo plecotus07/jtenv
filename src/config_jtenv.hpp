@@ -10,7 +10,7 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class ConfigMainFile : public jkpp::ConfigFile {
 	public:
-		ConfigMainFile (const fs::path& aConfigDirPath, std::string& aWorkspacesUrl, std::string& aUserName, std::string& aUserEmail);
+		ConfigMainFile (const fs::path& aConfigDirPath, fs::path& aWorkspacesUrl, std::string& aUserName, std::string& aUserEmail);
 };
 // +++ -------------------------------------------------------------------------
 class ConfigWorkspacesFile : public jkpp::ConfigFile {
@@ -27,7 +27,7 @@ class Config : public jkpp::Config {
 		virtual void init ();
 
 	protected:
-		std::path                       m_workspacesUrl;
+		fs::path                        m_workspacesUrl;
 		std::string                     m_userName;
 		std::string                     m_userEmail;
 		std::map<std::string, fs::path> m_workspaces;

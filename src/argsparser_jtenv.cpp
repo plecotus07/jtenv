@@ -1,6 +1,8 @@
 // +++ -------------------------------------------------------------------------
 #include "argsparser_jtenv.hpp"
 #include "projectconf_jtenv.hpp"
+#include "config_jtenv.hpp"
+#include "filesystem_jkpp.hpp"
 // +++ -------------------------------------------------------------------------
 #include <iostream>
 // +++ -------------------------------------------------------------------------
@@ -40,6 +42,11 @@ bool ArgsParser::Parse ()
 	if (displayVersion) {
 		DisplayVersion();
 		return true;
+	}
+	Config config {fs::path(jkpp::getHomeDirPath()) / ".jtenv"};
+	config.init();
+	if (!config.load()) {
+		return false;
 	}
 
 	return true;
