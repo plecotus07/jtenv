@@ -1,18 +1,17 @@
 // +++ -------------------------------------------------------------------------
-#ifndef _projectconf_jtenv_hpp_
-#define _projectconf_jtenv_hpp_
+#ifndef MVCAPP_JKPP_HPP
+#define MVCAPP_JKPP_HPP
 // +++ -------------------------------------------------------------------------
-#include <string>
+namespace jkpp {
 // +++ -------------------------------------------------------------------------
-namespace jtenv {
-/// Get full name
-/// \return Name
-std::string getFullName ();
-/// Get version.
-/// \return Version
-std::string getVersion ();
+class MvcApp {
+	public:
+    	virtual ~MvcApp () = default;
+
+        virtual bool run () = 0;
+};
 // +++ -------------------------------------------------------------------------
-} /// ccms3
+} // jkpp
 // +++ -------------------------------------------------------------------------
-#endif // _projectconf_jtenv_hpp_
+#endif // MVCAPP_JKPP_HPP
 // +++ -------------------------------------------------------------------------

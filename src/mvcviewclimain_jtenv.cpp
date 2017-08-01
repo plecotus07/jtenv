@@ -1,14 +1,14 @@
 // +++ -------------------------------------------------------------------------
-#include "argsparser_jtenv.hpp"
-#include "projectconf_jtenv.hpp"
+#include "mvcviewclimain_jtenv.hpp"
 #include "config_jtenv.hpp"
-#include "filesystem_jkpp.hpp"
-// +++ -------------------------------------------------------------------------
+
+#include <filesystem_jkpp.hpp>
+
 #include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-ArgsParser::ArgsParser (int aArgc, char* aArgv[]) :
+MvcViewCliMain::MvcViewCliMain (int aArgc, char* aArgv[]) :
 	m_args{}
 {
 	for (int i = 1; i < aArgc; ++i) {
@@ -16,7 +16,7 @@ ArgsParser::ArgsParser (int aArgc, char* aArgv[]) :
 	}
 }
 // -----------------------------------------------------------------------------
-bool ArgsParser::Parse ()
+bool MvcViewCliMain::update ()
 {
 	bool displayHelp {m_args.empty()};
 	bool displayVersion {false};
@@ -24,25 +24,16 @@ bool ArgsParser::Parse ()
 	for (auto arg : m_args) {
 		if ( (arg == "-h")
 		        || (arg == "--help") ) {
-			displayHelp = true;
-			break;
+        	m_helpView->Update();
+			return true;
 		}
 		else if ( (arg == "-v")
 		        || (arg == "--version") ) {
-			displayVersion = true;
-			break;
+        	m_versionView->Update();
+			return true;
 		}
 	}
 
-	if (displayHelp) {
-		DisplayHelp();
-		return true;
-	}
-
-	if (displayVersion) {
-		DisplayVersion();
-		return true;
-	}
 	Config config {fs::path(jkpp::getHomeDirPath()) / ".jtenv"};
 	config.init();
 	if (!config.load()) {
@@ -50,18 +41,6 @@ bool ArgsParser::Parse ()
 	}
 
 	return true;
-}
-// -----------------------------------------------------------------------------
-void ArgsParser::DisplayHelp ()
-{
-	std::cout << "  jtpm [-v | --version] [-h | --help] [ADDR] [COMMAND]\n\n"
-	             "    -v, --version                      - Display version.\n"
-	             "    -h, --help                         - Display help.\n";
-}
-// -----------------------------------------------------------------------------
-void ArgsParser::DisplayVersion ()
-{
-	std::cout << jtenv::GetFullName() << " - v" << jtenv::GetVersion() << '\n';
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

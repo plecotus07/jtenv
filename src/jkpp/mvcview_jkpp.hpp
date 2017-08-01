@@ -1,18 +1,21 @@
 // +++ -------------------------------------------------------------------------
-#ifndef _projectconf_jtenv_hpp_
-#define _projectconf_jtenv_hpp_
+#ifndef MVCVIEW_JKPP_HPP
+#define MVCVIEW_JKPP_HPP
 // +++ -------------------------------------------------------------------------
-#include <string>
+#include <memory>
 // +++ -------------------------------------------------------------------------
-namespace jtenv {
-/// Get full name
-/// \return Name
-std::string getFullName ();
-/// Get version.
-/// \return Version
-std::string getVersion ();
+namespace jkpp {
 // +++ -------------------------------------------------------------------------
-} /// ccms3
+class MvcView {
+	public:
+    	using UPtr = std::unique_ptr<MvcView>;
+
+    	virtual ~MvcView () = default;
+
+        virtual void update () = 0;
+};
 // +++ -------------------------------------------------------------------------
-#endif // _projectconf_jtenv_hpp_
+} // jkpp
+// +++ -------------------------------------------------------------------------
+#endif // MVCVIEW_JKPP_HPP
 // +++ -------------------------------------------------------------------------

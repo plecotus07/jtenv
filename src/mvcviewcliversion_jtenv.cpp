@@ -1,18 +1,15 @@
 // +++ -------------------------------------------------------------------------
-#ifndef _projectconf_jtenv_hpp_
-#define _projectconf_jtenv_hpp_
-// +++ -------------------------------------------------------------------------
-#include <string>
+#include "mvcviewclihelp_jtenv.hpp"
+#include "projectconf_jtenv.hpp"
+
+#include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
-/// Get full name
-/// \return Name
-std::string getFullName ();
-/// Get version.
-/// \return Version
-std::string getVersion ();
 // +++ -------------------------------------------------------------------------
-} /// ccms3
+void MvcViewCliVersion::update ()
+{
+	std::cout << getFullName() << " - v" << getVersion() << '\n';
+}
 // +++ -------------------------------------------------------------------------
-#endif // _projectconf_jtenv_hpp_
+} // jtenv
 // +++ -------------------------------------------------------------------------

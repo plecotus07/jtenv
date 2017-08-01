@@ -1,27 +1,17 @@
 // +++ -------------------------------------------------------------------------
-#ifndef _argsparser_jtenv_hpp_
-#define _argsparser_jtenv_hpp_
+#ifndef MVCVIEWCLIVERSION_JTENV_HPP
+#define MVCVIEWCLIVERSION_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include <vector>
-#include <string>
+#include <mvcview_jkpp.hpp>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class ArgsParser {
+class MvcViewCliVersion : jkpp::MvcView {
 	public:
-		ArgsParser (int aArgc, char* aArgv[]);
-
-		bool Parse ();
-
-	protected:
-		void DisplayHelp ();
-		void DisplayVersion ();
-
-		std::vector<std::string> m_args;
-
+		void update ();
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // _argsparser_jtenv_hpp_
+#endif // MVCVIEWCLIVERSION_JTENV_HPP
 // +++ -------------------------------------------------------------------------

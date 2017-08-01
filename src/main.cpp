@@ -1,10 +1,10 @@
 // +++ -------------------------------------------------------------------------
-#include "argsparser_jtenv.hpp"
+#include "mvcapp_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 int main (int aArgc, char* aArgv[])
 {
-	jtenv::ArgsParser parser{aArgc, aArgv};
+	jtenv::MvcApp app {aArgc, aArgv};
 
-	return parser.Parse();
+	return (app.run() ? 0 : 1);
 }
 // +++ -------------------------------------------------------------------------
