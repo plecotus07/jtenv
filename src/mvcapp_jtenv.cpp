@@ -3,15 +3,16 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcApp::MvcApp (int aArgc, char* aArgv[]) :
-    m_mainView (aArgc, aArgv)
+MvcApp::MvcApp () :
+    m_configModel {},
+    m_mainCtrl {m_configModel},
+    m_mainView {m_mainCtrl}
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcApp::run ()
+bool MvcApp::run (const std::vector<std::string>& aArgs)
 {
-	m_mainView.update();
-	return true;
+	return m_mainView.parse(aArgs);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

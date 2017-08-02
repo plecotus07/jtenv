@@ -154,6 +154,8 @@ class ConfigFile {
 // +++ -------------------------------------------------------------------------
 class Config {
 	public:
+		using UPtr = std::unique_ptr<Config>;
+
 		Config (const fs::path& aConfigDirPath);
 
 		virtual void init () = 0;

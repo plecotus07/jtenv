@@ -1,33 +1,22 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCVIEWCLIMAIN_JTENV_HPP
-#define MVCVIEWCLIMAIN_JTENV_HPP
-// +++ -------------------------------------------------------------------------
-#include "mvcviewclihelp_jtenv.hpp"
-#include "mvcviewcliversion_jtenv.hpp"
-
-#include <mvcview_jkpp.hpp>
-
-#include <vector>
-#include <string>
+#ifndef MVCCTRLMAIN_JTENV_HPP
+#define MVCCTRLMAIN_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcCtrlMain;
+class MvcModelConfig;
 // +++ -------------------------------------------------------------------------
-class MvcViewCliMain : public jkpp::MvcView {
+class MvcCtrlMain {
 	public:
-		MvcViewCliMain (MvcCtrlMain& aCtrl);
+		MvcCtrlMain (MvcModelConfig& aConfigModel);
 
-		void update () {};
-		bool parse (const std::vector<std::string>& aArgs);
+		bool loadConfig ();
 
 	protected:
-    	MvcCtrlMain&      m_ctrl;
-		MvcViewCliHelp    m_helpView;
-		MvcViewCliVersion m_versionView;
+		MvcModelConfig& m_configModel;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // MVCVIEWCLIMAIN_JTENV_HPP
+#endif // MVCCTRLMAIN_JTENV_HPP
 // +++ -------------------------------------------------------------------------

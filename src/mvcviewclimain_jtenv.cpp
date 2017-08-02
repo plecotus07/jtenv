@@ -1,45 +1,35 @@
 // +++ -------------------------------------------------------------------------
 #include "mvcviewclimain_jtenv.hpp"
-#include "config_jtenv.hpp"
 
-#include <filesystem_jkpp.hpp>
+#include "mvcctrlmain_jtenv.hpp"
 
 #include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliMain::MvcViewCliMain (int aArgc, char* aArgv[]) :
-	m_args{}
+MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl) :
+    m_ctrl {aCtrl},
+    m_helpView {}
 {
-	for (int i = 1; i < aArgc; ++i) {
-		m_args.push_back(aArgv[i]);
-	}
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::update ()
+bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
 {
-	bool displayHelp {m_args.empty()};
-	bool displayVersion {false};
-
-	for (auto arg : m_args) {
-		if ( (arg == "-h")
-		        || (arg == "--help") ) {
-        	m_helpView->Update();
-			return true;
-		}
-		else if ( (arg == "-v")
-		        || (arg == "--version") ) {
-        	m_versionView->Update();
-			return true;
-		}
+	if ( (aArgs.empty())
+	        || (aArgs[0] == "-h")
+	        || (aArgs[0] == "--help") ) {
+		m_helpView.update();
+		return true;
+	} else if ( (aArgs[0] == "-v")
+	                || (aArgs[0] == "--version") ) {
+		m_versionView.update();
+		return true;
 	}
 
-	Config config {fs::path(jkpp::getHomeDirPath()) / ".jtenv"};
-	config.init();
-	if (!config.load()) {
+	if (!m_ctrl.loadConfig()) {
+		std::cerr << "Configuration load error\n";
 		return false;
 	}
-
 	return true;
 }
 // +++ -------------------------------------------------------------------------

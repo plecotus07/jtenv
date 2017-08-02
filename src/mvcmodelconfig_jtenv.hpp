@@ -1,20 +1,25 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCAPP_JKPP_HPP
-#define MVCAPP_JKPP_HPP
+#ifndef MVCMODELCONFIG_JTENV_HPP
+#define MVCMODELCONFIG_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include <vector>
-#include <string>
+#include <mvcmodelimpl_jkpp.hpp>
+#include <config_jkpp.hpp>
 // +++ -------------------------------------------------------------------------
-namespace jkpp {
+namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcApp {
+class MvcModelConfig : public jkpp::MvcModelImpl {
 	public:
-		virtual ~MvcApp () = default;
+		MvcModelConfig ();
 
-		virtual bool run (const std::vector<std::string>& aArgs) = 0;
+		bool load ();
+		bool save ();
+
+	protected:
+		jkpp::Config::UPtr m_config;
+
 };
 // +++ -------------------------------------------------------------------------
-} // jkpp
+} // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // MVCAPP_JKPP_HPP
+#endif // MVCMODELCONFIG_JTENV_HPP
 // +++ -------------------------------------------------------------------------

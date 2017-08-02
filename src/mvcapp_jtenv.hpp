@@ -3,6 +3,8 @@
 #define MVCAPP_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 #include "mvcviewclimain_jtenv.hpp"
+#include "mvcmodelconfig_jtenv.hpp"
+#include "mvcctrlmain_jtenv.hpp"
 
 #include <mvcapp_jkpp.hpp>
 // +++ -------------------------------------------------------------------------
@@ -10,11 +12,14 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcApp : public jkpp::MvcApp {
 	public:
-		MvcApp (int aArgc, char* aArgv[]);
+		MvcApp ();
 
-        virtual bool run ();
+		virtual bool run (const std::vector<std::string>& aArgs);
+
 	protected:
 		MvcViewCliMain m_mainView;
+		MvcModelConfig m_configModel;
+		MvcCtrlMain    m_mainCtrl;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

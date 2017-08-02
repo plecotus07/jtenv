@@ -11,14 +11,27 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/projectconf_jtenv.cpp.in
                 ${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
                 @ONLY)
 
-add_executable (jtenv main.cpp ${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp config_jtenv.cpp jkpp/config_jkpp.cpp jkpp/filesystem_jkpp.cpp)
+add_executable (jtenv
+	main.cpp
+    mvcapp_jtenv.cpp
+    mvcviewclimain_jtenv.cpp
+    mvcviewclihelp_jtenv.cpp
+    mvcviewcliversion_jtenv.cpp
+    mvcctrlmain_jtenv.cpp
+    mvcmodelconfig_jtenv.cpp
+    config_jtenv.cpp
+    ${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
+    jkpp/mvcmodelimpl_jkpp.cpp
+    jkpp/config_jkpp.cpp
+    jkpp/filesystem_jkpp.cpp)
+
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 target_link_libraries(jtenv
   ${Boost_FILESYSTEM_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}
 )
 target_include_directories(jtenv PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>)
-target_include_directories(jtenv PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}>/jkpp)
+target_include_directories(jtenv PUBLIC $<BUILD_INTERFACE:${CMAKE_CURRENT_LIST_DIR}/jkpp>)
 
 find_package(Catch REQUIRED)
 add_executable (utjtenv EXCLUDE_FROM_ALL test.cpp)

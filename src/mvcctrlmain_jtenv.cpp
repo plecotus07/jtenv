@@ -1,15 +1,18 @@
 // +++ -------------------------------------------------------------------------
-#include "mvcviewclihelp_jtenv.hpp"
+#include "mvcctrlmain_jtenv.hpp"
 
-#include <iostream>
+#include "mvcmodelconfig_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-void MvcViewCliHelp::update ()
+MvcCtrlMain::MvcCtrlMain (MvcModelConfig& aConfigModel) :
+    m_configModel {aConfigModel}
 {
-	std::cout << "\n  jtpm [-v | --version] [-h | --help] [COMMAND]\n\n"
-	             "    -v, --version                      - Display version.\n"
-	             "    -h, --help                         - Display help.\n";
+}
+// -----------------------------------------------------------------------------
+bool MvcCtrlMain::loadConfig ()
+{
+    return m_configModel.load();
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

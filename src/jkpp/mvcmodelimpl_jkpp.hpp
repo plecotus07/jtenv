@@ -1,20 +1,32 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCAPP_JKPP_HPP
-#define MVCAPP_JKPP_HPP
+#ifndef MVCMODELIMPL_JKPP_HPP
+#define MVCMODELIMPL_JKPP_HPP
 // +++ -------------------------------------------------------------------------
-#include <vector>
-#include <string>
+#include "mvcmodel_jkpp.hpp"
+
+#include <set>
 // +++ -------------------------------------------------------------------------
 namespace jkpp {
 // +++ -------------------------------------------------------------------------
-class MvcApp {
+class MvcModelImpl : public MvcModel {
 	public:
-		virtual ~MvcApp () = default;
+		MvcModelImpl ();
 
-		virtual bool run (const std::vector<std::string>& aArgs) = 0;
+		virtual void attachView (MvcView* aView);
+		virtual void detachView (MvcView* aView);
+
+	protected:
+		virtual void beginUpdate () { ++m_updateCount; }
+		virtual void endUpdate ();
+
+	private:
+		virtual void notify ();
+
+		std::set<MvcView*> m_views;
+		int                m_updateCount;
 };
 // +++ -------------------------------------------------------------------------
 } // jkpp
 // +++ -------------------------------------------------------------------------
-#endif // MVCAPP_JKPP_HPP
+#endif // MVCMODELIMPL_JKPP_HPP
 // +++ -------------------------------------------------------------------------

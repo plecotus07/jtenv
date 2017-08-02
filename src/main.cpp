@@ -3,8 +3,11 @@
 // +++ -------------------------------------------------------------------------
 int main (int aArgc, char* aArgv[])
 {
-	jtenv::MvcApp app {aArgc, aArgv};
+	jtenv::MvcApp app {};
 
-	return (app.run() ? 0 : 1);
+	std::vector<std::string> args;
+	for (int i = 1; i < aArgc; ++i) args.push_back(aArgv[i]);
+
+	return app.run(args);
 }
 // +++ -------------------------------------------------------------------------
