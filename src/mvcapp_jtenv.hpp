@@ -8,7 +8,7 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcApp : jkpp::MvcApp {
+class MvcApp : public jkpp::MvcApp {
 	public:
 		MvcApp (int aArgc, char* aArgv[]);
 

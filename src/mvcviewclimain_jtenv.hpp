@@ -12,7 +12,7 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcViewCliMain : jkpp::MvcView {
+class MvcViewCliMain : public jkpp::MvcView {
 	public:
 		MvcViewCliMain (int aArgc, char* aArgv[]);
 

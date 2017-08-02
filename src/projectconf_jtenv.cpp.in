@@ -3,11 +3,11 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv
 {
-  std::string GetFullName ()
+  std::string getFullName ()
   {
       return "@PROJECT_FULL_NAME@";
   }
-  std::string GetVersion ()
+  std::string getVersion ()
   {
     return "@PROJECT_VERSION@";
   }

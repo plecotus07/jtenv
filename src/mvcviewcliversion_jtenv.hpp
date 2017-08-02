@@ -6,7 +6,7 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcViewCliVersion : jkpp::MvcView {
+class MvcViewCliVersion : public jkpp::MvcView {
 	public:
 		void update ();
 };
