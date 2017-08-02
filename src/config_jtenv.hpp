@@ -24,6 +24,9 @@ class Config : public jkpp::Config {
 	public:
 		Config (const fs::path& aConfigDirPath);
 
+		const std::string& getUserName () const { return m_userName; }
+		void               setUserName (const std::string& aUserName) { m_userName = aUserName; }
+
 		virtual void init ();
 
 	protected:
