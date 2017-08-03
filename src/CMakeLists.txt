@@ -15,8 +15,6 @@ add_executable (jtenv
 	main.cpp
     mvcapp_jtenv.cpp
     mvcviewclimain_jtenv.cpp
-    mvcviewclihelp_jtenv.cpp
-    mvcviewcliversion_jtenv.cpp
     mvcctrlmain_jtenv.cpp
     mvcmodelconfig_jtenv.cpp
     config_jtenv.cpp

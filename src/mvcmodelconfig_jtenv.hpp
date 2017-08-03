@@ -11,7 +11,7 @@ class MvcModelConfig : public jkpp::MvcModelImpl {
 	public:
 		MvcModelConfig ();
 
-		const jkpp::Config::UPtr& getConfig () const { return m_config };
+		const jkpp::Config::UPtr& getConfig () const { return m_config; };
 
 		void setUserName (const std::string& aUserName);
 

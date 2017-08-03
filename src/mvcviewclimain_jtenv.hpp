@@ -2,9 +2,6 @@
 #ifndef MVCVIEWCLIMAIN_JTENV_HPP
 #define MVCVIEWCLIMAIN_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include "mvcviewclihelp_jtenv.hpp"
-#include "mvcviewcliversion_jtenv.hpp"
-
 #include <mvcview_jkpp.hpp>
 
 #include <vector>
@@ -22,9 +19,10 @@ class MvcViewCliMain : public jkpp::MvcView {
 		bool parse (const std::vector<std::string>& aArgs);
 
 	protected:
-    	MvcCtrlMain&      m_ctrl;
-		MvcViewCliHelp    m_helpView;
-		MvcViewCliVersion m_versionView;
+		MvcCtrlMain& m_ctrl;
+
+		void DisplayHelp () const;
+		void DisplayVersion () const;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
