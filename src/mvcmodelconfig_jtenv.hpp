@@ -3,7 +3,7 @@
 #define MVCMODELCONFIG_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 #include <mvcmodelimpl_jkpp.hpp>
-#include <config_jkpp.hpp>
+#include <config_jtenv.hpp>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -11,15 +11,17 @@ class MvcModelConfig : public jkpp::MvcModelImpl {
 	public:
 		MvcModelConfig ();
 
-		const jkpp::Config::UPtr& getConfig () const { return m_config; };
+		const Config::UPtr& getConfig () const { return m_config; };
 
-		void setUserName (const std::string& aUserName);
+		bool setUserName (const std::string& aUserName);
+		bool setUserEmail (const std::string& aUserEmail);
+        bool setWorkspacesUrl (const std::string& aWorkspacesUrl);
 
 		bool load ();
 		bool save ();
 
 	protected:
-		jkpp::Config::UPtr m_config;
+		Config::UPtr m_config;
 
 };
 // +++ -------------------------------------------------------------------------

@@ -10,19 +10,21 @@
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcCtrlMain;
+class MvcModelConfig;
 // +++ -------------------------------------------------------------------------
 class MvcViewCliMain : public jkpp::MvcView {
 	public:
-		MvcViewCliMain (MvcCtrlMain& aCtrl);
+		MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel);
 
 		void update () {};
 		bool parse (const std::vector<std::string>& aArgs);
 
 	protected:
-		MvcCtrlMain& m_ctrl;
+		MvcCtrlMain&    m_ctrl;
+        MvcModelConfig& m_configModel;
 
-		void DisplayHelp () const;
-		void DisplayVersion () const;
+		void displayHelp () const;
+		void displayVersion () const;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

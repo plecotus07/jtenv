@@ -6,7 +6,7 @@ namespace jtenv {
 MvcApp::MvcApp () :
     m_configModel {},
     m_mainCtrl {m_configModel},
-    m_mainView {m_mainCtrl}
+    m_mainView {m_mainCtrl, m_configModel}
 {
 }
 // -----------------------------------------------------------------------------
