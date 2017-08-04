@@ -13,15 +13,17 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/projectconf_jtenv.cpp.in
 
 add_executable (jtenv
 	main.cpp
-    mvcapp_jtenv.cpp
-    mvcviewclimain_jtenv.cpp
-    mvcctrlmain_jtenv.cpp
-    mvcmodelconfig_jtenv.cpp
-    config_jtenv.cpp
-    ${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
-    jkpp/mvcmodelimpl_jkpp.cpp
-    jkpp/config_jkpp.cpp
-    jkpp/filesystem_jkpp.cpp)
+	item_jtenv.cpp
+	itemfactory_jtenv.cpp
+	mvcapp_jtenv.cpp
+	mvcviewclimain_jtenv.cpp
+	mvcctrlmain_jtenv.cpp
+	mvcmodelconfig_jtenv.cpp
+	config_jtenv.cpp
+	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
+	jkpp/mvcmodelimpl_jkpp.cpp
+	jkpp/config_jkpp.cpp
+	jkpp/filesystem_jkpp.cpp)
 
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 target_link_libraries(jtenv

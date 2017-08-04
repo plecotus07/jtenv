@@ -10,6 +10,11 @@
 #elif defined OS_MSW
 #include <windows.h>
 #endif // OS_MSW
+#include <boost/process/system.hpp>
+#include <boost/process/io.hpp>
+#include <boost/filesystem.hpp>
+// +++ -------------------------------------------------------------------------
+namespace proc = boost::process;
 // +++ -------------------------------------------------------------------------
 namespace jkpp {
 std::string getExecDirPath ()
@@ -54,6 +59,25 @@ std::string getHomeDirPath ()
 	}
 
 	return result;
+}
+// +++ -------------------------------------------------------------------------
+bool executeCommand (const std::string& aCommand, std::string& aOutput)
+{
+	proc::ipstream pipe {};
+	int result {0};
+
+	try {
+		result = proc::system(aCommand, proc::std_out > pipe);
+	} catch (...) {
+		result = 1;
+	}
+
+    std::string line {};
+    while (pipe && std::getline(pipe, line)) {
+        aOutput += line + '\n';
+    }
+
+    return (result == 0);
 }
 // +++ -------------------------------------------------------------------------
 } // jkpp

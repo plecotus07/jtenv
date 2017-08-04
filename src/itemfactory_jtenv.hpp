@@ -1,16 +1,23 @@
 // +++ -------------------------------------------------------------------------
-#ifndef FILESYSTEM_JKPP_H
-#define FILESYSTEM_JKPP_H
+#ifndef ITEMFACTORY_JTENV_HPP
+#define ITEMFACTORY_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include <string>
+#include "config_jtenv.hpp"
+#include "item_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
-namespace jkpp {
+namespace jtenv {
 // +++ -------------------------------------------------------------------------
-std::string getExecDirPath ();
-std::string getHomeDirPath ();
-bool executeCommand (const std::string& aCommand, std::string& aOutput);
+class ItemFactory {
+	public:
+    	ItemFactory (const Config::UPtr& aConfig);
+
+        Item::UPtr Create (const std::string& aAdr);
+
+	protected:
+        const Config::UPtr& m_config;
+};
 // +++ -------------------------------------------------------------------------
-} // jkpp
+} // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // FILESYSTEM_JKPP_H
-#// +++ -------------------------------------------------------------------------
+#endif // ITEMFACTORY_JTENV_HPP
+// +++ -------------------------------------------------------------------------
