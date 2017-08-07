@@ -9,6 +9,8 @@
 namespace fs = boost::filesystem;
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
+class VisitorItem;
+// +++ -------------------------------------------------------------------------
 class Item {
 	public:
 		using UPtr = std::unique_ptr<Item>;
@@ -23,6 +25,8 @@ class Item {
 		virtual fs::path    getPath () const { return m_path; }
 		virtual std::string getRepoUrl () const = 0;
         virtual fs::path    getRepoPath () const = 0;
+
+        virtual void Accept (VisitorItem* aVisitor) = 0;
 
 	protected:
         std::string m_name;

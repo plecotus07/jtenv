@@ -1,34 +1,21 @@
 // +++ -------------------------------------------------------------------------
-#include "itemproject_jtenv.hpp"
-#include "visitoritem_jtenv.hpp"
+#include "visitoritemtype_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-ItemProject::ItemProject (const std::string& aWsName, const std::string& aName, const fs::path& aPath, const Config::UPtr& aConfig) :
-    Item(aName, aPath, aConfig),
-    m_wsName {aWsName},
-    m_repoUrl {}
+VisitorItemType::VisitorItemType () :
+    m_type{}
 {
 }
 // -----------------------------------------------------------------------------
-bool ItemProject::exists () const
+void VisitorItemType::Visit (ItemProject* aItem)
 {
-    std::string url {m_repoUrl};
-
-    if (url.substr(0,6) == "ssh://") {
-    } else {
-        return fs::exists(url);
-    }
-
-    return true;
+    m_type = "project";
 }
 // -----------------------------------------------------------------------------
-void ItemProject::Accept (VisitorItem* aVisitor)
+void VisitorItemType::Visit (ItemWorkspace* aItem)
 {
-	///\todo assert(aVisitor 1+ nullptr);
-	if (aVisitor == nullptr) return;
-
-	aVisitor->Visit(this);
+    m_type = "workspace";
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

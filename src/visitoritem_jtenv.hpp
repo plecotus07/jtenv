@@ -1,26 +1,22 @@
 // +++ -------------------------------------------------------------------------
-#ifndef ITEMWORKSPACE_JTENV_HPP
-#define ITEMWORKSPACE_JTENV_HPP
-// +++ -------------------------------------------------------------------------
-#include "item_jtenv.hpp"
+#ifndef VISITORITEM_JTENV_HPP
+#define VISITORITEM_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
+class ItemProject;
+class ItemWorkspace;
 // +++ -------------------------------------------------------------------------
-class ItemWorkspace : public Item {
+class VisitorItem {
 	public:
-        ItemWorkspace (const std::string& aName, const fs::path& aPath, const Config::UPtr& aConfig);
+    	virtual ~VisitorItem () = default;
 
-		virtual std::string getRepoUrl () const;
-        virtual fs::path    getRepoPath () const { return m_path; }
-
-        virtual void Accept (VisitorItem* aVisitor);
+		virtual void Visit (ItemProject* aItem) = 0;
+		virtual void Visit (ItemWorkspace* aItem) = 0;
 
 	protected:
-
-		virtual bool exists () const;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // ITEMWORKSPACE_JTENV_HPP
+#endif // VISITORITEM_JTENV_HPP
 // +++ -------------------------------------------------------------------------

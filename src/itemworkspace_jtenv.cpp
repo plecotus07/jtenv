@@ -1,5 +1,6 @@
 // +++ -------------------------------------------------------------------------
 #include "itemworkspace_jtenv.hpp"
+#include "visitoritem_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -28,6 +29,14 @@ bool ItemWorkspace::exists () const
     }
 
     return true;
+}
+// -----------------------------------------------------------------------------
+void ItemWorkspace::Accept (VisitorItem* aVisitor)
+{
+	///\todo assert(aVisitor 1+ nullptr);
+	if (aVisitor == nullptr) return;
+
+	aVisitor->Visit(this);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

@@ -5,6 +5,7 @@
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvcmodelconfig_jtenv.hpp"
 #include "itemfactory_jtenv.hpp"
+#include "visitoritemtype_jtenv.hpp"
 
 #include <iostream>
 // +++ -------------------------------------------------------------------------
@@ -77,7 +78,12 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
         	std::cerr << "Invalid address: " << addr << '\n';
 			return false;
         }
-        std::cout << item->getItemType() << " : " << item->getPath() << '\n';
+
+        VisitorItemType visitor {};
+
+        item->Accept(&visitor);
+
+        std::cout << visitor.getType()  << " : " << item->getPath() << '\n';
     } else {
     	std::cerr << "Invalid command: " << command << '\n';
         return false;

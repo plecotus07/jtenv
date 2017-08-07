@@ -17,6 +17,7 @@ add_executable (jtenv
 	itemproject_jtenv.cpp
 	itemworkspace_jtenv.cpp
 	itemfactory_jtenv.cpp
+  visitoritemtype_jtenv.cpp	
 	mvcapp_jtenv.cpp
 	mvcviewclimain_jtenv.cpp
 	mvcctrlmain_jtenv.cpp
