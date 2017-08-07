@@ -1,6 +1,8 @@
 // +++ -------------------------------------------------------------------------
 #include "config_jtenv.hpp"
 #include "filesystem_jkpp.hpp"
+
+#include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jkpp {
 // +++ -------------------------------------------------------------------------
@@ -59,6 +61,9 @@ fs::path Config::getWsPath (const std::string& aName) const
 std::string Config::getWsName (const fs::path& aPath) const
 {
 	for (auto ws : m_workspaces) {
+std::cerr << "+++ getWsName: " << ws.first << '\n';
+std::cerr << "+++ getWsName: " << ws.second << '\n';
+std::cerr << "+++ getWsName: " << aPath << '\n';
     	fs::path wsPath {ws.second};
         fs::path path {aPath};
 
@@ -68,8 +73,10 @@ std::string Config::getWsName (const fs::path& aPath) const
 
        auto wsPathLen {std::distance(wsPath.begin(), wsPath.end())};
        auto pathLen {std::distance(path.begin(), path.end())};
+std::cerr << "+++: 1: " << wsPathLen << " - " << pathLen << '\n';
 
-       if (wsPathLen > pathLen) return "";
+       if (wsPathLen > pathLen) continue;
+std::cerr << "+++: 2" << '\n';
 
        if (std::equal(wsPath.begin(), wsPath.end(), path.begin())) return ws.first;
     }

@@ -17,7 +17,7 @@ class ItemFactory {
         const Config::UPtr& m_config;
 
         Item::UPtr CreateProject (const std::string& aWsName = "", const std::string& aName = "");
-        Item::UPtr CreateWorkspace (const std::string& aName);
+        Item::UPtr CreateWorkspace (const std::string& aName = "");
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

@@ -16,8 +16,10 @@ Item::UPtr ItemFactory::Create (const std::string& aAdr)
 	std::string wsName {};
 	std::string projName {};
 
-    if (aAdr.empty()) return CreateProject();
-
+    if (aAdr.empty()) {
+    	if (fs::exists("project.conf")) return CreateProject();
+        else return CreateWorkspace();
+	}
     auto pos {aAdr.find_first_of(':')};
     if (pos == std::string::npos) return CreateWorkspace(aAdr);
 
@@ -31,9 +33,13 @@ Item::UPtr ItemFactory::CreateWorkspace (const std::string& aName)
 		return std::unique_ptr<ItemWorkspace>();
     }
 
-	fs::path wsPath {m_config->getWsPath(aName)};
+    std::string name {aName};
+    if (aName.empty()) name = m_config->getWsName(fs::current_path());
 
-	return std::make_unique<ItemWorkspace>(aName, wsPath, m_config);
+	std::cerr << "+++: " << fs::current_path() << '\n';
+fs::path wsPath {m_config->getWsPath(name)};
+
+	return std::make_unique<ItemWorkspace>(name, wsPath, m_config);
 }
 // -----------------------------------------------------------------------------
 Item::UPtr ItemFactory::CreateProject (const std::string& aWsName, const std::string& aName)
