@@ -1,26 +1,26 @@
 // +++ -------------------------------------------------------------------------
-#ifndef ITEMFACTORY_JTENV_HPP
-#define ITEMFACTORY_JTENV_HPP
+#ifndef ITEMPROJECT_JTENV_HPP
+#define ITEMPROJECT_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include "config_jtenv.hpp"
 #include "item_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class ItemFactory {
+class ItemProject : public Item {
 	public:
-    	ItemFactory (const Config::UPtr& aConfig);
+        ItemProject (const std::string& aWsName, const std::string& aName, const fs::path& aPath, const Config::UPtr& aConfig);
 
-        Item::UPtr Create (const std::string& aAdr);
+		virtual std::string getRepoUrl () const { return m_repoUrl; }
+        virtual fs::path    getRepoPath () const { return m_path; }
 
 	protected:
-        const Config::UPtr& m_config;
+		std::string m_wsName;
+        std::string m_repoUrl;
 
-        Item::UPtr CreateProject (const std::string& aWsName = "", const std::string& aName = "");
-        Item::UPtr CreateWorkspace (const std::string& aName);
+		virtual bool exists () const;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // ITEMFACTORY_JTENV_HPP
+#endif // ITEMPROJECT_JTENV_HPP
 // +++ -------------------------------------------------------------------------

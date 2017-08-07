@@ -39,6 +39,9 @@ class Config : public jkpp::Config {
 		const std::string& getWorkspacesUrl () const { return m_workspacesUrl; }
 		void               setWorkspacesUrl (const std::string& aWorkspacesUrl) { m_workspacesUrl = aWorkspacesUrl; }
 
+        fs::path           getWsPath (const std::string& aName) const;
+        std::string        getWsName (const fs::path& aPath) const;
+
 		virtual void init ();
 
 	protected:

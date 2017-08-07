@@ -47,6 +47,36 @@ Config::Config (const fs::path& aConfigDirPath) :
 {
 }
 // -----------------------------------------------------------------------------
+fs::path Config::getWsPath (const std::string& aName) const
+{
+	auto ws {m_workspaces.find(aName)};
+
+    if (ws == m_workspaces.end()) return fs::path();
+
+    return ws->second;
+}
+// -----------------------------------------------------------------------------
+std::string Config::getWsName (const fs::path& aPath) const
+{
+	for (auto ws : m_workspaces) {
+    	fs::path wsPath {ws.second};
+        fs::path path {aPath};
+
+        if (wsPath.filename() == "." ) wsPath.remove_filename();
+
+        path.remove_filename();
+
+       auto wsPathLen {std::distance(wsPath.begin(), wsPath.end())};
+       auto pathLen {std::distance(path.begin(), path.end())};
+
+       if (wsPathLen > pathLen) return "";
+
+       if (std::equal(wsPath.begin(), wsPath.end(), path.begin())) return ws.first;
+    }
+
+    return "";
+}
+// -----------------------------------------------------------------------------
 void Config::init()
 {
 	m_configFiles.push_back(std::make_unique<ConfigMainFile>(m_configDirPath, m_workspacesUrl, m_userName, m_userEmail));

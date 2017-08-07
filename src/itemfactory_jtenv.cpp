@@ -1,5 +1,9 @@
 // +++ -------------------------------------------------------------------------
 #include "itemfactory_jtenv.hpp"
+
+#include "itemworkspace_jtenv.hpp"
+#include "itemproject_jtenv.hpp"
+#include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -12,7 +16,7 @@ Item::UPtr ItemFactory::Create (const std::string& aAdr)
 	std::string wsName {};
 	std::string projName {};
 
-    if (aArg.empty()) return CreateProject();
+    if (aAdr.empty()) return CreateProject();
 
     auto pos {aAdr.find_first_of(':')};
     if (pos == std::string::npos) return CreateWorkspace(aAdr);
@@ -23,13 +27,33 @@ Item::UPtr ItemFactory::Create (const std::string& aAdr)
 Item::UPtr ItemFactory::CreateWorkspace (const std::string& aName)
 {
 ///\todo assert(m_config.get() != nullptr)
-	std::string wsPath {m_config->getWsPath(aName)};
+	if (m_config.get() == nullptr) {
+		return std::unique_ptr<ItemWorkspace>();
+    }
 
-	return std::make_unique<ItemWorkspace>(aName, aPath, m_config);
+	fs::path wsPath {m_config->getWsPath(aName)};
+
+	return std::make_unique<ItemWorkspace>(aName, wsPath, m_config);
 }
 // -----------------------------------------------------------------------------
 Item::UPtr ItemFactory::CreateProject (const std::string& aWsName, const std::string& aName)
 {
+///\todo assert(m_config.get() != nullptr)
+	fs::path projPath {};
+
+	if (aName.empty()) {
+///\todo   	assert(aWsName.empty())
+        for (projPath = fs::current_path(); !fs::exists(projPath / "project.conf") && !projPath.string().empty(); projPath = projPath.parent_path());
+    } else {
+    	std::string wsName { aWsName };
+        if (aWsName.empty()) {
+			wsName = m_config->getWsName(fs::current_path());
+        }
+        if (wsName.empty()) projPath.clear();
+        else projPath = m_config->getWsPath(wsName) / aName;
+    }
+
+    return std::make_unique<ItemProject>(aWsName, aName, projPath, m_config);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

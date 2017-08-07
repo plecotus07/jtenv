@@ -3,7 +3,7 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-Item::Item (std::string& aName, const fs::path& aPath, const Config::UPtr& aConfig) :
+Item::Item (const std::string& aName, const fs::path& aPath, const Config::UPtr& aConfig) :
     m_name{aName},
     m_path{aPath},
     m_config{aConfig}

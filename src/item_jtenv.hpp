@@ -2,6 +2,8 @@
 #ifndef ITEM_JTENV_HPP
 #define ITEM_JTENV_HPP
 // +++ -------------------------------------------------------------------------
+#include "config_jtenv.hpp"
+
 #include <boost/filesystem.hpp>
 // +++ -------------------------------------------------------------------------
 namespace fs = boost::filesystem;
@@ -18,6 +20,7 @@ class Item {
         virtual bool   clone () const;
         virtual bool   git (const std::string& aCommand) const;
 
+		virtual fs::path    getPath () const { return m_path; }
 		virtual std::string getRepoUrl () const = 0;
         virtual fs::path    getRepoPath () const = 0;
 

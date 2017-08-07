@@ -4,6 +4,7 @@
 #include "projectconf_jtenv.hpp"
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvcmodelconfig_jtenv.hpp"
+#include "itemfactory_jtenv.hpp"
 
 #include <iostream>
 // +++ -------------------------------------------------------------------------
@@ -46,24 +47,37 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     std::string value {};
     if (key != command) value = command.substr(pos + 1);
 
-    if (key == "--user-name") {
+    if (key == "user-name") {
 		if (value.empty()) std::cout << config->getUserName() << '\n';
 		else  if (!m_ctrl.setUserName(value)) {
         	std::cerr << "Edit user name error\n";
             return false;
         }
-    } else if (key == "--user-email") {
+    } else if (key == "user-email") {
 		if (value.empty()) std::cout << config->getUserEmail() << '\n';
 		else  if (!m_ctrl.setUserEmail(value)) {
         	std::cerr << "Edit user email error\n";
         	return false;
         }
-    } else if (key == "--ws-url") {
+    } else if (key == "ws-url") {
 		if (value.empty()) std::cout << config->getWorkspacesUrl() << '\n';
 		else  if (!m_ctrl.setWorkspacesUrl(value)) {
         	std::cerr << "Edit workspaces url error\n";
         	return false;
         }
+    }
+    else if (key == "path") {
+    	std::string addr {};
+    	if (aArgs.size() >= 2) {
+			addr = aArgs[1];
+        }
+        ItemFactory fac {config};
+        Item::UPtr item {fac.Create(addr)};
+        if (!item) {
+        	std::cerr << "Invalid address: " << addr << '\n';
+			return false;
+        }
+        std::cout << item->getItemType() << " : " << item->getPath() << '\n';
     } else {
     	std::cerr << "Invalid command: " << command << '\n';
         return false;
