@@ -15,7 +15,7 @@ class MvcModelConfig : public jkpp::MvcModelImpl {
 
 		bool setUserName (const std::string& aUserName);
 		bool setUserEmail (const std::string& aUserEmail);
-        bool setWorkspacesUrl (const std::string& aWorkspacesUrl);
+        bool setWorkspacesDirPath (const fs::path& aWorkspacesDirPath);
 
 		bool load ();
 		bool save ();

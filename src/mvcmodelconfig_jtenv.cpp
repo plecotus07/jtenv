@@ -25,10 +25,10 @@ bool MvcModelConfig::setUserEmail (const std::string& aUserEmail)
     return save();
 }
 // -----------------------------------------------------------------------------
-bool MvcModelConfig::setWorkspacesUrl (const std::string& aWorkspacesUrl)
+bool MvcModelConfig::setWorkspacesDirPath (const fs::path& aWorkspacesDirPath)
 {
 ///\todo assert(m_config.get() != nullptr)
-	m_config->setWorkspacesUrl(aWorkspacesUrl);
+	m_config->setWorkspacesDirPath(aWorkspacesDirPath);
     return save();
 }
 // -----------------------------------------------------------------------------

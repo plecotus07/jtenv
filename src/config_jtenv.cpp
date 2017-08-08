@@ -7,6 +7,19 @@
 namespace jkpp {
 // +++ -------------------------------------------------------------------------
 template <>
+bool ConfigFileFieldImpl<fs::path>::setValue (const std::string& aValue)
+{
+	m_value = aValue;
+	return true;
+}
+// -----------------------------------------------------------------------------
+template <>
+void ConfigFileFieldImpl<fs::path>::clearValue ()
+{
+	m_value.clear();
+}
+// -----------------------------------------------------------------------------
+template <>
 bool ConfigFileFieldImpl<std::map<std::string, fs::path>>::setValue (const std::string& aValue)
 {
 	auto sepPos = aValue.find_first_of(m_separator);
@@ -26,10 +39,10 @@ bool ConfigFileFieldImpl<std::map<std::string, fs::path>>::setValue (const std::
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-ConfigMainFile::ConfigMainFile (const fs::path& aConfigDirPath, std::string& aWorkspacesUrl, std::string& aUserName, std::string& aUserEmail) :
+ConfigMainFile::ConfigMainFile (const fs::path& aConfigDirPath, fs::path& aWorkspacesDirPath, std::string& aUserName, std::string& aUserEmail) :
 	jkpp::ConfigFile {aConfigDirPath / "main.conf"}
 {
-	m_fields.push_back(std::make_unique<jkpp::ConfigFileFieldImpl<std::string>>("workspaces_url", aWorkspacesUrl, (aConfigDirPath / "workspaces").string()));
+	m_fields.push_back(std::make_unique<jkpp::ConfigFileFieldImpl<fs::path>>("workspaces_dir_path", aWorkspacesDirPath, (aConfigDirPath / "workspaces").string()));
 	m_fields.push_back(std::make_unique<jkpp::ConfigFileFieldImpl<std::string>>("user_name", aUserName, ""));
 	m_fields.push_back(std::make_unique<jkpp::ConfigFileFieldImpl<std::string>>("user_email", aUserEmail, ""));
 }
@@ -42,7 +55,7 @@ ConfigWorkspacesFile::ConfigWorkspacesFile (const fs::path& aConfigDirPath, std:
 // +++ -------------------------------------------------------------------------
 Config::Config (const fs::path& aConfigDirPath) :
     jkpp::Config(aConfigDirPath),
-    m_workspacesUrl {},
+    m_workspacesDirPath {},
     m_userName {},
     m_userEmail {},
     m_workspaces {}
@@ -61,9 +74,6 @@ fs::path Config::getWsPath (const std::string& aName) const
 std::string Config::getWsName (const fs::path& aPath) const
 {
 	for (auto ws : m_workspaces) {
-std::cerr << "+++ getWsName: " << ws.first << '\n';
-std::cerr << "+++ getWsName: " << ws.second << '\n';
-std::cerr << "+++ getWsName: " << aPath << '\n';
     	fs::path wsPath {ws.second};
         fs::path path {aPath};
 
@@ -73,10 +83,8 @@ std::cerr << "+++ getWsName: " << aPath << '\n';
 
        auto wsPathLen {std::distance(wsPath.begin(), wsPath.end())};
        auto pathLen {std::distance(path.begin(), path.end())};
-std::cerr << "+++: 1: " << wsPathLen << " - " << pathLen << '\n';
 
        if (wsPathLen > pathLen) continue;
-std::cerr << "+++: 2" << '\n';
 
        if (std::equal(wsPath.begin(), wsPath.end(), path.begin())) return ws.first;
     }
@@ -86,7 +94,7 @@ std::cerr << "+++: 2" << '\n';
 // -----------------------------------------------------------------------------
 void Config::init()
 {
-	m_configFiles.push_back(std::make_unique<ConfigMainFile>(m_configDirPath, m_workspacesUrl, m_userName, m_userEmail));
+	m_configFiles.push_back(std::make_unique<ConfigMainFile>(m_configDirPath, m_workspacesDirPath, m_userName, m_userEmail));
 	m_configFiles.push_back(std::make_unique<ConfigWorkspacesFile>(m_configDirPath, m_workspaces));
 }
 // +++ -------------------------------------------------------------------------

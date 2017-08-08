@@ -61,9 +61,9 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
         	return false;
         }
     } else if (key == "ws-url") {
-		if (value.empty()) std::cout << config->getWorkspacesUrl() << '\n';
-		else  if (!m_ctrl.setWorkspacesUrl(value)) {
-        	std::cerr << "Edit workspaces url error\n";
+		if (value.empty()) std::cout << config->getWorkspacesDirPath().string() << '\n';
+		else  if (!m_ctrl.setWorkspacesDirPath(value)) {
+        	std::cerr << "Edit workspaces path error\n";
         	return false;
         }
     }

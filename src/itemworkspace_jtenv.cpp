@@ -14,7 +14,7 @@ std::string ItemWorkspace::getRepoUrl () const
 ///\todo assert(m_config.get() != nullptr)
 	if (m_config.get() == nullptr) return std::string();
 
-	return m_config->getWorkspacesUrl() + "/" + m_name + ".git";
+	return (m_config->getWorkspacesDirPath() / fs::path(m_name + ".git")).string();
 }
 // -----------------------------------------------------------------------------
 bool ItemWorkspace::exists () const
@@ -33,7 +33,7 @@ bool ItemWorkspace::exists () const
 // -----------------------------------------------------------------------------
 void ItemWorkspace::Accept (VisitorItem* aVisitor)
 {
-	///\todo assert(aVisitor 1+ nullptr);
+	///\todo assert(aVisitor != nullptr);
 	if (aVisitor == nullptr) return;
 
 	aVisitor->Visit(this);

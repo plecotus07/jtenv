@@ -25,9 +25,9 @@ bool MvcCtrlMain::setUserEmail (const std::string& aUserEmail)
     return m_configModel.setUserEmail(aUserEmail);
 }
 // -----------------------------------------------------------------------------
-bool MvcCtrlMain::setWorkspacesUrl (const std::string& aWorkspacesUrl)
+bool MvcCtrlMain::setWorkspacesDirPath (const fs::path& aWorkspacesDirPath)
 {
-    return m_configModel.setWorkspacesUrl(aWorkspacesUrl);
+    return m_configModel.setWorkspacesDirPath(aWorkspacesDirPath);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

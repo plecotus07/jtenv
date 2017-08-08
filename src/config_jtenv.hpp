@@ -10,7 +10,7 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class ConfigMainFile : public jkpp::ConfigFile {
 	public:
-		ConfigMainFile (const fs::path& aConfigDirPath, std::string& aWorkspacesUrl, std::string& aUserName, std::string& aUserEmail);
+		ConfigMainFile (const fs::path& aConfigDirPath, fs::path& aWorkspacesDirPath, std::string& aUserName, std::string& aUserEmail);
 };
 // +++ -------------------------------------------------------------------------
 class ConfigWorkspacesFile : public jkpp::ConfigFile {
@@ -36,8 +36,8 @@ class Config : public jkpp::Config {
 		const std::string& getUserEmail () const { return m_userEmail; }
 		void               setUserEmail (const std::string& aUserEmail) { m_userEmail = aUserEmail; }
 
-		const std::string& getWorkspacesUrl () const { return m_workspacesUrl; }
-		void               setWorkspacesUrl (const std::string& aWorkspacesUrl) { m_workspacesUrl = aWorkspacesUrl; }
+		const fs::path&    getWorkspacesDirPath () const { return m_workspacesDirPath; }
+		void               setWorkspacesDirPath (const fs::path& aWorkspacesDirPath) { m_workspacesDirPath = aWorkspacesDirPath; }
 
         fs::path           getWsPath (const std::string& aName) const;
         std::string        getWsName (const fs::path& aPath) const;
@@ -45,7 +45,7 @@ class Config : public jkpp::Config {
 		virtual void init ();
 
 	protected:
-		std::string                     m_workspacesUrl;
+		fs::path                        m_workspacesDirPath;
 		std::string                     m_userName;
 		std::string                     m_userEmail;
 		std::map<std::string, fs::path> m_workspaces;

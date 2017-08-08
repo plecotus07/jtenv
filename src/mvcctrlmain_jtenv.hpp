@@ -2,8 +2,10 @@
 #ifndef MVCCTRLMAIN_JTENV_HPP
 #define MVCCTRLMAIN_JTENV_HPP
 // +++ -------------------------------------------------------------------------
+#include <boost/filesystem.hpp>
 #include <string>
 // +++ -------------------------------------------------------------------------
+namespace fs = boost::filesystem;
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcModelConfig;
@@ -15,7 +17,7 @@ class MvcCtrlMain {
 		bool loadConfig ();
         bool setUserName (const std::string& aUserName);
         bool setUserEmail (const std::string& aUserEmail);
-        bool setWorkspacesUrl (const std::string& aWorkspacesUrl);
+        bool setWorkspacesDirPath (const fs::path& aWorkspacesDirPath);
 
 	protected:
 		MvcModelConfig& m_configModel;
