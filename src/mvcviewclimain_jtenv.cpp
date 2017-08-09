@@ -159,11 +159,33 @@ bool MvcViewCliMain::onListItems (const std::vector<std::string>& aArgs)
 
             fs::path ws_path {config->getWsPath(ws_name)};
 
-			if (!ws_path.empty() || !cloned_only) std::cout << ws_name << (ws_path.empty() ? "" : " : ") << ws_path.string() << '\n';
+			if (!ws_path.empty() || !cloned_only) std::cout << ws_name << '\n';
         }
 
-    }
+    } else {
+        if (!fs::exists(config->getWorkspacesDirPath() / (root_ws_name + ".git"))) {
+        	std::cerr << "Workspace '" << root_ws_name << "' not exists.\n";
+            return false;
+        }
 
+        fs::path ws_path {config->getWsPath(root_ws_name)};
+
+        if (ws_path.empty()) {
+        	std::cerr << "Workspace '" << root_ws_name << "' is not cloned.\n";
+        	return false;
+        }
+
+	   	std::vector<fs::path> items {};
+    	std::copy(fs::directory_iterator(ws_path), fs::directory_iterator(), std::back_inserter(items));
+
+        for (auto item_path : items) {
+            if (!fs::exists(item_path / "project.conf")) continue;
+
+            std::string proj_name {item_path.filename().string()};
+
+			if (fs::exists(item_path / (proj_name + "_repo")) || !cloned_only) std::cout << proj_name << '\n';
+        }
+    }
 
     return true;
 }
