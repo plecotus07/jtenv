@@ -194,7 +194,15 @@ void MvcViewCliMain::displayHelp () const
 {
 	std::cout << "\n  jtpm [-v | --version] [-h | --help] [COMMAND]\n\n"
 	             "    -v, --version                      - Display version.\n"
-	             "    -h, --help                         - Display help.\n";
+	             "    -h, --help                         - Display help.\n"
+                 "\n    user-name [USER_NAME]              - Set or get user name.\n"
+                 "    user-email [USER_EMAIL]            - Set or get user email.\n"
+                 "    ws-dir [WS_DIR_PATH]               - Set or get workspaces directory path.\n"
+                 "\n    path [ADDR]                        - Get item path.\n"
+                 "\n    list [-c]                          - List workspaces.\n"
+                 "      -c - only cloned\n"
+                 "    list WS_NAME [-c]                  - List workspace projects.\n"
+                 "      -c - only cloned\n";
 }
 // -----------------------------------------------------------------------------
 void MvcViewCliMain::displayVersion () const
