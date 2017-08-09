@@ -23,6 +23,12 @@ class MvcViewCliMain : public jkpp::MvcView {
 		MvcCtrlMain&    m_ctrl;
         MvcModelConfig& m_configModel;
 
+		bool onUserName (const std::string& aValue);
+		bool onUserEmail (const std::string& aValue);
+		bool onWorkspacesDirPath (const std::string& aValue);
+		bool onPath (const std::vector<std::string>& aArgs);
+		bool onListItems (const std::vector<std::string>& aArgs);
+
 		void displayHelp () const;
 		void displayVersion () const;
 };

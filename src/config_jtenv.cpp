@@ -14,6 +14,13 @@ bool ConfigFileFieldImpl<fs::path>::setValue (const std::string& aValue)
 }
 // -----------------------------------------------------------------------------
 template <>
+bool ConfigFileFieldImpl<fs::path>::saveValue (std::ofstream& aFileStream)
+{
+	aFileStream << m_key << "=" << m_value.string() << '\n';
+	return !aFileStream.fail();
+}
+// -----------------------------------------------------------------------------
+template <>
 void ConfigFileFieldImpl<fs::path>::clearValue ()
 {
 	m_value.clear();
