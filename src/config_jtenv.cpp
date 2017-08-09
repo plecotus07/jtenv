@@ -78,8 +78,7 @@ std::string Config::getWsName (const fs::path& aPath) const
         fs::path path {aPath};
 
         if (wsPath.filename() == "." ) wsPath.remove_filename();
-
-        path.remove_filename();
+        if (!fs::is_directory(path)) path.remove_filename();
 
        auto wsPathLen {std::distance(wsPath.begin(), wsPath.end())};
        auto pathLen {std::distance(path.begin(), path.end())};

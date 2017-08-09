@@ -29,15 +29,12 @@ Item::UPtr ItemFactory::Create (const std::string& aAdr)
 Item::UPtr ItemFactory::CreateWorkspace (const std::string& aName)
 {
 ///\todo assert(m_config.get() != nullptr)
-	if (m_config.get() == nullptr) {
-		return std::unique_ptr<ItemWorkspace>();
-    }
+	if (m_config.get() == nullptr) return std::unique_ptr<ItemWorkspace>();
 
     std::string name {aName};
     if (aName.empty()) name = m_config->getWsName(fs::current_path());
 
-	std::cerr << "+++: " << fs::current_path() << '\n';
-fs::path wsPath {m_config->getWsPath(name)};
+	fs::path wsPath {m_config->getWsPath(name)};
 
 	return std::make_unique<ItemWorkspace>(name, wsPath, m_config);
 }
@@ -56,7 +53,11 @@ Item::UPtr ItemFactory::CreateProject (const std::string& aWsName, const std::st
 			wsName = m_config->getWsName(fs::current_path());
         }
         if (wsName.empty()) projPath.clear();
-        else projPath = m_config->getWsPath(wsName) / aName;
+        else {
+        	fs::path wsPath {m_config->getWsPath(wsName)};
+	        if (wsPath.empty()) projPath.clear();
+    	    else projPath =  wsPath / aName;
+        }
     }
 
     return std::make_unique<ItemProject>(aWsName, aName, projPath, m_config);
