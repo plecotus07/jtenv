@@ -39,32 +39,30 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
 		return false;
 	}
 
-    auto pos {command.find_first_of('=')};
-	std::string key {command.substr(0, pos)};
-    std::string value {};
-    if (key != command) value = command.substr(pos + 1);
+    bool result {true};
+    ArgIterator arg {aArgs.begin() + 1};
 
-    if (key == "user-name") return onUserName(value);
-    else if (key == "user-email") return onUserEmail(value);
-    else if (key == "ws-path") return onWorkspacesDirPath(value);
-    else if (key == "path") return onPath(aArgs);
-    else if (key == "list") return onListItems(aArgs);
+    if (command == "user-name") result = onUserName(arg, aArgs.end());
+    else if (command == "user-email") result = onUserEmail(arg, aArgs.end());
+    else if (command == "ws-path") result = onWorkspacesDirPath(arg, aArgs.end());
+    else if (command == "path") result = onPath(arg, aArgs.end());
+    else if (command == "list") result = onListItems(arg, aArgs.end());
     else {
     	std::cerr << "Invalid command: " << command << '\n';
         return false;
     }
 
-	return true;
+	return result;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::onUserName (const std::string& aValue)
+bool MvcViewCliMain::onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
 	const Config::UPtr& config { m_configModel.getConfig() };
 ///\todo assert(config.get() != nullptr);
 	if (config.get() == nullptr) return false;
 
-    if (aValue.empty()) std::cout << config->getUserName() << '\n';
-    else  if (!m_ctrl.setUserName(aValue)) {
+    if (aArg == aArgsEnd) std::cout << config->getUserName() << '\n';
+    else  if (!m_ctrl.setUserName(*aArg)) {
         std::cerr << "Edit user name error\n";
         return false;
     }
@@ -72,14 +70,14 @@ bool MvcViewCliMain::onUserName (const std::string& aValue)
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::onUserEmail (const std::string& aValue)
+bool MvcViewCliMain::onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
 	const Config::UPtr& config { m_configModel.getConfig() };
 ///\todo assert(config.get() != nullptr);
 	if (config.get() == nullptr) return false;
 
-    if (aValue.empty()) std::cout << config->getUserEmail() << '\n';
-    else  if (!m_ctrl.setUserEmail(aValue)) {
+    if (aArg == aArgsEnd) std::cout << config->getUserEmail() << '\n';
+    else  if (!m_ctrl.setUserEmail(*aArg)) {
         std::cerr << "Edit user email error\n";
         return false;
     }
@@ -87,14 +85,14 @@ bool MvcViewCliMain::onUserEmail (const std::string& aValue)
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::onWorkspacesDirPath (const std::string& aValue)
+bool MvcViewCliMain::onWorkspacesDirPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
 	const Config::UPtr& config { m_configModel.getConfig() };
 ///\todo assert(config.get() != nullptr);
 	if (config.get() == nullptr) return false;
 
-    if (aValue.empty()) std::cout << config->getWorkspacesDirPath().string() << '\n';
-    else  if (!m_ctrl.setWorkspacesDirPath(aValue)) {
+    if (aArg == aArgsEnd) std::cout << config->getWorkspacesDirPath().string() << '\n';
+    else  if (!m_ctrl.setWorkspacesDirPath(*aArg)) {
         std::cerr << "Edit workspaces path error\n";
         return false;
     }
@@ -102,7 +100,7 @@ bool MvcViewCliMain::onWorkspacesDirPath (const std::string& aValue)
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::onPath (const std::vector<std::string>& aArgs)
+bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
 	const Config::UPtr& config { m_configModel.getConfig() };
 ///\todo assert(config.get() != nullptr);
@@ -110,7 +108,7 @@ bool MvcViewCliMain::onPath (const std::vector<std::string>& aArgs)
 
 	std::string addr {};
 
-	if (aArgs.size() >= 2) addr = aArgs[1];
+    if (aArg != aArgsEnd) addr = *aArg;
 
     ItemFactory fac {config};
     Item::UPtr item {fac.Create(addr)};
@@ -119,16 +117,20 @@ bool MvcViewCliMain::onPath (const std::vector<std::string>& aArgs)
         return false;
     }
 
+#ifdef DEBUG_BUILD
     VisitorItemType visitor {};
 
     item->Accept(&visitor);
 
-    std::cout << visitor.getType() << " : " << item->getPath() << '\n';
+    std::cout << visitor.getType() << " : ";
+#endif
+
+     std::cout << item->getPath() << '\n';
 
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::onListItems (const std::vector<std::string>& aArgs)
+bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
 	const Config::UPtr& config { m_configModel.getConfig() };
 ///\todo assert(config.get() != nullptr);
@@ -137,15 +139,14 @@ bool MvcViewCliMain::onListItems (const std::vector<std::string>& aArgs)
     std::string root_ws_name {};
     bool cloned_only {false};
 
-    for (int i = 1; i < aArgs.size(); ++i) {
-        if (aArgs[i] == "-c") cloned_only = true;
-        else if (root_ws_name.empty()) root_ws_name = aArgs[i];
+    for (; aArg != aArgsEnd; ++aArg) {
+        if (*aArg == "-c") cloned_only = true;
+        else if (root_ws_name.empty()) root_ws_name = *aArg;
         else {
-            std::cerr << "Invalid option: " << aArgs[i] << '\n';
+            std::cerr << "Invalid option: " << *aArg << '\n';
             return false;
         }
     }
-
 
     if (root_ws_name.empty()) {
 

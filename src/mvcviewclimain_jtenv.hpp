@@ -20,14 +20,16 @@ class MvcViewCliMain : public jkpp::MvcView {
 		bool parse (const std::vector<std::string>& aArgs);
 
 	protected:
+    	using ArgIterator = std::vector<std::string>::const_iterator;
+
 		MvcCtrlMain&    m_ctrl;
         MvcModelConfig& m_configModel;
 
-		bool onUserName (const std::string& aValue);
-		bool onUserEmail (const std::string& aValue);
-		bool onWorkspacesDirPath (const std::string& aValue);
-		bool onPath (const std::vector<std::string>& aArgs);
-		bool onListItems (const std::vector<std::string>& aArgs);
+		bool onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onWorkspacesDirPath (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 
 		void displayHelp () const;
 		void displayVersion () const;

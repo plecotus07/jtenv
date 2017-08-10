@@ -4,6 +4,16 @@ set (PROJECT_FULL_NAME "jtEnv")
 set (PROJECT_RELEASE_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH})
 set (RELEASE_DATE "2017-07-08")
 
+if (WIN32)
+	set(OS_MARK OS_MSW)
+elseif (UNIX)
+	set(OS_MARK OS_LINUX)
+endif()
+
+if (${CMAKE_BUILD_TYPE} STREQUAL  "Debug")
+	add_definitions(-DDEBUG_BUILD)
+endif()
+
 include (GNUInstallDirs)
 include (CTest)
 
