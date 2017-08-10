@@ -11,19 +11,27 @@ ItemFactory::ItemFactory (const Config::UPtr& aConfig) : m_config(aConfig)
 {
 }
 // -----------------------------------------------------------------------------
-Item::UPtr ItemFactory::Create (const std::string& aAdr)
+std::pair<std::string, std::string> ItemFactory::splitAddr (const std::string& aAddr)
 {
-	std::string wsName {};
-	std::string projName {};
+	auto pos {aAddr.find_first_of(':')};
 
-    if (aAdr.empty()) {
+    if (pos == std::string::npos) return std::make_pair(aAddr, "");
+
+    return std::make_pair(aAddr.substr(0, pos), aAddr.substr(pos + 1));
+}
+// -----------------------------------------------------------------------------
+Item::UPtr ItemFactory::Create (const std::string& aAddr)
+{
+    if (aAddr.empty()) {
     	if (fs::exists("project.conf")) return CreateProject();
         else return CreateWorkspace();
 	}
-    auto pos {aAdr.find_first_of(':')};
-    if (pos == std::string::npos) return CreateWorkspace(aAdr);
 
-    return CreateProject(aAdr.substr(0, pos), aAdr.substr(pos + 1));
+	auto names {splitAddr(aAddr)};
+
+    if (names.second.empty()) CreateWorkspace(names.first);
+
+    return CreateProject(names.first, names.second);
 }
 // -----------------------------------------------------------------------------
 Item::UPtr ItemFactory::CreateWorkspace (const std::string& aName)

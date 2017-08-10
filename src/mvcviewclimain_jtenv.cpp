@@ -47,6 +47,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     else if (command == "ws-path") result = onWorkspacesDirPath(arg, aArgs.end());
     else if (command == "path") result = onPath(arg, aArgs.end());
     else if (command == "list") result = onListItems(arg, aArgs.end());
+    else if (command == "init") result = onInitItem(arg, aArgs.end());
     else {
     	std::cerr << "Invalid command: " << command << '\n';
         return false;
@@ -191,6 +192,67 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
     return true;
 }
 // -----------------------------------------------------------------------------
+bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+{
+    if (aArg == aArgsEnd)
+    {
+    	std::cerr << "Missing item address.\n";
+	    return false;
+    }
+
+    auto names {ItemFactory::splitAddr(*aArg)};
+
+    if (names.second.empty()) {
+		if (names.first.empty()) {
+        	std::cerr << "Missing workspace name.\n";
+            return false;
+        }
+
+        ++aArg;
+        if (aArg != aArgsEnd) {
+        	std::cerr << "Invalid argument: " << *aArg << '\n';
+            return false;
+        }
+
+
+        if (!m_ctrl.initWorkspace(names.first)) {
+			std::cerr << "Init workspace error.\n";
+		    return false;
+		}
+
+    } else {
+    	bool clone {false};
+        std::string full_name {};
+
+        ++aArg;
+        if (aArg == aArgsEnd) {
+        	std::cerr << "Missing project full name.\n";
+        	return false;
+        }
+        full_name = *aArg;
+
+        ++aArg;
+        if (aArg != aArgsEnd) {
+        	if (*aArg == "-c") clone = true;
+            else {
+            	std::cerr << "Invalid argument: " << *aArg << '\n';
+                return false;
+            }
+            ++aArg;
+	        if (aArg != aArgsEnd) {
+            	std::cerr << "Invalid argument: " << *aArg << '\n';
+                return false;
+            }
+        }
+
+		if (!m_ctrl.initProject(names.first, names.second, full_name, clone)) {
+			std::cerr << "Init project error.\n";
+		    return false;
+		}
+    }
+	return true;
+}
+// -----------------------------------------------------------------------------
 void MvcViewCliMain::displayHelp () const
 {
 	std::cout << "\n  jtpm [-v | --version] [-h | --help] [COMMAND]\n\n"
@@ -203,7 +265,10 @@ void MvcViewCliMain::displayHelp () const
                  "\n    list [-c]                          - List workspaces.\n"
                  "      -c - only cloned\n"
                  "    list WS_NAME [-c]                  - List workspace projects.\n"
-                 "      -c - only cloned\n";
+                 "      -c - only cloned\n"
+                 "\n    init WS_NAME                       - Init workspace.\n"
+	             "    init ADDR FULL_NAME REPO_URL [-c]    - Init project.\n"
+                 "      -c - clone\n";
 }
 // -----------------------------------------------------------------------------
 void MvcViewCliMain::displayVersion () const

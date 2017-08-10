@@ -19,6 +19,9 @@ class MvcCtrlMain {
         bool setUserEmail (const std::string& aUserEmail);
         bool setWorkspacesDirPath (const fs::path& aWorkspacesDirPath);
 
+        bool initWorkspace (const std::string& aName);
+        bool initProject (const std::string& aWsName, const std::string& aName, const std::string& aFullName, bool clone);
+
 	protected:
 		MvcModelConfig& m_configModel;
 };

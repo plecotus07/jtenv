@@ -11,7 +11,9 @@ class ItemFactory {
 	public:
     	ItemFactory (const Config::UPtr& aConfig);
 
-        Item::UPtr Create (const std::string& aAdr);
+        Item::UPtr Create (const std::string& aAddr);
+
+		static std::pair<std::string, std::string> splitAddr (const std::string& aAddr);
 
 	protected:
         const Config::UPtr& m_config;
