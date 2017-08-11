@@ -4,8 +4,6 @@
 #include "projectconf_jtenv.hpp"
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvcmodelconfig_jtenv.hpp"
-#include "itemfactory_jtenv.hpp"
-#include "visitoritemtype_jtenv.hpp"
 
 #include <iostream>
 // +++ -------------------------------------------------------------------------
@@ -111,24 +109,8 @@ bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 
     if (aArg != aArgsEnd) addr = *aArg;
 
-    ItemFactory fac {config};
-    Item::UPtr item {fac.Create(addr)};
-    if (!item) {
-        std::cerr << "Invalid address: " << addr << '\n';
-        return false;
-    }
 
-#ifdef DEBUG_BUILD
-    VisitorItemType visitor {};
-
-    item->Accept(&visitor);
-
-    std::cout << visitor.getType() << " : ";
-#endif
-
-     std::cout << item->getPath() << '\n';
-
-    return true;
+    return false;
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd)
@@ -194,62 +176,6 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-    if (aArg == aArgsEnd)
-    {
-    	std::cerr << "Missing item address.\n";
-	    return false;
-    }
-
-    auto names {ItemFactory::splitAddr(*aArg)};
-
-    if (names.second.empty()) {
-		if (names.first.empty()) {
-        	std::cerr << "Missing workspace name.\n";
-            return false;
-        }
-
-        ++aArg;
-        if (aArg != aArgsEnd) {
-        	std::cerr << "Invalid argument: " << *aArg << '\n';
-            return false;
-        }
-
-
-        if (!m_ctrl.initWorkspace(names.first)) {
-			std::cerr << "Init workspace error.\n";
-		    return false;
-		}
-
-    } else {
-    	bool clone {false};
-        std::string full_name {};
-
-        ++aArg;
-        if (aArg == aArgsEnd) {
-        	std::cerr << "Missing project full name.\n";
-        	return false;
-        }
-        full_name = *aArg;
-
-        ++aArg;
-        if (aArg != aArgsEnd) {
-        	if (*aArg == "-c") clone = true;
-            else {
-            	std::cerr << "Invalid argument: " << *aArg << '\n';
-                return false;
-            }
-            ++aArg;
-	        if (aArg != aArgsEnd) {
-            	std::cerr << "Invalid argument: " << *aArg << '\n';
-                return false;
-            }
-        }
-
-		if (!m_ctrl.initProject(names.first, names.second, full_name, clone)) {
-			std::cerr << "Init project error.\n";
-		    return false;
-		}
-    }
 	return true;
 }
 // -----------------------------------------------------------------------------

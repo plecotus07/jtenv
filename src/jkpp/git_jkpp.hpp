@@ -22,7 +22,6 @@ class Git {
 // +++ -------------------------------------------------------------------------
 class GitBuilder {
 	public:
-    	using UPtr = std::unique_ptr<GitBuilder>;
 		virtual ~GitBuilder () = default;
 
         virtual Git::UPtr create () const = 0;

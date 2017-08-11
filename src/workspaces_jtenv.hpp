@@ -1,25 +1,29 @@
 // +++ -------------------------------------------------------------------------
-#ifndef ITEMFACTORY_JTENV_HPP
-#define ITEMFACTORY_JTENV_HPP
+#ifndef WORKSPACES_JTENV_HPP
+#define WORKSPACES_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 #include "config_jtenv.hpp"
-#include "item_jtenv.hpp"
+#include "itemworkspace_jtenv.hpp"
+
+#include <git_jkpp.hpp>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class ItemFactory {
+class Workspaces {
 	public:
-    	ItemFactory (const Config::UPtr& aConfig);
+    	using WorkspaceByStringMap = std::map<std::string, ItemWorkspace::SPtr>;
 
-        Item::UPtr Create (const std::string& aAddr);
+    	Workspaces (const Config::UPtr& aConfig, const jkpp::GitBuilder& aGitBuilder);
 
-		static std::pair<std::string, std::string> splitAddr (const std::string& aAddr);
+        ItemWorkspace* getWorkspace (const std::string& aName);
+        bool           initWorkspace (const std::string& aName, const fs::path& aLocalDirPath);
+
 
 	protected:
-        const Config::UPtr& m_config;
+    	WorkspaceByStringMap    m_workspaces;
 
-        Item::UPtr CreateProject (const std::string& aWsName = "", const std::string& aName = "");
-        Item::UPtr CreateWorkspace (const std::string& aName = "");
+        const Config::UPtr&     m_config;
+        const jkpp::GitBuilder& m_gitBuilder;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

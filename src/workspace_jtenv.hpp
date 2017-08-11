@@ -1,28 +1,29 @@
 // +++ -------------------------------------------------------------------------
-#ifndef ITEMPROJECT_JTENV_HPP
-#define ITEMPROJECT_JTENV_HPP
+#ifndef WORKSPACE_JTENV_HPP
+#define WORKSPACE_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include "item_jtenv.hpp"
+#include <git_jkpp.hpp>
+
+#include <boost/filesystem.hpp>
+#include <memory>
 // +++ -------------------------------------------------------------------------
+namespace fs = boost::filesystem;
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class ItemProject : public Item {
-	public:
-        ItemProject (const std::string& aWsName, const std::string& aName, const fs::path& aPath, const Config::UPtr& aConfig);
+class Workspace {
+    public:
+    	using SPtr = std::shared_ptr<Workspace>;
 
-		virtual std::string getRepoUrl () const { return m_repoUrl; }
-        virtual fs::path    getRepoPath () const { return m_path; }
+        Workspace (const std::string& aName, const fs::path& aPath, jkpp::Git::UPtr&& aGit);
 
-        virtual void Accept (VisitorItem* aVisitor);
+    protected:
+    	std::string    m_name;
+        fs::path       m_path;
+        jkpp::Git::UPtr m_git;
 
-	protected:
-		std::string m_wsName;
-        std::string m_repoUrl;
-
-		virtual bool exists () const;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // ITEMPROJECT_JTENV_HPP
+#endif // WORKSPACE_JTENV_HPP
 // +++ -------------------------------------------------------------------------

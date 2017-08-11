@@ -13,11 +13,7 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/projectconf_jtenv.cpp.in
 
 add_executable (jtenv
 	main.cpp
-	item_jtenv.cpp
-	itemproject_jtenv.cpp
-	itemworkspace_jtenv.cpp
-	itemfactory_jtenv.cpp
-  visitoritemtype_jtenv.cpp
+	workspace_jtenv.cpp
 	mvcapp_jtenv.cpp
 	mvcviewclimain_jtenv.cpp
 	mvcctrlmain_jtenv.cpp
@@ -27,7 +23,7 @@ add_executable (jtenv
 	jkpp/mvcmodelimpl_jkpp.cpp
 	jkpp/config_jkpp.cpp
 	jkpp/filesystem_jkpp.cpp
-  jkpp/gitsubproc_jkpp.cpp)
+	jkpp/gitsubproc_jkpp.cpp)
 
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 target_link_libraries(jtenv
