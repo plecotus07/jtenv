@@ -80,5 +80,17 @@ bool executeCommand (const std::string& aCommand, std::string& aOutput)
     return (result == 0);
 }
 // +++ -------------------------------------------------------------------------
+bool executeCommand (const std::string& aCommand)
+{
+	int result {0};
+	try {
+		result = proc::system(aCommand);
+	} catch (...) {
+		result = 1;
+	}
+
+    return (result == 0);
+}
+// +++ -------------------------------------------------------------------------
 } // jkpp
 // +++ -------------------------------------------------------------------------

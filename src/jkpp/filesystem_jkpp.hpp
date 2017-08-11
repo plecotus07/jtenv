@@ -9,6 +9,7 @@ namespace jkpp {
 std::string getExecDirPath ();
 std::string getHomeDirPath ();
 bool executeCommand (const std::string& aCommand, std::string& aOutput);
+bool executeCommand (const std::string& aCommand);
 // +++ -------------------------------------------------------------------------
 } // jkpp
 // +++ -------------------------------------------------------------------------
