@@ -15,9 +15,10 @@
 #include <boost/filesystem.hpp>
 // +++ -------------------------------------------------------------------------
 namespace proc = boost::process;
+namespace fs = boost::filesystem;
 // +++ -------------------------------------------------------------------------
 namespace jkpp {
-std::string getExecDirPath ()
+fs::path getExecDirPath ()
 {
 	std::string result {};
 #ifdef OS_LINUX
@@ -33,10 +34,10 @@ std::string getExecDirPath ()
 	result = buff;
 #endif // OS_MSW
 
-	return result;
+	return fs::path(result);
 }
 // +++ -------------------------------------------------------------------------
-std::string getHomeDirPath ()
+fs::path getHomeDirPath ()
 {
 	std::string result {};
 	char* homedir {};
@@ -58,7 +59,7 @@ std::string getHomeDirPath ()
 #endif // OS_MSW
 	}
 
-	return result;
+	return fs::path(result);
 }
 // +++ -------------------------------------------------------------------------
 bool executeCommand (const std::string& aCommand, std::string& aOutput)

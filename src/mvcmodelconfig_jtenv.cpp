@@ -1,7 +1,7 @@
 // +++ -------------------------------------------------------------------------
 #include "mvcmodelconfig_jtenv.hpp"
 
-#include <filesystem_jkpp.hpp>
+#include "projectconf_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -34,7 +34,7 @@ bool MvcModelConfig::setWorkspacesDirPath (const fs::path& aWorkspacesDirPath)
 // -----------------------------------------------------------------------------
 bool MvcModelConfig::load ()
 {
-	Config::UPtr config {std::make_unique<Config>(fs::path(jkpp::getHomeDirPath()) / ".jtenv")};
+	Config::UPtr config {std::make_unique<Config>(getConfDirPath())};
 	config->init();
 	if (!config->load()) return false;
 
