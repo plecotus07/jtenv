@@ -7,47 +7,75 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 MvcModelConfig::MvcModelConfig () :
     jkpp::MvcModelImpl(),
-    m_config {}
+    m_userName {},
+    m_userEmail {},
+    m_workspacesDirPath {getConfDirPath() / "workspaces"},
+    m_confFilePath {(getConfDirPath() / "main.conf").string()}
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcModelConfig::setUserName (const std::string& aUserName)
+void MvcModelConfig::setUserName (const std::string& aUserName)
 {
-///\todo assert(m_config.get() != nullptr)
-	m_config->setUserName(aUserName);
-    return save();
+    beginUpdate();
+	m_userName = aUserName;
+    endUpdate();
 }
 // -----------------------------------------------------------------------------
-bool MvcModelConfig::setUserEmail (const std::string& aUserEmail)
+void MvcModelConfig::setUserEmail (const std::string& aUserEmail)
 {
-///\todo assert(m_config.get() != nullptr)
-	m_config->setUserEmail(aUserEmail);
-    return save();
+    beginUpdate();
+    m_userEmail = aUserEmail;
+    endUpdate();
 }
 // -----------------------------------------------------------------------------
-bool MvcModelConfig::setWorkspacesDirPath (const fs::path& aWorkspacesDirPath)
+void MvcModelConfig::setWorkspacesDirPath (const fs::path& aWorkspacesDirPath)
 {
-///\todo assert(m_config.get() != nullptr)
-	m_config->setWorkspacesDirPath(aWorkspacesDirPath);
-    return save();
+    beginUpdate();
+    m_workspacesDirPath = aWorkspacesDirPath;
+    endUpdate();
 }
 // -----------------------------------------------------------------------------
 bool MvcModelConfig::load ()
 {
-	Config::UPtr config {std::make_unique<Config>(getConfDirPath())};
-	config->init();
-	if (!config->load()) return false;
+    std::ifstream file {m_confFilePath.c_str(), std::fstream::in};
+    if (!file) return false;
 
-	m_config = std::move(config);
+    beginUpdate();
+    bool result {loadLines (file)};
+    endUpdate();
 
-	return true;
+	return result;
+}
+// -----------------------------------------------------------------------------
+bool MvcModelConfig::loadLines (std::ifstream& aFile)
+{
+    std::string line {};
+    while (std::getline(aFile, line)) {
+        auto pos {line.find_first_of('=')};
+        if (pos == std::string::npos) return false;
+        std::string key {line.substr(0,pos)};
+        std::string value {line.substr(pos + 1)};
+
+        if (key == "user_name") m_userName = value;
+        else if (key == "user_email") m_userEmail = value;
+        else if (key == "workspaces_dir_path") m_workspacesDirPath = value;
+        else return false;
+    }
+    return aFile.eof();
 }
 // -----------------------------------------------------------------------------
 bool MvcModelConfig::save ()
 {
-///\todo assert(m_config.get() != nullptr)
+    std::ofstream file {m_confFilePath.c_str(), std::fstream::out};
+    if (!file) return false;
 
-	return m_config->save();
+    file << "user_name=" << m_userName << '\n';
+    file << "user_email" << m_userEmail << '\n';
+    file << "workspaces_dir_path" << m_workspacesDirPath << '\n';
+
+    file.close();
+
+	return true;
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

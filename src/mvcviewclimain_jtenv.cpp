@@ -9,9 +9,10 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel) :
+MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel) :
     m_ctrl {aCtrl},
-    m_configModel {aConfigModel}
+    m_configModel {aConfigModel},
+    m_workspacesModel {aWorkspacesModel}
 {
 }
 // -----------------------------------------------------------------------------
@@ -32,7 +33,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
 		return true;
 	}
 
-	if (!m_ctrl.loadConfig()) {
+    if (!m_ctrl.loadConfig()) {
 		std::cerr << "Configuration load error\n";
 		return false;
 	}
@@ -56,11 +57,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-	const Config::UPtr& config { m_configModel.getConfig() };
-///\todo assert(config.get() != nullptr);
-	if (config.get() == nullptr) return false;
-
-    if (aArg == aArgsEnd) std::cout << config->getUserName() << '\n';
+    if (aArg == aArgsEnd) std::cout << m_configModel.getUserName() << '\n';
     else  if (!m_ctrl.setUserName(*aArg)) {
         std::cerr << "Edit user name error\n";
         return false;
@@ -71,11 +68,7 @@ bool MvcViewCliMain::onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-	const Config::UPtr& config { m_configModel.getConfig() };
-///\todo assert(config.get() != nullptr);
-	if (config.get() == nullptr) return false;
-
-    if (aArg == aArgsEnd) std::cout << config->getUserEmail() << '\n';
+    if (aArg == aArgsEnd) std::cout << m_configModel.getUserEmail() << '\n';
     else  if (!m_ctrl.setUserEmail(*aArg)) {
         std::cerr << "Edit user email error\n";
         return false;
@@ -86,11 +79,7 @@ bool MvcViewCliMain::onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onWorkspacesDirPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-	const Config::UPtr& config { m_configModel.getConfig() };
-///\todo assert(config.get() != nullptr);
-	if (config.get() == nullptr) return false;
-
-    if (aArg == aArgsEnd) std::cout << config->getWorkspacesDirPath().string() << '\n';
+    if (aArg == aArgsEnd) std::cout << m_configModel.getWorkspacesDirPath().string() << '\n';
     else  if (!m_ctrl.setWorkspacesDirPath(*aArg)) {
         std::cerr << "Edit workspaces path error\n";
         return false;
@@ -101,24 +90,18 @@ bool MvcViewCliMain::onWorkspacesDirPath (ArgIterator& aArg, const ArgIterator& 
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-	const Config::UPtr& config { m_configModel.getConfig() };
-///\todo assert(config.get() != nullptr);
-	if (config.get() == nullptr) return false;
-
 	std::string addr {};
 
     if (aArg != aArgsEnd) addr = *aArg;
 
+    
 
     return false;
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-	const Config::UPtr& config { m_configModel.getConfig() };
-///\todo assert(config.get() != nullptr);
-	if (config.get() == nullptr) return false;
-
+/*
     std::string root_ws_name {};
     bool cloned_only {false};
 
@@ -170,7 +153,7 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
 			if (fs::exists(item_path / (proj_name + "_repo")) || !cloned_only) std::cout << proj_name << '\n';
         }
     }
-
+*/
     return true;
 }
 // -----------------------------------------------------------------------------

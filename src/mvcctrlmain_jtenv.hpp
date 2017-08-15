@@ -9,12 +9,15 @@ namespace fs = boost::filesystem;
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcModelConfig;
+class MvcModelWorkspaces;
 // +++ -------------------------------------------------------------------------
 class MvcCtrlMain {
 	public:
-		MvcCtrlMain (MvcModelConfig& aConfigModel);
+		MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel);
 
 		bool loadConfig ();
+		bool saveConfig ();
+		
         bool setUserName (const std::string& aUserName);
         bool setUserEmail (const std::string& aUserEmail);
         bool setWorkspacesDirPath (const fs::path& aWorkspacesDirPath);
@@ -23,7 +26,8 @@ class MvcCtrlMain {
         bool initProject (const std::string& aWsName, const std::string& aName, const std::string& aFullName, bool clone);
 
 	protected:
-		MvcModelConfig& m_configModel;
+		MvcModelConfig&     m_configModel;
+		MvcModelWorkspaces& m_workspacesModel;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

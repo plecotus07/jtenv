@@ -11,10 +11,11 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcCtrlMain;
 class MvcModelConfig;
+class MvcModelWorkspaces;
 // +++ -------------------------------------------------------------------------
 class MvcViewCliMain : public jkpp::MvcView {
 	public:
-		MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel);
+		MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel);
 
 		void update () {};
 		bool parse (const std::vector<std::string>& aArgs);
@@ -22,8 +23,9 @@ class MvcViewCliMain : public jkpp::MvcView {
 	protected:
     	using ArgIterator = std::vector<std::string>::const_iterator;
 
-		MvcCtrlMain&    m_ctrl;
-        MvcModelConfig& m_configModel;
+		MvcCtrlMain&        m_ctrl;
+        MvcModelConfig&     m_configModel;
+		MvcModelWorkspaces& m_workspacesModel;
 
 		bool onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd);

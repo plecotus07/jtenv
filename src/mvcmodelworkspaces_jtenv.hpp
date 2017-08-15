@@ -1,30 +1,38 @@
 // +++ -------------------------------------------------------------------------
-#ifndef WORKSPACE_JTENV_HPP
-#define WORKSPACE_JTENV_HPP
+#ifndef MVCMODELWORKSPACES_JTENV_HPP
+#define MVCMODELWORKSPACES_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include <git_jkpp.hpp>
+#include "workspace_jtenv.hpp"
+#include <mvcmodelimpl_jkpp.hpp>
 
 #include <boost/filesystem.hpp>
-#include <memory>
+#include <map>
 // +++ -------------------------------------------------------------------------
 namespace fs = boost::filesystem;
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class Workspace {
-    public:
-    	using SPtr = std::shared_ptr<Workspace>;
+class MvcModelWorkspaces : public jkpp::MvcModelImpl {
+	public:
+		using WorkspaceByStringMap = std::map<std::string, Workspace::SPtr>;
 
-        Workspace (const std::string& aName, const fs::path& aPath);
+		MvcModelWorkspaces ();
 
-        const std::string& getName () const { return m_name; }
-        const fs::path&    getPath () const { return m_path; }
+		Workspace::SPtr getWorkspace (const std::string& aName);
+		Workspace::SPtr addWorkspace (const std::string& aName, const fs::path& aPath);
 
-    protected:
-    	std::string    m_name;
-        fs::path       m_path;
+		bool load ();
+		bool save ();
+
+	protected:
+		WorkspaceByStringMap m_workspaces;
+
+		const std::string m_confFilePath;
+
+		bool loadLines (std::ifstream& aFile);
+
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // WORKSPACE_JTENV_HPP
+#endif // MVCMODELWORKSPACES_JTENV_HPP
 // +++ -------------------------------------------------------------------------

@@ -13,15 +13,14 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/projectconf_jtenv.cpp.in
 
 add_executable (jtenv
 	main.cpp
-	workspace_jtenv.cpp
+    workspace_jtenv.cpp
 	mvcapp_jtenv.cpp
 	mvcviewclimain_jtenv.cpp
 	mvcctrlmain_jtenv.cpp
-	mvcmodelconfig_jtenv.cpp
-	config_jtenv.cpp
+    mvcmodelconfig_jtenv.cpp
+    mvcmodelworkspaces_jtenv.cpp
 	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
 	jkpp/mvcmodelimpl_jkpp.cpp
-	jkpp/config_jkpp.cpp
 	jkpp/filesystem_jkpp.cpp
 	jkpp/gitsubproc_jkpp.cpp)
 

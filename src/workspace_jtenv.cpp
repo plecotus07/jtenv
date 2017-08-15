@@ -3,10 +3,9 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-Workspace::Workspace (const std::string& aName, const fs::path& aPath, jkpp::Git::UPtr&& aGit) :
+Workspace::Workspace (const std::string& aName, const fs::path& aPath) :
 	m_name{aName},
-    m_path{aPath},
-    m_git{std::move(aGit)}
+    m_path{aPath}
 {
 }
 // -----------------------------------------------------------------------------
