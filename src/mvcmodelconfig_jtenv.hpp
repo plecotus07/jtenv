@@ -20,9 +20,6 @@ class MvcModelConfig : public jkpp::MvcModelImpl {
 		const std::string & getUserEmail () const { return m_userEmail; }
 		void setUserEmail (const std::string& aUserEmail);
 
-		const fs::path & getWorkspacesDirPath () const { return m_workspacesDirPath; }
-        void setWorkspacesDirPath (const fs::path& aWorkspacesDirPath);
-
 		bool load ();
 		bool save ();
 
@@ -31,7 +28,6 @@ class MvcModelConfig : public jkpp::MvcModelImpl {
 
 		std::string m_userName;
 		std::string m_userEmail;
-		fs::path    m_workspacesDirPath;
 
 		bool loadLines (std::ifstream& aFile);
 };

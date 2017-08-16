@@ -15,22 +15,36 @@ MvcCtrlMain::MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWor
 bool MvcCtrlMain::loadConfig ()
 {
     if ( (!fs::exists(m_configModel.getConfFilePath()))
-         && (!m_configModel.save())) return false;
+         && (!saveConfig())) return false;
 
-    if (m_configModel.load()) return false;
+    if ( (!m_configModel.load())
+         || (!m_workspacesModel.load()) ) return false;
 
-    if ( (!fs::exists(m_workspacesModel.getConfFilePath()))
-         && (!m_workspacesModel.save())) return false;
-
-    if (m_workspacesModel.load()) return false;
+	if (m_workspacesModel.clean()) saveConfig();
 
     return true;
 }
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::saveConfig ()
 {
+    if (!fs::exists(fs::path(m_configModel.getConfFilePath()).parent_path())) {
+        try {
+            fs::create_directories(fs::path(m_configModel.getConfFilePath()).parent_path());
+        } catch (fs::filesystem_error& e) {
+            return false;
+        }
+    }
+
+    if (!fs::exists(m_workspacesModel.getWorkspacesDirPath())) {
+		try {
+        	fs::create_directories(m_workspacesModel.getWorkspacesDirPath());
+        } catch (fs::filesystem_error& e) {
+        	return false;
+        }
+    }
+
     return (m_configModel.save()
-            && m_workspaces.save());
+            && m_workspacesModel.save());
 }
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::setUserName (const std::string& aUserName)
@@ -46,13 +60,7 @@ bool MvcCtrlMain::setUserEmail (const std::string& aUserEmail)
     return saveConfig();
 }
 // -----------------------------------------------------------------------------
-bool MvcCtrlMain::setWorkspacesDirPath (const fs::path& aWorkspacesDirPath)
-{
-    m_configModel.setWorkspacesDirPath(aWorkspacesDirPath);
-    return saveConfig();
-}
-// -----------------------------------------------------------------------------
-bool MvcCtrlMain::initWorkspace (const std::string& aName, const std::path& aPath)
+bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath)
 {
 	return false;
 }

@@ -17,12 +17,11 @@ class MvcCtrlMain {
 
 		bool loadConfig ();
 		bool saveConfig ();
-		
+
         bool setUserName (const std::string& aUserName);
         bool setUserEmail (const std::string& aUserEmail);
-        bool setWorkspacesDirPath (const fs::path& aWorkspacesDirPath);
 
-        bool initWorkspace (const std::string& aName);
+        bool initWorkspace (const std::string& aName, const fs::path& aPath);
         bool initProject (const std::string& aWsName, const std::string& aName, const std::string& aFullName, bool clone);
 
 	protected:

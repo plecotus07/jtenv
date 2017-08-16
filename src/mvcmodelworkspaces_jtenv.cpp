@@ -2,14 +2,15 @@
 #include "mvcmodelworkspaces_jtenv.hpp"
 
 #include "projectconf_jtenv.hpp"
+#include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
 MvcModelWorkspaces::MvcModelWorkspaces () :
     jkpp::MvcModelImpl(),
     m_workspaces {},
-    m_confFilePath {(getConfDirPath() / "workspaces.conf").string()}
-
+    m_confFilePath {(getConfDirPath() / "workspaces.conf").string()},
+    m_workspacesDirPath {getConfDirPath() / "workspaces"}
 {
 }
 // -----------------------------------------------------------------------------
@@ -36,11 +37,22 @@ Workspace::SPtr MvcModelWorkspaces::addWorkspace (const std::string& aName, cons
 // -----------------------------------------------------------------------------
 bool MvcModelWorkspaces::load ()
 {
+    m_workspaces.clear();
+	if (!fs::exists(m_workspacesDirPath)) return false;
+
+    fs::directory_iterator dir { m_workspacesDirPath };
+
+    for (;dir != fs::directory_iterator(); ++dir) {
+        if ( (fs::is_directory(dir->path()))
+		     && (dir->path().extension() == ".git") ) {
+			if (!addWorkspace(dir->path().stem().string())) return false;
+        }
+    }
+
     std::ifstream file {m_confFilePath.c_str(), std::fstream::in};
     if (!file) return false;
 
     beginUpdate();
-    m_workspaces.clear();
     bool result {loadLines (file)};
     endUpdate();
 
@@ -52,7 +64,20 @@ bool MvcModelWorkspaces::save ()
     std::ofstream file {m_confFilePath.c_str(), std::fstream::out};
     if (!file) return false;
 
-    for (auto ws : m_workspaces) file << "workspace=" << ws.first << ':' << ws.second->getPath().string();
+    for (auto ws : m_workspaces) file << "workspace=" << ws.first << ':' << ws.second->getPath().string() << '\n';
+}
+// -----------------------------------------------------------------------------
+bool MvcModelWorkspaces::clean ()
+{
+	bool result {false};
+	for (auto ws = m_workspaces.begin() ; ws != m_workspaces.end(); ++ws) {
+    	if (!fs::exists(ws->second->getPath())) {
+        	m_workspaces.erase(ws);
+            result = true;
+        }
+    }
+
+    return result;
 }
 // -----------------------------------------------------------------------------
 bool MvcModelWorkspaces::loadLines (std::ifstream& aFile)
@@ -71,9 +96,9 @@ bool MvcModelWorkspaces::loadLines (std::ifstream& aFile)
             std::string name {value.substr(0, ws_pos)};
             std::string path {value.substr(ws_pos + 1)};
 
-            if (!fs::exists(path)) continue;
-
-            if (!addWorkspace(name, path)) return false;
+            auto ws {m_workspaces.find(name)};
+            if (ws != m_workspaces.end()) ws->second->setPath(path);
+            else if (!addWorkspace(name, path)) return false;
         }
         else return false;
     }

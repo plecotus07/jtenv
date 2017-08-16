@@ -4,6 +4,7 @@
 #include "projectconf_jtenv.hpp"
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvcmodelconfig_jtenv.hpp"
+#include "mvcmodelworkspaces_jtenv.hpp"
 
 #include <iostream>
 // +++ -------------------------------------------------------------------------
@@ -38,19 +39,23 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
 		return false;
 	}
 
-    bool result {true};
-    ArgIterator arg {aArgs.begin() + 1};
-
-    if (command == "user-name") result = onUserName(arg, aArgs.end());
-    else if (command == "user-email") result = onUserEmail(arg, aArgs.end());
-    else if (command == "ws-path") result = onWorkspacesDirPath(arg, aArgs.end());
-    else if (command == "path") result = onPath(arg, aArgs.end());
-    else if (command == "list") result = onListItems(arg, aArgs.end());
-    else if (command == "init") result = onInitItem(arg, aArgs.end());
-    else {
-    	std::cerr << "Invalid command: " << command << '\n';
-        return false;
+    for (auto ws : m_workspacesModel) {
+        std::cout << ws.second->getName() << " : " << ws.second->getPath().string() << '\n';
     }
+
+
+    bool result {true};
+//    ArgIterator arg {aArgs.begin() + 1};
+//
+//    if (command == "user-name") result = onUserName(arg, aArgs.end());
+//    else if (command == "user-email") result = onUserEmail(arg, aArgs.end());
+//    else if (command == "path") result = onPath(arg, aArgs.end());
+//    else if (command == "list") result = onListItems(arg, aArgs.end());
+//    else if (command == "init") result = onInitItem(arg, aArgs.end());
+//    else {
+//    	std::cerr << "Invalid command: " << command << '\n';
+//        return false;
+//    }
 
 	return result;
 }
@@ -77,24 +82,13 @@ bool MvcViewCliMain::onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::onWorkspacesDirPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
-{
-    if (aArg == aArgsEnd) std::cout << m_configModel.getWorkspacesDirPath().string() << '\n';
-    else  if (!m_ctrl.setWorkspacesDirPath(*aArg)) {
-        std::cerr << "Edit workspaces path error\n";
-        return false;
-    }
-
-    return true;
-}
-// -----------------------------------------------------------------------------
 bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
 	std::string addr {};
 
     if (aArg != aArgsEnd) addr = *aArg;
 
-    
+
 
     return false;
 }

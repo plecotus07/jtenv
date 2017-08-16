@@ -17,7 +17,9 @@ class Workspace {
         Workspace (const std::string& aName, const fs::path& aPath);
 
         const std::string& getName () const { return m_name; }
+
         const fs::path&    getPath () const { return m_path; }
+        void               setPath (const fs::path& aPath) { m_path = aPath; }
 
     protected:
     	std::string    m_name;

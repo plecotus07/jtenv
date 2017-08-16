@@ -29,7 +29,6 @@ class MvcViewCliMain : public jkpp::MvcView {
 
 		bool onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd);
-		bool onWorkspacesDirPath (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd);
