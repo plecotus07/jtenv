@@ -13,27 +13,23 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcModelWorkspaces : public jkpp::MvcModelImpl {
 	public:
-		using WorkspaceByStringMap = std::map<std::string, Workspace::SPtr>;
-        using iterator = WorkspaceByStringMap::iterator;
-
 		MvcModelWorkspaces ();
 
 		const std::string& getConfFilePath () const { return m_confFilePath; }
 		const fs::path&    getWorkspacesDirPath () const { return m_workspacesDirPath; }
 
+		Item::SPtr      getItem (const std::string& aAddr, const fs::path& aPath);
 		Workspace::SPtr getWorkspace (const std::string& aName);
 		Workspace::SPtr addWorkspace (const std::string& aName, const fs::path& aPath = fs::path());
 
 		bool load ();
 		bool save ();
 
-		bool clean ();
-
-        iterator begin () { return m_workspaces.begin(); };
-        iterator end () { return m_workspaces.end(); };
+        Workspace::Iterator begin () { return m_workspaces.begin(); };
+        Workspace::Iterator end () { return m_workspaces.end(); };
 
 	protected:
-		WorkspaceByStringMap m_workspaces;
+		Workspace::SPtrByStrMap m_workspaces;
 
 		const std::string m_confFilePath;
 		const fs::path    m_workspacesDirPath;

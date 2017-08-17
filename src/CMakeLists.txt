@@ -14,6 +14,7 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/projectconf_jtenv.cpp.in
 add_executable (jtenv
 	main.cpp
     workspace_jtenv.cpp
+	project_jtenv.cpp
 	mvcapp_jtenv.cpp
 	mvcviewclimain_jtenv.cpp
 	mvcctrlmain_jtenv.cpp

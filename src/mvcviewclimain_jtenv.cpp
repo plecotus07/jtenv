@@ -39,23 +39,28 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
 		return false;
 	}
 
-    for (auto ws : m_workspacesModel) {
-        std::cout << ws.second->getName() << " : " << ws.second->getPath().string() << '\n';
-    }
+	// std::cerr << "+++ -------------------\n";
+    // for (auto ws : m_workspacesModel) {
+    //     std::cout << ws.second->getName() << " : " << ws.second->getPath().string() << '\n';
+	// 	for (auto proj : *(ws.second)) {
+    //     	std::cout << "  " << proj.second->getName() << " : " << proj.second->getPath().string() << '\n';
+	// 	}
+    // }
+	// std::cerr << "+++ -------------------\n";
 
 
     bool result {true};
-//    ArgIterator arg {aArgs.begin() + 1};
-//
-//    if (command == "user-name") result = onUserName(arg, aArgs.end());
-//    else if (command == "user-email") result = onUserEmail(arg, aArgs.end());
-//    else if (command == "path") result = onPath(arg, aArgs.end());
+   ArgIterator arg {aArgs.begin() + 1};
+
+   if (command == "user-name") result = onUserName(arg, aArgs.end());
+   else if (command == "user-email") result = onUserEmail(arg, aArgs.end());
+   else if (command == "path") result = onPath(arg, aArgs.end());
 //    else if (command == "list") result = onListItems(arg, aArgs.end());
 //    else if (command == "init") result = onInitItem(arg, aArgs.end());
-//    else {
-//    	std::cerr << "Invalid command: " << command << '\n';
-//        return false;
-//    }
+   else {
+   	std::cerr << "Invalid command: " << command << '\n';
+       return false;
+   }
 
 	return result;
 }
@@ -88,9 +93,13 @@ bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 
     if (aArg != aArgsEnd) addr = *aArg;
 
+	Item::SPtr item {m_workspacesModel.getItem(addr, fs::current_path())};
 
+	if (!item) return false;
 
-    return false;
+	std::cout << item->getPath().string() << '\n';
+
+    return true;
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd)
@@ -163,15 +172,15 @@ void MvcViewCliMain::displayHelp () const
 	             "    -h, --help                         - Display help.\n"
                  "\n    user-name [USER_NAME]              - Set or get user name.\n"
                  "    user-email [USER_EMAIL]            - Set or get user email.\n"
-                 "    ws-dir [WS_DIR_PATH]               - Set or get workspaces directory path.\n"
                  "\n    path [ADDR]                        - Get item path.\n"
-                 "\n    list [-c]                          - List workspaces.\n"
-                 "      -c - only cloned\n"
-                 "    list WS_NAME [-c]                  - List workspace projects.\n"
-                 "      -c - only cloned\n"
-                 "\n    init WS_NAME                       - Init workspace.\n"
-	             "    init ADDR FULL_NAME REPO_URL [-c]    - Init project.\n"
-                 "      -c - clone\n";
+                //  "\n    list [-c]                          - List workspaces.\n"
+                //  "      -c - only cloned\n"
+                //  "    list WS_NAME [-c]                  - List workspace projects.\n"
+                //  "      -c - only cloned\n"
+                //  "\n    init WS_NAME                       - Init workspace.\n"
+	            //  "    init ADDR FULL_NAME REPO_URL [-c]    - Init project.\n"
+                //  "      -c - clone"
+				 "\n";
 }
 // -----------------------------------------------------------------------------
 void MvcViewCliMain::displayVersion () const

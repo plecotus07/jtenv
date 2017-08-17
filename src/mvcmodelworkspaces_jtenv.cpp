@@ -2,7 +2,6 @@
 #include "mvcmodelworkspaces_jtenv.hpp"
 
 #include "projectconf_jtenv.hpp"
-#include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -12,6 +11,47 @@ MvcModelWorkspaces::MvcModelWorkspaces () :
     m_confFilePath {(getConfDirPath() / "workspaces.conf").string()},
     m_workspacesDirPath {getConfDirPath() / "workspaces"}
 {
+}
+// -----------------------------------------------------------------------------
+Item::SPtr MvcModelWorkspaces::getItem (const std::string& aAddr, const fs::path& aPath)
+{
+	auto pos {aAddr.find_first_of(':')};
+
+	std::string proj_name {};
+	std::string ws_name {};
+
+	if (pos == std::string::npos) ws_name = aAddr;
+	else {
+		ws_name = aAddr.substr(0, pos);
+		proj_name = aAddr.substr(pos + 1);
+	}
+
+	if (ws_name.empty() && proj_name.empty()) {
+		fs::path dir {aPath};
+		for (; !dir.empty() && !fs::exists(dir / "project.conf"); dir = dir.parent_path());
+		if (dir.empty()) return nullptr;
+
+		proj_name = dir.filename().string();
+
+		if (dir.parent_path().empty()) return nullptr;
+
+		ws_name = dir.parent_path().filename().string();
+
+	} else if (ws_name.empty()) {
+		fs::path dir {aPath};
+		for (; !dir.empty() && !fs::exists(dir / proj_name / "project.conf"); dir = dir.parent_path());
+
+		if (dir.parent_path().empty()) return nullptr;
+		ws_name = dir.filename().string();
+
+	} else if (proj_name.empty()) {
+		return getWorkspace(ws_name);
+	}
+
+	Workspace::SPtr ws = getWorkspace(ws_name);
+	if (!ws) return nullptr;
+
+	return ws->getProject(proj_name);
 }
 // -----------------------------------------------------------------------------
 Workspace::SPtr MvcModelWorkspaces::getWorkspace (const std::string& aName)
@@ -25,7 +65,8 @@ Workspace::SPtr MvcModelWorkspaces::getWorkspace (const std::string& aName)
 // -----------------------------------------------------------------------------
 Workspace::SPtr MvcModelWorkspaces::addWorkspace (const std::string& aName, const fs::path& aPath)
 {
-    if (m_workspaces.find(aName) != m_workspaces.end()) return Workspace::SPtr(nullptr);
+	if (aName.empty()) return nullptr;
+    if (m_workspaces.find(aName) != m_workspaces.end()) return nullptr;
 
     beginUpdate();
     Workspace::SPtr workspace {std::make_shared<Workspace>(aName, aPath)};
@@ -67,19 +108,6 @@ bool MvcModelWorkspaces::save ()
     for (auto ws : m_workspaces) file << "workspace=" << ws.first << ':' << ws.second->getPath().string() << '\n';
 }
 // -----------------------------------------------------------------------------
-bool MvcModelWorkspaces::clean ()
-{
-	bool result {false};
-	for (auto ws = m_workspaces.begin() ; ws != m_workspaces.end(); ++ws) {
-    	if (!fs::exists(ws->second->getPath())) {
-        	m_workspaces.erase(ws);
-            result = true;
-        }
-    }
-
-    return result;
-}
-// -----------------------------------------------------------------------------
 bool MvcModelWorkspaces::loadLines (std::ifstream& aFile)
 {
     std::string line {};
@@ -94,11 +122,22 @@ bool MvcModelWorkspaces::loadLines (std::ifstream& aFile)
             if (ws_pos == std::string::npos) return false;
 
             std::string name {value.substr(0, ws_pos)};
-            std::string path {value.substr(ws_pos + 1)};
+            fs::path path {value.substr(ws_pos + 1)};
+			if (!fs::exists(path)) continue;
 
             auto ws {m_workspaces.find(name)};
-            if (ws != m_workspaces.end()) ws->second->setPath(path);
-            else if (!addWorkspace(name, path)) return false;
+            if (ws == m_workspaces.end()) return false;
+
+			ws->second->setPath(path);
+
+		    fs::directory_iterator dir {path};
+
+		    for (;dir != fs::directory_iterator(); ++dir) {
+		        if ( fs::is_directory(dir->path())
+				     && fs::exists(dir->path() / "project.conf") ) {
+					if (!ws->second->addProject(dir->path().filename().string())) return false;
+		        }
+		    }
         }
         else return false;
     }

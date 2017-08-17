@@ -21,8 +21,6 @@ bool MvcCtrlMain::loadConfig ()
     if ( (!m_configModel.load())
          || (!m_workspacesModel.load()) ) return false;
 
-	if (m_workspacesModel.clean()) saveConfig();
-
     return true;
 }
 // -----------------------------------------------------------------------------
