@@ -17,7 +17,11 @@ std::string getVersion ()
 // -----------------------------------------------------------------------------
 boost::filesystem::path getConfDirPath ()
 {
+#ifdef DEBUG_BUILD
+    return jkpp::getExecDirPath() / ".." / ".." / ".jtenv";
+#else
 	return jkpp::getHomeDirPath() / ".jtenv";
+#endif
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv
