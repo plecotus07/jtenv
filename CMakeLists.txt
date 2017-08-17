@@ -5,9 +5,11 @@ set (PROJECT_RELEASE_VERSION ${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.$
 set (RELEASE_DATE "2017-07-08")
 
 if (WIN32)
-	set(OS_MARK OS_MSW)
+  	set(OS_MARK OS_MSW)
+		add_definitions(-DOS_MSW)
 elseif (UNIX)
 	set(OS_MARK OS_LINUX)
+		add_definitions(-DOS_LINUX)
 endif()
 
 if (${CMAKE_BUILD_TYPE} STREQUAL  "Debug")
