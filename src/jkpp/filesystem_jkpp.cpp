@@ -34,7 +34,7 @@ fs::path getExecDirPath ()
 	result = buff;
 #endif // OS_MSW
 
-	return fs::path(result);
+	return fs::path(result).parent_path();
 }
 // +++ -------------------------------------------------------------------------
 fs::path getHomeDirPath ()
