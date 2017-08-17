@@ -3,6 +3,7 @@
 
 #include "mvcmodelconfig_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
+#include "projectconf_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -27,9 +28,9 @@ bool MvcCtrlMain::loadConfig ()
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::saveConfig ()
 {
-    if (!fs::exists(fs::path(m_configModel.getConfFilePath()).parent_path())) {
+    if (!fs::exists(getConfDirPath())) {
         try {
-            fs::create_directories(fs::path(m_configModel.getConfFilePath()).parent_path());
+            fs::create_directories(getConfDirPath());
         } catch (fs::filesystem_error& e) {
             return false;
         }
