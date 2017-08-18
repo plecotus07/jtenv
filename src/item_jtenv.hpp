@@ -18,6 +18,8 @@ class Item {
 
         virtual const fs::path&    getPath () const = 0;
         virtual void               setPath (const fs::path& aPath) = 0;
+        virtual fs::path           getRepoPath () const = 0;
+
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

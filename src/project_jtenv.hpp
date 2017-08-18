@@ -21,6 +21,7 @@ class Project : public Item {
 
         virtual const fs::path&    getPath () const { return m_path; }
         virtual void               setPath (const fs::path& aPath) { m_path = aPath; }
+        virtual fs::path           getRepoPath () const { return m_path / (m_name + "_repo"); };
 
     protected:
 		std::string m_wsName;

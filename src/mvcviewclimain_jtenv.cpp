@@ -55,7 +55,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
    if (command == "user-name") result = onUserName(arg, aArgs.end());
    else if (command == "user-email") result = onUserEmail(arg, aArgs.end());
    else if (command == "path") result = onPath(arg, aArgs.end());
-//    else if (command == "list") result = onListItems(arg, aArgs.end());
+   else if (command == "list") result = onListItems(arg, aArgs.end());
 //    else if (command == "init") result = onInitItem(arg, aArgs.end());
    else {
    	std::cerr << "Invalid command: " << command << '\n';
@@ -104,13 +104,16 @@ bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-/*
     std::string root_ws_name {};
     bool cloned_only {false};
-
+    bool with_path {false};
     for (; aArg != aArgsEnd; ++aArg) {
-        if (*aArg == "-c") cloned_only = true;
-        else if (root_ws_name.empty()) root_ws_name = *aArg;
+        if ((*aArg)[0] == '-') {
+            for (int i = 1; i < aArg->size(); ++i) {
+                if ((*aArg)[i] == 'c') cloned_only = true;
+                else if ((*aArg)[i] == 'p') with_path = true;
+            }
+        } else if (root_ws_name.empty()) root_ws_name = *aArg;
         else {
             std::cerr << "Invalid option: " << *aArg << '\n';
             return false;
@@ -118,45 +121,27 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
     }
 
     if (root_ws_name.empty()) {
-
-	   	std::vector<fs::path> items {};
-    	std::copy(fs::directory_iterator(config->getWorkspacesDirPath()), fs::directory_iterator(), std::back_inserter(items));
-        for (auto item_path : items) {
-			std::string ws_name {};
-            if (item_path.extension() == ".git") ws_name = item_path.stem().string();
-
-            if (ws_name.empty()) continue;
-
-            fs::path ws_path {config->getWsPath(ws_name)};
-
-			if (!ws_path.empty() || !cloned_only) std::cout << ws_name << '\n';
+    	for (auto ws : m_workspacesModel) {
+        	if (!cloned_only || !ws.second->getPath().empty()) {
+            	std::cout << ws.first;
+                if (with_path) std::cout << " : " << ws.second->getPath().string();
+                std::cout << '\n';
+            }
         }
-
     } else {
-        if (!fs::exists(config->getWorkspacesDirPath() / (root_ws_name + ".git"))) {
-        	std::cerr << "Workspace '" << root_ws_name << "' not exists.\n";
-            return false;
-        }
+    	Workspace::SPtr ws {m_workspacesModel.getWorkspace(root_ws_name)};
+        if (!ws
+		    || ws->getPath().empty()) return false;
 
-        fs::path ws_path {config->getWsPath(root_ws_name)};
-
-        if (ws_path.empty()) {
-        	std::cerr << "Workspace '" << root_ws_name << "' is not cloned.\n";
-        	return false;
-        }
-
-	   	std::vector<fs::path> items {};
-    	std::copy(fs::directory_iterator(ws_path), fs::directory_iterator(), std::back_inserter(items));
-
-        for (auto item_path : items) {
-            if (!fs::exists(item_path / "project.conf")) continue;
-
-            std::string proj_name {item_path.filename().string()};
-
-			if (fs::exists(item_path / (proj_name + "_repo")) || !cloned_only) std::cout << proj_name << '\n';
+        for (auto proj : *ws) {
+        	if (!cloned_only || fs::exists(proj.second->getRepoPath())) {
+            	std::cout << proj.first;
+                if (with_path) std::cout << " : " << proj.second->getPath().string();
+                std::cout << '\n';
+            }
         }
     }
-*/
+
     return true;
 }
 // -----------------------------------------------------------------------------
@@ -173,10 +158,12 @@ void MvcViewCliMain::displayHelp () const
                  "\n    user-name [USER_NAME]              - Set or get user name.\n"
                  "    user-email [USER_EMAIL]            - Set or get user email.\n"
                  "\n    path [ADDR]                        - Get item path.\n"
-                //  "\n    list [-c]                          - List workspaces.\n"
-                //  "      -c - only cloned\n"
-                //  "    list WS_NAME [-c]                  - List workspace projects.\n"
-                //  "      -c - only cloned\n"
+                 "\n    list [-c]                          - List workspaces.\n"
+                 "      -c - only cloned\n"
+                 "      -p - with path\n"
+                 "    list WS_NAME [-c]                  - List workspace projects.\n"
+                 "      -c - only cloned\n"
+                 "      -p - with path\n"
                 //  "\n    init WS_NAME                       - Init workspace.\n"
 	            //  "    init ADDR FULL_NAME REPO_URL [-c]    - Init project.\n"
                 //  "      -c - clone"

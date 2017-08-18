@@ -20,6 +20,7 @@ class Workspace : public Item {
 
         virtual const fs::path&    getPath () const { return m_path; }
         virtual void               setPath (const fs::path& aPath) { m_path = aPath; }
+        virtual fs::path           getRepoPath () const { return m_path; };
 
 		Project::SPtr              addProject (const std::string& aName);
 		Project::SPtr              getProject (const std::string& aName);
