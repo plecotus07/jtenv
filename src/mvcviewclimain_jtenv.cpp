@@ -95,7 +95,10 @@ bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 
 	Item::SPtr item {m_workspacesModel.getItem(addr, fs::current_path())};
 
-	if (!item) return false;
+	if (!item) {
+        std::cerr << "Invalid address.\n";
+        return false;
+    }
 
 	std::cout << item->getPath().string() << '\n';
 
@@ -130,8 +133,14 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
         }
     } else {
     	Workspace::SPtr ws {m_workspacesModel.getWorkspace(root_ws_name)};
-        if (!ws
-		    || ws->getPath().empty()) return false;
+        if (!ws) {
+            std::cerr << "Workspace " << root_ws_name << " not exists\n";
+            return false;
+        }
+        if (ws->getPath().empty()) {
+            std::cerr << "Workspace " << root_ws_name << " is not cloned\n";
+            return false;
+        }
 
         for (auto proj : *ws) {
         	if (!cloned_only || fs::exists(proj.second->getRepoPath())) {
