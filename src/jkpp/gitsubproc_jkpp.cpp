@@ -14,19 +14,22 @@ GitSubProc::GitSubProc () :
 // -----------------------------------------------------------------------------
 bool GitSubProc::init (const std::string& aPath, bool aBare)
 {
-    if (!executeCommand("git init " + aPath +  + (aBare ? " --bare" : ""))) return false;
+    if (!executeCommand("git init " + aPath + (aBare ? " --bare" : ""))) return false;
 
     m_localPath = aPath;
 
     return true;
 }
 // -----------------------------------------------------------------------------
-bool GitSubProc::clone (const std::string& aLocalPath, const std::string& aRemoteUrl, bool aBare)
+Git::UPtr GitSubProc::clone (const std::string& aLocalPath, bool aBare)
 {
-    if (!executeCommand("git clone " + aRemoteUrl + " " + aLocalPath)) return false;
-    m_remoteUrl = aRemoteUrl;
-    m_localPath = aLocalPath;
+    if (!executeCommand("git clone " + m_localPath + " " + aLocalPath + (aBare ? " --bare" : "") )) return nullptr;
 
+    Git::UPtr result {std::make_unique<GitSubProc>()};
+
+    if (!result->set(aLocalPath)) return nullptr;
+
+    return result;
 }
 // -----------------------------------------------------------------------------
 bool GitSubProc::command (const std::string& aCommand) const

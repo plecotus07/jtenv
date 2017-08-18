@@ -6,6 +6,11 @@
 #include <string>
 // +++ -------------------------------------------------------------------------
 namespace fs = boost::filesystem;
+// +++ -------------------------------------------------------------------------
+namespace jkpp {
+class GitBuilder;
+}
+// +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcModelConfig;
@@ -13,7 +18,7 @@ class MvcModelWorkspaces;
 // +++ -------------------------------------------------------------------------
 class MvcCtrlMain {
 	public:
-		MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel);
+		MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, jkpp::GitBuilder& aGitBuilder);
 
 		bool loadConfig ();
 		bool saveConfig ();
@@ -27,6 +32,7 @@ class MvcCtrlMain {
 	protected:
 		MvcModelConfig&     m_configModel;
 		MvcModelWorkspaces& m_workspacesModel;
+        jkpp::GitBuilder&          m_gitBuilder;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

@@ -13,7 +13,7 @@ class Git {
 		virtual ~Git () = default;
 
 		virtual bool init (const std::string& aPath, bool aBare) = 0;
-		virtual bool clone (const std::string& aLocalPath, const std::string& aRemoteUrl, bool aBare) = 0;
+		virtual UPtr clone (const std::string& aLocalPath, bool aBare) = 0;
         virtual bool set (const std::string& aPath) = 0;
 
 		virtual bool command (const std::string& aCommand) const = 0;

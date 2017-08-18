@@ -8,6 +8,7 @@
 #include "mvcctrlmain_jtenv.hpp"
 
 #include <mvcapp_jkpp.hpp>
+#include <gitsubproc_jkpp.hpp>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -18,10 +19,11 @@ class MvcApp : public jkpp::MvcApp {
 		virtual bool run (const std::vector<std::string>& aArgs);
 
 	protected:
-		MvcViewCliMain 	   m_mainView;
-		MvcModelConfig 	   m_configModel;
-		MvcModelWorkspaces m_workspacesModel;
-		MvcCtrlMain        m_mainCtrl;
+		MvcModelConfig 	        m_configModel;
+		MvcModelWorkspaces      m_workspacesModel;
+		MvcViewCliMain 	        m_mainView;
+        jkpp::GitSubProcBuilder m_gitBuilder;
+		MvcCtrlMain             m_mainCtrl;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

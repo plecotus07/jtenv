@@ -23,6 +23,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     if (!aArgs.empty()) {
     	command = aArgs[0];
     }
+
 	if ( (command.empty())
 	        || (command == "-h")
 	        || (command == "--help") ) {
@@ -50,17 +51,17 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
 
 
     bool result {true};
-   ArgIterator arg {aArgs.begin() + 1};
+    ArgIterator arg {aArgs.begin() + 1};
 
-   if (command == "user-name") result = onUserName(arg, aArgs.end());
-   else if (command == "user-email") result = onUserEmail(arg, aArgs.end());
-   else if (command == "path") result = onPath(arg, aArgs.end());
-   else if (command == "list") result = onListItems(arg, aArgs.end());
-//    else if (command == "init") result = onInitItem(arg, aArgs.end());
-   else {
+    if (command == "user-name")result = onUserName(arg, aArgs.end());
+    else if (command == "user-email") result = onUserEmail(arg, aArgs.end());
+    else if (command == "path") result = onPath(arg, aArgs.end());
+    else if (command == "list") result = onListItems(arg, aArgs.end());
+    else if (command == "init") result = onInitItem(arg, aArgs.end());
+    else {
    	std::cerr << "Invalid command: " << command << '\n';
        return false;
-   }
+    }
 
 	return result;
 }
@@ -156,6 +157,47 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
+    if (aArg == aArgsEnd) {
+        std::cerr << "Missing arguments.\n";
+        return false;
+    }
+
+    std::string addr {*aArg};
+
+    ++aArg;
+    if (aArg == aArgsEnd) {
+    	if (!m_ctrl.initWorkspace(addr, fs::current_path())) {
+        	std::cerr << "Workspace initialization error.\n";
+            return false;
+        }
+    } else {
+    	std::string full_name {*aArg};
+
+        ++aArg;
+        if (aArg == aArgsEnd) {
+            std::cerr << "Missing project repository URL.\n";
+            return false;
+        }
+
+        std::string repo_url {*aArg};
+
+        bool clone {false};
+        ++aArg;
+        if (aArg != aArgsEnd) {
+        	if ((*aArg) == "-c") {
+				clone = true;
+            } else {
+            	std::cerr << "Invalid argument: " << *aArg << '\n';
+                return false;
+            }
+		}
+
+		if (!m_ctrl.initProject(addr, full_name, repo_url, clone)) {
+        	std::cerr << "Project initialization error.\n";
+            return false;
+        }
+    }
+
 	return true;
 }
 // -----------------------------------------------------------------------------
@@ -173,9 +215,9 @@ void MvcViewCliMain::displayHelp () const
                  "    list WS_NAME [-c]                  - List workspace projects.\n"
                  "      -c - only cloned\n"
                  "      -p - with path\n"
-                //  "\n    init WS_NAME                       - Init workspace.\n"
-	            //  "    init ADDR FULL_NAME REPO_URL [-c]    - Init project.\n"
-                //  "      -c - clone"
+                 "\n    init WS_NAME                       - Init workspace.\n"
+	             "    init ADDR FULL_NAME REPO_URL [-c]    - Init project.\n"
+                 "      -c - clone\n"
 				 "\n";
 }
 // -----------------------------------------------------------------------------
