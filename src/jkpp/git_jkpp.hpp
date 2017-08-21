@@ -12,8 +12,10 @@ class Git {
     	using UPtr = std::unique_ptr<Git>;
 		virtual ~Git () = default;
 
+		virtual const std::string& getPath () const = 0;
+
 		virtual bool init (const std::string& aPath, bool aBare) = 0;
-		virtual UPtr clone (const std::string& aLocalPath, bool aBare) = 0;
+		virtual UPtr clone (const std::string& aPath, bool aBare) = 0;
         virtual bool set (const std::string& aPath) = 0;
 
 		virtual bool command (const std::string& aCommand) const = 0;

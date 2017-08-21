@@ -10,15 +10,16 @@ class GitSubProc : public Git {
 	public:
 		GitSubProc ();
 
+		virtual const std::string& getPath () const  { return m_path; }
+
 		virtual bool init (const std::string& aPath, bool aBare);
-		virtual UPtr clone (const std::string& aLocalPath, bool aBare);
+		virtual UPtr clone (const std::string& aPath, bool aBare);
         virtual bool set (const std::string& aPath);
 
 		virtual bool command (const std::string& aCommand) const;
 
 	protected:
-		std::string m_remoteUrl;
-		std::string m_localPath;
+		std::string m_path;
 };
 // +++ -------------------------------------------------------------------------
 class GitSubProcBuilder : public GitBuilder {

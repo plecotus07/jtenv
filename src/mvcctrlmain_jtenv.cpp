@@ -24,7 +24,7 @@ bool MvcCtrlMain::loadConfig ()
          && (!saveConfig())) return false;
 
     if ( (!m_configModel.load())
-         || (!m_workspacesModel.load()) ) return false;
+         || (!m_workspacesModel.load(m_gitBuilder)) ) return false;
 
     return true;
 }
@@ -41,7 +41,8 @@ bool MvcCtrlMain::saveConfig ()
         std::ofstream f {(getConfDirPath() / "gitignore.tmpl").string().c_str(), std::fstream::out};
         if (!f) return false;
 
-        f << "*.bat\n"
+        f << "*_repo/\n"
+		     "*.bat\n"
              "_*\n"
              "build/\n"
              "tmp/\n";
@@ -76,17 +77,17 @@ bool MvcCtrlMain::setUserEmail (const std::string& aUserEmail)
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath)
 {
-	Workspace::SPtr ws {m_workspacesModel.getWorkspace(aName)};
-    if (ws) return false;
+    if (m_workspacesModel.getWorkspace(aName)) return false;
 
-    jkpp::Git::UPtr git_remote {m_gitBuilder.create()};
+	jkpp::Git::UPtr git {m_gitBuilder.create()};
 
-    if (!git_remote->init((m_workspacesModel.getWorkspacesDirPath() / (aName + ".git")).string(), true)) return false;
+    if (!git->init((m_workspacesModel.getWorkspacesDirPath() / (aName + ".git")).string(), true)) return false;
 
-	jkpp::Git::UPtr git_local {git_remote->clone((aPath / aName).string(), false)};
+	Workspace::SPtr ws {m_workspacesModel.addWorkspace(aName, std::move(git), aPath / aName)};
+    if (!ws) return false;
+	if (!m_workspacesModel.save()) return false;
 
-    if (!git_local->command("config user.name \"" + m_configModel.getUserName() + "\"")) return false;
-    if (!git_local->command("config user.email \"" + m_configModel.getUserEmail() + "\"")) return false;
+    if (!ws->clone(m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
 
     try {
     	fs::copy(getConfDirPath() / "gitignore.tmpl", aPath / aName / ".gitignore");
@@ -94,15 +95,39 @@ bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath
     	return false;
     }
 
-	if (!git_local->command("add .")) return false;
-    if (!git_local->command("commit -m\"Initialize repo\"")) return false;
-    if (!git_local->command("push -u origin master")) return false;
+	if (!ws->getGit().command("add .")) return false;
+    if (!ws->getGit().command("commit -m\"Initialize repo.\"")) return false;
+    if (!ws->getGit().command("push -u origin master")) return false;
 
-    m_workspacesModel.addWorkspace(aName, aPath/aName);
+	return true;
 
-	if (!m_workspacesModel.save()) return false;
-
-    return true;
+	// Workspace::SPtr ws {m_workspacesModel.getWorkspace(aName)};
+    // if (ws) return false;
+	//
+    // jkpp::Git::UPtr git_remote {m_gitBuilder.create()};
+	//
+    // if (!git_remote->init((m_workspacesModel.getWorkspacesDirPath() / (aName + ".git")).string(), true)) return false;
+	//
+	// jkpp::Git::UPtr git_local {git_remote->clone((aPath / aName).string(), false)};
+	//
+    // if (!git_local->command("config user.name \"" + m_configModel.getUserName() + "\"")) return false;
+    // if (!git_local->command("config user.email \"" + m_configModel.getUserEmail() + "\"")) return false;
+	//
+    // try {
+    // 	fs::copy(getConfDirPath() / "gitignore.tmpl", aPath / aName / ".gitignore");
+    // } catch (...) {
+    // 	return false;
+    // }
+	//
+	// if (!git_local->command("add .")) return false;
+    // if (!git_local->command("commit -m\"Initialize repo\"")) return false;
+    // if (!git_local->command("push -u origin master")) return false;
+	//
+    // m_workspacesModel.addWorkspace(aName, aPath/aName);
+	//
+	// if (!m_workspacesModel.save()) return false;
+	//
+    // return true;
 }
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::initProject (const std::string& aWsName, const std::string& aName, const std::string& aFullName, bool aClone)

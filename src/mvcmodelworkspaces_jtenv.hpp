@@ -3,6 +3,7 @@
 #define MVCMODELWORKSPACES_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 #include "workspace_jtenv.hpp"
+
 #include <mvcmodelimpl_jkpp.hpp>
 
 #include <boost/filesystem.hpp>
@@ -18,11 +19,12 @@ class MvcModelWorkspaces : public jkpp::MvcModelImpl {
 		const std::string& getConfFilePath () const { return m_confFilePath; }
 		const fs::path&    getWorkspacesDirPath () const { return m_workspacesDirPath; }
 
-		Item::SPtr      getItem (const std::string& aAddr, const fs::path& aPath);
+		Item::SPtr      getItem (const std::string& aAddr, const fs::path& aPath = fs::path());
 		Workspace::SPtr getWorkspace (const std::string& aName);
-		Workspace::SPtr addWorkspace (const std::string& aName, const fs::path& aPath = fs::path());
+		Workspace::SPtr addWorkspace (const std::string& aName, jkpp::Git::UPtr&& aGit, const fs::path& aPath = fs::path());
+        bool            removeWorkspace (const std::string& aName);
 
-		bool load ();
+		bool load (jkpp::GitBuilder& aGitBuilder);
 		bool save ();
 
         Workspace::Iterator begin () { return m_workspaces.begin(); };
@@ -34,8 +36,7 @@ class MvcModelWorkspaces : public jkpp::MvcModelImpl {
 		const std::string m_confFilePath;
 		const fs::path    m_workspacesDirPath;
 
-		bool loadLines (std::ifstream& aFile);
-
+		bool loadLines (std::ifstream& aFile, jkpp::GitBuilder& aGitBuilder);
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

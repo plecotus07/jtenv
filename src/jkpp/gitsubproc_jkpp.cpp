@@ -7,8 +7,7 @@ namespace fs = boost::filesystem;
 namespace jkpp {
 // +++ -------------------------------------------------------------------------
 GitSubProc::GitSubProc () :
-    m_localPath{},
-    m_remoteUrl{}
+    m_path{}
 {
 }
 // -----------------------------------------------------------------------------
@@ -16,25 +15,25 @@ bool GitSubProc::init (const std::string& aPath, bool aBare)
 {
     if (!executeCommand("git init " + aPath + (aBare ? " --bare" : ""))) return false;
 
-    m_localPath = aPath;
+    m_path = aPath;
 
     return true;
 }
 // -----------------------------------------------------------------------------
-Git::UPtr GitSubProc::clone (const std::string& aLocalPath, bool aBare)
+Git::UPtr GitSubProc::clone (const std::string& aPath, bool aBare)
 {
-    if (!executeCommand("git clone " + m_localPath + " " + aLocalPath + (aBare ? " --bare" : "") )) return nullptr;
+    if (!executeCommand("git clone " + m_path + " " + aPath + (aBare ? " --bare" : "") )) return nullptr;
 
     Git::UPtr result {std::make_unique<GitSubProc>()};
 
-    if (!result->set(aLocalPath)) return nullptr;
+    if (!result->set(aPath)) return nullptr;
 
     return result;
 }
 // -----------------------------------------------------------------------------
 bool GitSubProc::command (const std::string& aCommand) const
 {
-	return executeCommand("git -C " + m_localPath + " " + aCommand);
+	return executeCommand("git -C " + m_path + " " + aCommand);
 }
 // -----------------------------------------------------------------------------
 bool GitSubProc::set (const std::string& aPath)
@@ -43,12 +42,7 @@ bool GitSubProc::set (const std::string& aPath)
 
     if (!fs::exists(fs::path(aPath) / ".git")) return false;
 
-    m_localPath = aPath;
-
-	std::string output {};
-    if (!executeCommand("git -C " + m_localPath + " remote get-url origin", output)) return false;
-
-	m_remoteUrl = output;
+    m_path = aPath;
 
     return true;
 }
