@@ -37,18 +37,17 @@ bool MvcCtrlMain::saveConfig ()
         } catch (fs::filesystem_error& e) {
             return false;
         }
+
+        std::ofstream f {(getConfDirPath() / "gitignore.tmpl").string().c_str(), std::fstream::out};
+        if (!f) return false;
+
+        f << "*.bat\n"
+             "_*\n"
+             "build/\n"
+             "tmp/\n";
+
+        f.close();
     }
-
-    std::ofstream f {(getConfDirPath() / "gitignore.tmpl").string().c_str(), std::fstream::out};
-    if (!f) return false;
-
-    f << "*.bat\n"
-         "_*\n"
-         "build/\n"
-         "tmp/\n";
-
-    f.close();
-
 
     if (!fs::exists(m_workspacesModel.getWorkspacesDirPath())) {
 		try {
@@ -86,6 +85,9 @@ bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath
 
 	jkpp::Git::UPtr git_local {git_remote->clone((aPath / aName).string(), false)};
 
+    if (!git_local->command("config user.name \"" + m_configModel.getUserName() + "\"")) return false;
+    if (!git_local->command("config user.email \"" + m_configModel.getUserEmail() + "\"")) return false;
+
     try {
     	fs::copy(getConfDirPath() / "gitignore.tmpl", aPath / aName / ".gitignore");
     } catch (...) {
@@ -94,7 +96,11 @@ bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath
 
 	if (!git_local->command("add .")) return false;
     if (!git_local->command("commit -m\"Initialize repo\"")) return false;
-    if (!git_local->command("push -u origin mater")) return false;
+    if (!git_local->command("push -u origin master")) return false;
+
+    m_workspacesModel.addWorkspace(aName, aPath/aName);
+
+	if (!m_workspacesModel.save()) return false;
 
     return true;
 }

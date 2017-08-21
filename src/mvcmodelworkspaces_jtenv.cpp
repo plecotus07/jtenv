@@ -106,6 +106,7 @@ bool MvcModelWorkspaces::save ()
     if (!file) return false;
 
     for (auto ws : m_workspaces) file << "workspace=" << ws.first << ':' << ws.second->getPath().string() << '\n';
+	return  true;
 }
 // -----------------------------------------------------------------------------
 bool MvcModelWorkspaces::loadLines (std::ifstream& aFile)
