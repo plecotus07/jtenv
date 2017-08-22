@@ -27,23 +27,28 @@ bool Workspace::clone (const std::string& aUserName, const std::string& aUserEma
 	return true;
 }
 // -----------------------------------------------------------------------------
-void Workspace::setPath (const fs::path& aPath)
-{
-	if (!m_git) return;
-
-	m_git->set(aPath.string());
-}
-// -----------------------------------------------------------------------------
-Project::SPtr Workspace::addProject (const std::string& aName, jkpp::Git::UPtr&& aGit)
+Project::SPtr Workspace::initProject (const std::string& aName, jkpp::GitBuilder& aGitBuilder, const std::string& aFullName, const std::string& aRepoUrl)
 {
 	if (aName.empty()) return nullptr;
-
-	if (!m_git) return nullptr;
     if (m_path.empty()) return nullptr;
-
     if (m_projects.find(aName) != m_projects.end()) return nullptr;
 
-    Project::SPtr proj {std::make_shared<Project>(m_name, aName, std::move(aGit), m_path / aName)};
+    Project::SPtr proj {std::make_shared<Project>(m_name, aName, m_path / aName)};
+
+    if (!proj->init(aFullName, aRepoUrl, aGitBuilder)) return nullptr;
+
+	m_projects.insert(std::make_pair(aName, proj));
+
+    return proj;
+}
+// -----------------------------------------------------------------------------
+Project::SPtr Workspace::addProject (const std::string& aName)
+{
+	if (aName.empty()) return nullptr;
+    if (m_path.empty()) return nullptr;
+    if (m_projects.find(aName) != m_projects.end()) return nullptr;
+
+    Project::SPtr proj {std::make_shared<Project>(m_name, aName, m_path / aName)};
     m_projects.insert(std::make_pair(aName, proj));
 
 	return proj;

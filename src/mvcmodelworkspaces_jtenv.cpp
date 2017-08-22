@@ -106,7 +106,7 @@ bool MvcModelWorkspaces::load (jkpp::GitBuilder& aGitBuilder)
         }
     }
 
-    std::ifstream file {m_confFilePath.c_str(), std::fstream::in};
+    std::ifstream file {m_confFilePath.string(), std::fstream::in};
     if (!file) return false;
 
     beginUpdate();
@@ -118,10 +118,13 @@ bool MvcModelWorkspaces::load (jkpp::GitBuilder& aGitBuilder)
 // -----------------------------------------------------------------------------
 bool MvcModelWorkspaces::save ()
 {
-    std::ofstream file {m_confFilePath.c_str(), std::fstream::out};
+    std::ofstream file {m_confFilePath.string(), std::fstream::out};
     if (!file) return false;
 
-    for (auto ws : m_workspaces) file << "workspace=" << ws.first << ':' << ws.second->getPath().string() << '\n';
+    for (auto ws : m_workspaces) {
+    	if (!ws.second->getPath().empty())
+	    	file << "workspace=" << ws.first << ':' << ws.second->getPath().string() << '\n';
+    }
 	return  true;
 }
 // -----------------------------------------------------------------------------
@@ -152,7 +155,7 @@ bool MvcModelWorkspaces::loadLines (std::ifstream& aFile, jkpp::GitBuilder& aGit
 		    for (;dir != fs::directory_iterator(); ++dir) {
 		        if ( fs::is_directory(dir->path())
 				     && fs::exists(dir->path() / "project.conf") ) {
-					if (!ws->second->addProject(dir->path().filename().string(), aGitBuilder.create())) return false;
+					if (!ws->second->addProject(dir->path().filename().string())) return false;
 		        }
 		    }
         }

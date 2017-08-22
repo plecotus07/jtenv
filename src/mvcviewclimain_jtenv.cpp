@@ -163,14 +163,24 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
     }
 
     std::string addr {*aArg};
+	auto pos {addr.find_first_of(':')};
 
     ++aArg;
-    if (aArg == aArgsEnd) {
+    if (pos == std::string::npos) {
+    	if (aArg != aArgsEnd) {
+        	std::cerr << "Unknown argument: " << *aArg << '\n';
+            return false;
+        }
+
     	if (!m_ctrl.initWorkspace(addr, fs::current_path())) {
         	std::cerr << "Workspace initialization error.\n";
             return false;
         }
     } else {
+        if (aArg == aArgsEnd) {
+            std::cerr << "Missing project full name.\n";
+            return false;
+        }
     	std::string full_name {*aArg};
 
         ++aArg;
@@ -192,7 +202,7 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
             }
 		}
 
-		if (!m_ctrl.initProject(addr, full_name, repo_url, clone)) {
+		if (!m_ctrl.initProject(addr.substr(0, pos), addr.substr(pos + 1), full_name, repo_url, clone)) {
         	std::cerr << "Project initialization error.\n";
             return false;
         }

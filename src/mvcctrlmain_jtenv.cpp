@@ -38,7 +38,7 @@ bool MvcCtrlMain::saveConfig ()
             return false;
         }
 
-        std::ofstream f {(getConfDirPath() / "gitignore.tmpl").string().c_str(), std::fstream::out};
+        std::ofstream f {(getConfDirPath() / "gitignore.tmpl").string(), std::fstream::out};
         if (!f) return false;
 
         f << "*_repo/\n"
@@ -100,45 +100,19 @@ bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath
     if (!ws->getGit().command("push -u origin master")) return false;
 
 	return true;
-
-	// Workspace::SPtr ws {m_workspacesModel.getWorkspace(aName)};
-    // if (ws) return false;
-	//
-    // jkpp::Git::UPtr git_remote {m_gitBuilder.create()};
-	//
-    // if (!git_remote->init((m_workspacesModel.getWorkspacesDirPath() / (aName + ".git")).string(), true)) return false;
-	//
-	// jkpp::Git::UPtr git_local {git_remote->clone((aPath / aName).string(), false)};
-	//
-    // if (!git_local->command("config user.name \"" + m_configModel.getUserName() + "\"")) return false;
-    // if (!git_local->command("config user.email \"" + m_configModel.getUserEmail() + "\"")) return false;
-	//
-    // try {
-    // 	fs::copy(getConfDirPath() / "gitignore.tmpl", aPath / aName / ".gitignore");
-    // } catch (...) {
-    // 	return false;
-    // }
-	//
-	// if (!git_local->command("add .")) return false;
-    // if (!git_local->command("commit -m\"Initialize repo\"")) return false;
-    // if (!git_local->command("push -u origin master")) return false;
-	//
-    // m_workspacesModel.addWorkspace(aName, aPath/aName);
-	//
-	// if (!m_workspacesModel.save()) return false;
-	//
-    // return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcCtrlMain::initProject (const std::string& aWsName, const std::string& aName, const std::string& aFullName, bool aClone)
+bool MvcCtrlMain::initProject (const std::string& aWsName, const std::string& aName, const std::string& aFullName, const std::string& aRepoUrl, bool aClone)
 {
-	std::cerr << "+++ init project\n";
-    std::cerr << "   ws name: " << aWsName << '\n';
-    std::cerr << "   name: " << aName << '\n';
-    std::cerr << "   full name: " << aFullName << '\n';
-    std::cerr << "   clone: " << (aClone ? "true" : "false") << '\n';
+	Workspace::SPtr ws {m_workspacesModel.getWorkspace(aWsName)};
+    if (!ws) return false;
 
-	return false;
+    Project::SPtr proj {ws->initProject(aName, m_gitBuilder, aFullName, aRepoUrl)};
+    if (!proj) return false;
+
+    if (aClone && !proj->clone(m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
+
+	return true;
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

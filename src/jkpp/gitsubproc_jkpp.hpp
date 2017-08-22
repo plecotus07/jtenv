@@ -14,7 +14,7 @@ class GitSubProc : public Git {
 
 		virtual bool init (const std::string& aPath, bool aBare);
 		virtual UPtr clone (const std::string& aPath, bool aBare);
-        virtual bool set (const std::string& aPath);
+        virtual void set (const std::string& aPath) { m_path = aPath; }
 
 		virtual bool command (const std::string& aCommand) const;
 

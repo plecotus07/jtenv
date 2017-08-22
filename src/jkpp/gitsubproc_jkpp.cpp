@@ -26,7 +26,7 @@ Git::UPtr GitSubProc::clone (const std::string& aPath, bool aBare)
 
     Git::UPtr result {std::make_unique<GitSubProc>()};
 
-    if (!result->set(aPath)) return nullptr;
+    result->set(aPath);
 
     return result;
 }
@@ -34,17 +34,6 @@ Git::UPtr GitSubProc::clone (const std::string& aPath, bool aBare)
 bool GitSubProc::command (const std::string& aCommand) const
 {
 	return executeCommand("git -C " + m_path + " " + aCommand);
-}
-// -----------------------------------------------------------------------------
-bool GitSubProc::set (const std::string& aPath)
-{
-	if (!fs::exists(aPath)) return false;
-
-    if (!fs::exists(fs::path(aPath) / ".git")) return false;
-
-    m_path = aPath;
-
-    return true;
 }
 // +++ -------------------------------------------------------------------------
 Git::UPtr GitSubProcBuilder::create () const

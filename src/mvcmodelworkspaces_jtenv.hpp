@@ -16,7 +16,7 @@ class MvcModelWorkspaces : public jkpp::MvcModelImpl {
 	public:
 		MvcModelWorkspaces ();
 
-		const std::string& getConfFilePath () const { return m_confFilePath; }
+		const fs::path& getConfFilePath () const { return m_confFilePath; }
 		const fs::path&    getWorkspacesDirPath () const { return m_workspacesDirPath; }
 
 		Item::SPtr      getItem (const std::string& aAddr, const fs::path& aPath = fs::path());
@@ -33,8 +33,8 @@ class MvcModelWorkspaces : public jkpp::MvcModelImpl {
 	protected:
 		Workspace::SPtrByStrMap m_workspaces;
 
-		const std::string m_confFilePath;
-		const fs::path    m_workspacesDirPath;
+		const fs::path m_confFilePath;
+		const fs::path m_workspacesDirPath;
 
 		bool loadLines (std::ifstream& aFile, jkpp::GitBuilder& aGitBuilder);
 };

@@ -31,7 +31,7 @@ void MvcModelConfig::setUserEmail (const std::string& aUserEmail)
 // -----------------------------------------------------------------------------
 bool MvcModelConfig::load ()
 {
-    std::ifstream file {m_confFilePath.c_str(), std::fstream::in};
+    std::ifstream file {m_confFilePath, std::fstream::in};
     if (!file) return false;
 
     beginUpdate();
@@ -59,7 +59,7 @@ bool MvcModelConfig::loadLines (std::ifstream& aFile)
 // -----------------------------------------------------------------------------
 bool MvcModelConfig::save ()
 {
-    std::ofstream file {m_confFilePath.c_str(), std::fstream::out};
+    std::ofstream file {m_confFilePath, std::fstream::out};
     if (!file) return false;
 
     file << "user_name=" << m_userName << '\n';

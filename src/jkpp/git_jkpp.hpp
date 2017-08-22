@@ -16,7 +16,7 @@ class Git {
 
 		virtual bool init (const std::string& aPath, bool aBare) = 0;
 		virtual UPtr clone (const std::string& aPath, bool aBare) = 0;
-        virtual bool set (const std::string& aPath) = 0;
+        virtual void set (const std::string& aPath) = 0;
 
 		virtual bool command (const std::string& aCommand) const = 0;
 

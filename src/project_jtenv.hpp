@@ -14,8 +14,11 @@ class Project : public Item {
 		using SPtrByStrMap = std::map<std::string, SPtr>;
 		using Iterator = SPtrByStrMap::iterator;
 
-        Project (const std::string& aWsName, const std::string& aName, jkpp::Git::UPtr&& aGit, const fs::path& aPath = fs::path());
+        Project (const std::string& aWsName, const std::string& aName, const fs::path& aPath);
 
+		virtual bool init (const std::string& aFullName, const std::string& aRepoUrl, jkpp::GitBuilder& aGitBuider);
+		virtual bool load (jkpp::GitBuilder& aGitBuilder);
+		virtual bool save ();
         virtual bool clone (const std::string& aUserName, const std::string& aUserEmail);
 
         virtual const std::string& getName () const { return m_name; }
@@ -27,8 +30,11 @@ class Project : public Item {
     protected:
 		std::string     m_wsName;
     	std::string     m_name;
+		std::string     m_fullName;
         fs::path        m_path;
         jkpp::Git::UPtr m_git;
+        jkpp::Git::UPtr m_remoteGit;
+		std::string     m_defaultBranch;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
