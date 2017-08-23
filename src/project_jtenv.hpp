@@ -20,12 +20,14 @@ class Project : public Item {
 		virtual bool load (jkpp::GitBuilder& aGitBuilder);
 		virtual bool save ();
         virtual bool clone (const std::string& aUserName, const std::string& aUserEmail);
+        virtual bool git (const std::string& aCommand);
 
         virtual const std::string& getName () const { return m_name; }
         virtual const fs::path&    getPath () const { return m_path; }
         virtual void               setPath (const fs::path& aPath) { m_path = aPath; }
         virtual const std::string& getWsName () const { return m_wsName; }
-        virtual jkpp::Git&         getGit() { return *(m_git.get()); }
+
+		virtual bool isCloned () const { return m_git != nullptr; }
 
     protected:
 		std::string     m_wsName;

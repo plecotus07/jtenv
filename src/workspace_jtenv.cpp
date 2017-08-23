@@ -27,6 +27,13 @@ bool Workspace::clone (const std::string& aUserName, const std::string& aUserEma
 	return true;
 }
 // -----------------------------------------------------------------------------
+bool Workspace::git (const std::string& aCommand)
+{
+	if (!m_git) return false;
+
+    return m_git->command(aCommand);
+}
+// -----------------------------------------------------------------------------
 Project::SPtr Workspace::initProject (const std::string& aName, jkpp::GitBuilder& aGitBuilder, const std::string& aFullName, const std::string& aRepoUrl)
 {
 	if (aName.empty()) return nullptr;

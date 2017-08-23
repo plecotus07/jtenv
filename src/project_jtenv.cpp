@@ -1,5 +1,6 @@
 // +++ -------------------------------------------------------------------------
 #include "project_jtenv.hpp"
+#include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -38,6 +39,7 @@ bool Project::load (jkpp::GitBuilder& aGitBuilder)
     if (!file) return false;
 
     std::string line {};
+std::cerr << "+++: " << m_path / (m_name + "_repo") << '\n';
 
     while (std::getline(file, line)) {
 		auto pos {line.find_first_of('=')};
@@ -51,9 +53,13 @@ bool Project::load (jkpp::GitBuilder& aGitBuilder)
             m_remoteGit->set(value);
         } else if (key == "full_name") m_fullName = value;
         else if (key == "default_branch") m_defaultBranch = value;
-
         else return false;
     }
+
+	if (fs::exists(m_path / (m_name + "_repo"))) {
+		m_git = aGitBuilder.create();
+	    m_git->set((m_path / (m_name + "_repo")).string());
+	}
 
 	return true;
 }
@@ -85,6 +91,13 @@ bool Project::clone (const std::string& aUserName, const std::string& aUserEmail
     m_git->command("checkout " + m_defaultBranch);
 
 	return true;
+}
+// -----------------------------------------------------------------------------
+bool Project::git (const std::string& aCommand)
+{
+	if (!m_git) return false;
+
+    return m_git->command(aCommand);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

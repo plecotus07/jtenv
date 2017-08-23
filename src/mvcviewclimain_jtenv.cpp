@@ -144,7 +144,8 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
         }
 
         for (auto proj : *ws) {
-        	if (!cloned_only || fs::exists(proj.second->getGit().getPath())) {
+
+        	if (!cloned_only || (proj.second->isCloned())) {
             	std::cout << proj.first;
                 if (with_path) std::cout << " : " << proj.second->getPath().string();
                 std::cout << '\n';

@@ -95,9 +95,9 @@ bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath
     	return false;
     }
 
-	if (!ws->getGit().command("add .")) return false;
-    if (!ws->getGit().command("commit -m\"Initialize repo.\"")) return false;
-    if (!ws->getGit().command("push -u origin master")) return false;
+	if (!ws->git("add .")) return false;
+    if (!ws->git("commit -m\"Initialize repo.\"")) return false;
+    if (!ws->git("push -u origin master")) return false;
 
 	return true;
 }

@@ -18,11 +18,11 @@ class Workspace : public Item {
         Workspace (const std::string& aName, jkpp::Git::UPtr&& aGit, const fs::path& aPath = fs::path());
 
         virtual bool clone (const std::string& aUserName, const std::string& aUserEmail);
+        virtual bool git (const std::string& aCommand);
 
         virtual const std::string& getName () const { return m_name; }
         virtual const fs::path&    getPath () const { return m_path; }
         virtual void               setPath (const fs::path& aPath) { m_path = aPath; };
-        virtual jkpp::Git&         getGit() { return *(m_git.get()); }
 
 		Project::SPtr              initProject (const std::string& aName, jkpp::GitBuilder& aGitBuilder, const std::string& aFullName, const std::string& aRepoUrl);
 		Project::SPtr              addProject (const std::string& aName);
