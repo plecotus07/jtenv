@@ -25,7 +25,7 @@ set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_BINARY_DIR}/bin)
 
 add_subdirectory("src")
 
-add_custom_target(tests COMMAND ${CMAKE_CTEST_COMMAND}
+add_custom_target(tests 
                   DEPENDS utjtenv)
 
 configure_file(${CMAKE_SOURCE_DIR}/cmake/uninstall.cmake.in

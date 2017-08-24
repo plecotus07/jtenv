@@ -1,6 +1,2 @@
-#include <iostream>
-int main (int aArgc, char* aArgv[])
-{
-	std::cout << "test\n";
-	return 0;
-}
+#define CATCH_CONFIG_MAIN
+#include <catch/catch.hpp>

@@ -17,7 +17,9 @@ class MvcModelWorkspaces : public jkpp::MvcModelImpl {
 		MvcModelWorkspaces ();
 
 		const fs::path& getConfFilePath () const { return m_confFilePath; }
-		const fs::path&    getWorkspacesDirPath () const { return m_workspacesDirPath; }
+		const fs::path& getWorkspacesDirPath () const { return m_workspacesDirPath; }
+
+		std::pair<std::string, std::string> parseAddress (const std::string& aAddr, const fs::path& aPath);
 
 		Item::SPtr      getItem (const std::string& aAddr, const fs::path& aPath = fs::path());
 		Workspace::SPtr getWorkspace (const std::string& aName);
