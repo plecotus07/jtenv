@@ -155,7 +155,10 @@ bool MvcModelWorkspaces::loadLines (std::ifstream& aFile, jkpp::GitBuilder& aGit
 		    for (;dir != fs::directory_iterator(); ++dir) {
 		        if ( fs::is_directory(dir->path())
 				     && fs::exists(dir->path() / "project.conf") ) {
-					if (!ws->second->addProject(dir->path().filename().string())) return false;
+                	std::string proj_name {dir->path().filename().string()};
+					Project::SPtr proj {ws->second->addProject(proj_name)};
+                    if (!proj) return false;
+                    if (!proj->load(aGitBuilder)) return false;
 		        }
 		    }
         }

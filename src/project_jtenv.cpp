@@ -39,7 +39,6 @@ bool Project::load (jkpp::GitBuilder& aGitBuilder)
     if (!file) return false;
 
     std::string line {};
-std::cerr << "+++: " << m_path / (m_name + "_repo") << '\n';
 
     while (std::getline(file, line)) {
 		auto pos {line.find_first_of('=')};
