@@ -14,86 +14,16 @@ MvcModelWorkspaces::MvcModelWorkspaces () :
 {
 }
 // -----------------------------------------------------------------------------
-std::pair<std::string, std::string> MvcModelWorkspaces::parseAddress (const std::string& aAddr, const fs::path& aPath)
+Item::SPtr MvcModelWorkspaces::getItem (const std::string& aWsName, const std::string& aProjName)
 {
-	auto pos {aAddr.find_first_of(':')};
+	if (aWsName.empty()) return nullptr;
 
-	std::string proj_name {};
-	std::string ws_name {};
-
-	if (pos == std::string::npos) {
-    	ws_name = aAddr;
-    } else {
-		ws_name = aAddr.substr(0, pos);
-		proj_name = aAddr.substr(pos + 1);
-	}
-
-    if (ws_name.empty() && proj_name.empty()) {
-        fs::path dir {aPath};
-        for (bool eol = false; !dir.empty() && !eol; dir = dir.parent_path()) {
-            if ( fs::exists(dir / "project.conf")
-                     && fs::exists(m_workspacesDirPath / (dir.parent_path().filename().string() + ".git")) ) {
-                ws_name = dir.parent_path().filename().string();
-                proj_name = dir.filename().string();
-                eol = true;
-            } else if ( (fs::exists(m_workspacesDirPath / (dir.filename().string() + ".git")))
-                        && (m_workspaces.find(dir.filename().string()) != m_workspaces.end())
-                        && (m_workspaces[dir.filename().string()]->getPath() == dir) ) {
-                ws_name = dir.filename().string();
-                eol = true;
-            }
-        }
-    } else if (ws_name.empty()) {
-        fs::path dir {aPath};
-        for (; !dir.empty() && !fs::exists(dir / proj_name / "project.conf"); dir = dir.parent_path());
-
-        if (!dir.empty()
-                && fs::exists(m_workspacesDirPath / (dir.filename().string() + ".git")) ) ws_name = dir.filename().string();
-        else proj_name.clear();
-    }
-
-    return std::make_pair(ws_name, proj_name);
-}
-// -----------------------------------------------------------------------------
-Item::SPtr MvcModelWorkspaces::getItem (const std::string& aAddr, const fs::path& aPath)
-{
-	auto pos {aAddr.find_first_of(':')};
-
-	std::string proj_name {};
-	std::string ws_name {};
-
-	if (pos == std::string::npos) ws_name = aAddr;
-	else {
-		ws_name = aAddr.substr(0, pos);
-		proj_name = aAddr.substr(pos + 1);
-	}
-
-	if (ws_name.empty() && proj_name.empty()) {
-		fs::path dir {aPath};
-		for (; !dir.empty() && !fs::exists(dir / "project.conf"); dir = dir.parent_path());
-		if (dir.empty()) return nullptr;
-
-		proj_name = dir.filename().string();
-
-		if (dir.parent_path().empty()) return nullptr;
-
-		ws_name = dir.parent_path().filename().string();
-
-	} else if (ws_name.empty()) {
-		fs::path dir {aPath};
-		for (; !dir.empty() && !fs::exists(dir / proj_name / "project.conf"); dir = dir.parent_path());
-
-		if (dir.parent_path().empty()) return nullptr;
-		ws_name = dir.filename().string();
-
-	} else if (proj_name.empty()) {
-		return getWorkspace(ws_name);
-	}
-
-	Workspace::SPtr ws = getWorkspace(ws_name);
+	Workspace::SPtr ws = getWorkspace(aWsName);
 	if (!ws) return nullptr;
 
-	return ws->getProject(proj_name);
+    if (aProjName.empty()) return ws;
+
+    return ws->getProject(aProjName);
 }
 // -----------------------------------------------------------------------------
 Workspace::SPtr MvcModelWorkspaces::getWorkspace (const std::string& aName)

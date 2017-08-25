@@ -13,7 +13,8 @@ namespace jtenv {
 MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel) :
     m_ctrl {aCtrl},
     m_configModel {aConfigModel},
-    m_workspacesModel {aWorkspacesModel}
+    m_workspacesModel {aWorkspacesModel},
+    m_addressParser {aWorkspacesModel.getWorkspaces()}
 {
 }
 // -----------------------------------------------------------------------------
@@ -94,7 +95,9 @@ bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 
     if (aArg != aArgsEnd) addr = *aArg;
 
-	Item::SPtr item {m_workspacesModel.getItem(addr, fs::current_path())};
+	auto names {m_addressParser(addr)};
+
+	Item::SPtr item {m_workspacesModel.getItem(names.first, names.second)};
 
 	if (!item) {
         std::cerr << "Invalid address.\n";
@@ -163,17 +166,18 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
         return false;
     }
 
-    std::string addr {*aArg};
-	auto pos {addr.find_first_of(':')};
+    auto names { m_addressParser(*aArg)};
+
+    if (names.first.empty()) return false;
 
     ++aArg;
-    if (pos == std::string::npos) {
+    if (names.second.empty()) {
     	if (aArg != aArgsEnd) {
         	std::cerr << "Unknown argument: " << *aArg << '\n';
             return false;
         }
 
-    	if (!m_ctrl.initWorkspace(addr, fs::current_path())) {
+    	if (!m_ctrl.initWorkspace(names.first, fs::current_path())) {
         	std::cerr << "Workspace initialization error.\n";
             return false;
         }
@@ -203,7 +207,7 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
             }
 		}
 
-		if (!m_ctrl.initProject(addr.substr(0, pos), addr.substr(pos + 1), full_name, repo_url, clone)) {
+		if (!m_ctrl.initProject(names.first, names.second, full_name, repo_url, clone)) {
         	std::cerr << "Project initialization error.\n";
             return false;
         }

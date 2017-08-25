@@ -1,20 +1,21 @@
 // +++ -------------------------------------------------------------------------
-#include "mvcmodelworkspaces_jtenv.hpp"
-
-#include <filesystem_jkpp.hpp>
-
-#include <iostream>
+#include "addressparser_jtenv.hpp"
+#include "workspace_jtenv.hpp"
 
 #include <catch/catch.hpp>
 // +++ -------------------------------------------------------------------------
-SCENARIO ("Workspaces model parse address") {
-	GIVEN ("Workspaces model") {
-        jtenv::MvcModelWorkspaces model;
-        model.addWorkspace("ws1", nullptr, fs::current_path()/"workspaces"/"ws1");
-        model.addWorkspace("ws3", nullptr, fs::current_path()/"workspaces"/"ws3");
+SCENARIO ("Address parser") {
+	GIVEN ("Parser with given workspaces") {
+
+    	jtenv::Workspace::SPtrByStrMap workspaces {
+        	{"ws1", std::make_shared<jtenv::Workspace>("ws1", nullptr, fs::current_path()/"workspaces"/"ws1")},
+	        {"ws2", std::make_shared<jtenv::Workspace>("ws2", nullptr)},
+	        {"ws3", std::make_shared<jtenv::Workspace>("ws3", nullptr, fs::current_path()/"workspaces"/"ws3")},
+        };
+        jtenv::AddressParser parser {workspaces};
 
         WHEN ("Address is empty and path is outside workspace") {
-			auto names = model.parseAddress("", fs::current_path());
+			auto names = parser("");
 
             THEN ("Project and workspace names are empty") {
             	REQUIRE(names.first.empty());
@@ -22,7 +23,7 @@ SCENARIO ("Workspaces model parse address") {
             }
 		}
         WHEN ("Address is empty and path is in false workspace") {
-			auto names = model.parseAddress("", fs::current_path() / "ws2");
+			auto names = parser("", fs::current_path() / "ws2");
 
             THEN ("Project and workspace names are empty") {
             	REQUIRE(names.first.empty());
@@ -30,7 +31,7 @@ SCENARIO ("Workspaces model parse address") {
             }
         }
         WHEN ("Address is empty and path is in workspace") {
-			auto names = model.parseAddress("", fs::current_path() / "workspaces" / "ws1");
+			auto names = parser("", fs::current_path() / "workspaces" / "ws1");
 
         	THEN ("Workspace name is found, but project name is empty") {
             	REQUIRE(names.first == "ws1");
@@ -38,7 +39,7 @@ SCENARIO ("Workspaces model parse address") {
             }
         }
         WHEN ("Address is empty and path is in workspace no project sub dir") {
-			auto names = model.parseAddress("", fs::current_path() / "workspaces" / "ws1" / "dir1" / "dir2");
+			auto names = parser("", fs::current_path() / "workspaces" / "ws1" / "dir1" / "dir2");
 
         	THEN ("Workspace name is found, but project name is empty") {
             	REQUIRE(names.first == "ws1");
@@ -46,7 +47,7 @@ SCENARIO ("Workspaces model parse address") {
             }
         }
         WHEN ("Address is empty and path is in project") {
-			auto names = model.parseAddress("", fs::current_path() / "workspaces" / "ws1" / "proj11");
+			auto names = parser("", fs::current_path() / "workspaces" / "ws1" / "proj11");
 
             THEN ("Workspace and project are found") {
             	REQUIRE(names.first == "ws1");
@@ -54,7 +55,7 @@ SCENARIO ("Workspaces model parse address") {
             }
 		}
         WHEN ("Address is empty and path is in project sub dir") {
-			auto names = model.parseAddress("", fs::current_path() / "workspaces" / "ws1" / "proj11" / "dir1" / "dir2");
+			auto names = parser("", fs::current_path() / "workspaces" / "ws1" / "proj11" / "dir1" / "dir2");
 
             THEN ("Workspace and project are found") {
             	REQUIRE(names.first == "ws1");
@@ -62,7 +63,7 @@ SCENARIO ("Workspaces model parse address") {
             }
 		}
         WHEN ("Address is workspace and path is outside workspace") {
-			auto names = model.parseAddress("ws1", fs::current_path());
+			auto names = parser("ws1");
 
             THEN ("Workspace name is found and project name is empty") {
             	REQUIRE(names.first == "ws1");
@@ -70,7 +71,7 @@ SCENARIO ("Workspaces model parse address") {
             }
         }
         WHEN ("Address is workspace and path is in project") {
-			auto names = model.parseAddress("ws1", fs::current_path() / "workspaces" / "ws1" / "proj11");
+			auto names = parser("ws1", fs::current_path() / "workspaces" / "ws1" / "proj11");
 
             THEN ("Workspace name is found and project name is empty") {
             	REQUIRE(names.first == "ws1");
@@ -78,7 +79,7 @@ SCENARIO ("Workspaces model parse address") {
             }
         }
         WHEN ("Address is workspace and path is in project sub dir") {
-			auto names = model.parseAddress("ws1", fs::current_path() / "workspaces" / "ws1" / "proj11" / "sub1" / "sub2");
+			auto names = parser("ws1", fs::current_path() / "workspaces" / "ws1" / "proj11" / "sub1" / "sub2");
 
             THEN ("Workspace name is found and project name is empty") {
             	REQUIRE(names.first == "ws1");
@@ -86,7 +87,7 @@ SCENARIO ("Workspaces model parse address") {
             }
         }
         WHEN ("Address is project and path is outside workspace") {
-			auto names = model.parseAddress(":proj11", fs::current_path());
+			auto names = parser(":proj11");
 
             THEN ("Project and workspace names are empty") {
             	REQUIRE(names.first.empty());
@@ -94,7 +95,7 @@ SCENARIO ("Workspaces model parse address") {
             }
 		}
         WHEN ("Address is project and path is in workspace") {
-			auto names = model.parseAddress(":proj11", fs::current_path() / "workspaces" / "ws1");
+			auto names = parser(":proj11", fs::current_path() / "workspaces" / "ws1");
 
             THEN ("Project and workspace names are found") {
             	REQUIRE(names.first == "ws1");
@@ -102,7 +103,7 @@ SCENARIO ("Workspaces model parse address") {
             }
 		}
         WHEN ("Address is project and path is in workspace sub dir") {
-			auto names = model.parseAddress(":proj11", fs::current_path() / "workspaces" / "ws1" / "dir1" / "dir2");
+			auto names = parser(":proj11", fs::current_path() / "workspaces" / "ws1" / "dir1" / "dir2");
 
             THEN ("Project and workspace names are found") {
             	REQUIRE(names.first == "ws1");
@@ -110,7 +111,7 @@ SCENARIO ("Workspaces model parse address") {
             }
 		}
         WHEN ("Address is workspace and project and path is outside workspace") {
-			auto names = model.parseAddress("ws1:proj11", fs::current_path());
+			auto names = parser("ws1:proj11");
 
             THEN ("Project and workspace names are found") {
             	REQUIRE(names.first == "ws1");
@@ -118,7 +119,7 @@ SCENARIO ("Workspaces model parse address") {
             }
 		}
         WHEN ("Address is not cloned workspace") {
-			auto names = model.parseAddress("ws2", fs::current_path());
+			auto names = parser("ws2");
 
             THEN ("Workspace names are found") {
             	REQUIRE(names.first == "ws2");
@@ -126,7 +127,7 @@ SCENARIO ("Workspaces model parse address") {
             }
 		}
         WHEN ("Address is not cloned workspace and project") {
-			auto names = model.parseAddress("ws2:proj21", fs::current_path());
+			auto names = parser("ws2:proj21");
 
             THEN ("Project and workspace names are found") {
             	REQUIRE(names.first == "ws2");
@@ -134,7 +135,7 @@ SCENARIO ("Workspaces model parse address") {
             }
 		}
         WHEN ("Address is workspace and not existing project") {
-			auto names = model.parseAddress("ws1:proj", fs::current_path());
+			auto names = parser("ws1:proj");
 
             THEN ("Project and workspace names are found") {
             	REQUIRE(names.first == "ws1");

@@ -2,6 +2,8 @@
 #ifndef MVCVIEWCLIMAIN_JTENV_HPP
 #define MVCVIEWCLIMAIN_JTENV_HPP
 // +++ -------------------------------------------------------------------------
+#include "addressparser_jtenv.hpp"
+
 #include <mvcview_jkpp.hpp>
 
 #include <vector>
@@ -26,6 +28,7 @@ class MvcViewCliMain : public jkpp::MvcView {
 		MvcCtrlMain&        m_ctrl;
         MvcModelConfig&     m_configModel;
 		MvcModelWorkspaces& m_workspacesModel;
+        AddressParser       m_addressParser;
 
 		bool onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd);

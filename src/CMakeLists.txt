@@ -1,4 +1,4 @@
-set(CMAKE_CXX_STANDARD 14)
+set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 if (CMAKE_COMPILER_IS_GNUCXX)
@@ -16,10 +16,12 @@ add_executable (jtenv
   workspace_jtenv.cpp
 	project_jtenv.cpp
 	mvcapp_jtenv.cpp
+  addressparser_jtenv.cpp
+
 	mvcviewclimain_jtenv.cpp
 	mvcctrlmain_jtenv.cpp
-    mvcmodelconfig_jtenv.cpp
-    mvcmodelworkspaces_jtenv.cpp
+  mvcmodelconfig_jtenv.cpp
+  mvcmodelworkspaces_jtenv.cpp
 	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
 	jkpp/mvcmodelimpl_jkpp.cpp
 	jkpp/filesystem_jkpp.cpp
@@ -38,11 +40,11 @@ add_executable (utjtenv EXCLUDE_FROM_ALL
 	test.cpp
 	project_jtenv.cpp
   workspace_jtenv.cpp
-	mvcmodelworkspaces_test_jtenv.cpp
-	mvcmodelworkspaces_jtenv.cpp
+  addressparser_jtenv.cpp
+  addressparser_test_jtenv.cpp
 	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
-	jkpp/mvcmodelimpl_jkpp.cpp
 	jkpp/filesystem_jkpp.cpp)
+
 target_include_directories(utjtenv PRIVATE ${Catch_INCLUDE_DIRS})
 target_include_directories(utjtenv PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 target_include_directories(utjtenv PRIVATE ${CMAKE_CURRENT_LIST_DIR}/jkpp)
