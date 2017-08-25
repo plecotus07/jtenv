@@ -39,7 +39,14 @@ std::pair<std::string, std::string> AddressParser::operator () (const std::strin
             }
         }
     } else if (ws_name.empty()) {
-        for (; !path.empty() && !fs::exists(path / proj_name / "project.conf"); path = path.parent_path());
+        for (; !path.empty(); path = path.parent_path()){
+            if (auto found {m_workspaces.find(path.filename().string())};
+                       (found != m_workspaces.end())
+                       && (found->second->getPath() == path) ) {
+                ws_name = path.filename().string();
+                break;
+            }
+        }
 
         if (!path.empty()
                 && (m_workspaces.find(path.filename().string()) != m_workspaces.end()) ) ws_name = path.filename().string();

@@ -102,6 +102,14 @@ SCENARIO ("Address parser") {
                 REQUIRE(names.second == "proj11");
             }
 		}
+		WHEN ("Address is not existing project and path is in workspace") {
+			auto names = parser(":proj15", fs::current_path() / "workspaces" / "ws1");
+
+            THEN ("Project and workspace names are found") {
+            	REQUIRE(names.first == "ws1");
+                REQUIRE(names.second == "proj15");
+            }
+		}
         WHEN ("Address is project and path is in workspace sub dir") {
 			auto names = parser(":proj11", fs::current_path() / "workspaces" / "ws1" / "dir1" / "dir2");
 
