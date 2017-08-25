@@ -100,7 +100,7 @@ bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 	Item::SPtr item {m_workspacesModel.getItem(names.first, names.second)};
 
 	if (!item) {
-        std::cerr << "Invalid address.\n";
+        std::cerr << "Invalid address or workspace is not cloned.\n";
         return false;
     }
 
