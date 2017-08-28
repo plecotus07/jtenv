@@ -10,13 +10,21 @@ namespace jkpp {
 class Git {
 	public:
     	using UPtr = std::unique_ptr<Git>;
+		enum class Status { unknown = 0,
+		                    clean,
+							empty,
+                            not_cloned,
+                            not_commited,
+                            not_pushed};
+
 		virtual ~Git () = default;
 
 		virtual const std::string& getPath () const = 0;
 
-		virtual bool init (const std::string& aPath, bool aBare) = 0;
-		virtual UPtr clone (const std::string& aPath, bool aBare) = 0;
-        virtual void set (const std::string& aPath) = 0;
+		virtual bool   init (const std::string& aPath, bool aBare) = 0;
+		virtual UPtr   clone (const std::string& aPath, bool aBare) = 0;
+        virtual void   set (const std::string& aPath) = 0;
+		virtual Status getStatus (std::string& aStatusDetails) const = 0;
 
 		virtual bool command (const std::string& aCommand) const = 0;
 

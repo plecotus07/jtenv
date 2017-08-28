@@ -59,6 +59,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     else if (command == "path") result = onPath(arg, aArgs.end());
     else if (command == "list") result = onListItems(arg, aArgs.end());
     else if (command == "init") result = onInitItem(arg, aArgs.end());
+    else if (command == "status") result = onStatus(arg, aArgs.end());
     else {
    	std::cerr << "Invalid command: " << command << '\n';
        return false;
@@ -219,6 +220,57 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 	return true;
 }
 // -----------------------------------------------------------------------------
+bool MvcViewCliMain::onStatus (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+{
+	std::string addr;
+    bool showDetails {false};
+
+    for (;aArg != aArgsEnd; ++aArg) {
+    	if (*aArg == "-d"){
+        	if (showDetails) {
+            	std::cerr << "Invalid argument: -d\n";
+                return false;
+            }
+            showDetails = true;
+        } else {
+        	if (!addr.empty()) {
+        		std::cerr << "Invalid argument: " + *aArg + '\n';
+	            return false;
+    	    }
+			addr = *aArg;
+		}
+    }
+
+    auto names {m_addressParser(addr)};
+    if (names.first.empty()) {
+    	std::cerr << "Invalid address: " << addr << '\n';
+    	return false;
+    }
+
+	Item::SPtr item { m_workspacesModel.getItem(names.first, names.second) };
+    if (!item) {
+    	std::cout << "Not exists\n";
+    	return true;
+    }
+
+	std::string statusDetails {};
+    jkpp::Git::Status status { item->getStatus(statusDetails) };
+
+    switch (status) {
+   		case jkpp::Git::Status::empty: std::cout << "Empty\n"; break;
+    	case jkpp::Git::Status::clean: std::cout << "Clean\n"; break;
+    	case jkpp::Git::Status::not_cloned: std::cout << "Not cloned\n"; break;
+    	case jkpp::Git::Status::not_commited: std::cout << "Not commited\n"; break;
+    	case jkpp::Git::Status::not_pushed: std::cout << "Not pushed\n"; break;
+		case jkpp::Git::Status::unknown:
+        default: std::cerr << "Get status error\n";
+    }
+
+	if (showDetails && !statusDetails.empty()) std::cout << statusDetails << '\n';
+
+	return false;
+}
+// -----------------------------------------------------------------------------
 void MvcViewCliMain::displayHelp () const
 {
 	std::cout << "\n  jtpm [-v | --version] [-h | --help] [COMMAND]\n\n"
@@ -234,8 +286,10 @@ void MvcViewCliMain::displayHelp () const
                  "      -c - only cloned\n"
                  "      -p - with path\n"
                  "\n    init WS_NAME                       - Init workspace.\n"
-	             "    init ADDR FULL_NAME REPO_URL [-c]    - Init project.\n"
+	             "    init ADDR FULL_NAME REPO_URL [-c]  - Init project.\n"
                  "      -c - clone\n"
+                 "\n    status [ADDR] [-d]                 - get item status\n"
+                 "      -d - display details\n"
 				 "\n";
 }
 // -----------------------------------------------------------------------------

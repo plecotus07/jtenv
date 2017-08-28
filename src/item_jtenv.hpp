@@ -22,7 +22,7 @@ class Item {
         virtual const std::string& getName () const = 0;
 		virtual const fs::path&    getPath () const = 0;
         virtual void               setPath (const fs::path& aPath) = 0;
-
+		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const = 0;
 
 };
 // +++ -------------------------------------------------------------------------

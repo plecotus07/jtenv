@@ -22,7 +22,8 @@ class Workspace : public Item {
 
         virtual const std::string& getName () const { return m_name; }
         virtual const fs::path&    getPath () const { return m_path; }
-        virtual void               setPath (const fs::path& aPath) { m_path = aPath; };
+        virtual void               setPath (const fs::path& aPath);
+		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const;
 
 		Project::SPtr              initProject (const std::string& aName, jkpp::GitBuilder& aGitBuilder, const std::string& aFullName, const std::string& aRepoUrl);
 		Project::SPtr              addProject (const std::string& aName);

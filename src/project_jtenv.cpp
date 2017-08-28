@@ -96,6 +96,9 @@ bool Project::clone (const std::string& aUserName, const std::string& aUserEmail
     if (!git) return false;
     m_git = std::move(git);
 
+    m_git->command("config user.name \"" + aUserName + "\"");
+    m_git->command("config user.email \"" + aUserEmail + "\"");
+
     m_git->command("checkout " + m_defaultBranch);
 
 	return true;
@@ -106,6 +109,13 @@ bool Project::git (const std::string& aCommand)
 	if (!m_git) return false;
 
     return m_git->command(aCommand);
+}
+// -----------------------------------------------------------------------------
+jkpp::Git::Status Project::getStatus (std::string& aStatusDetails) const
+{
+	if (!m_git) return jkpp::Git::Status::not_cloned;
+
+    return m_git->getStatus(aStatusDetails);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

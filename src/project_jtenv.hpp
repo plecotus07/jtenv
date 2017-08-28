@@ -25,6 +25,7 @@ class Project : public Item {
         virtual const std::string& getName () const { return m_name; }
         virtual const fs::path&    getPath () const { return m_path; }
         virtual void               setPath (const fs::path& aPath) { m_path = aPath; }
+		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const;
         virtual const std::string& getWsName () const { return m_wsName; }
 
 		virtual bool isCloned () const { return m_git != nullptr; }

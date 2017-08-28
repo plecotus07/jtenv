@@ -34,6 +34,22 @@ bool Workspace::git (const std::string& aCommand)
     return m_git->command(aCommand);
 }
 // -----------------------------------------------------------------------------
+void Workspace::setPath (const fs::path& aPath)
+{
+	if (!m_git) return;
+
+    m_path = aPath;
+    m_git->set(aPath.string());
+}
+// -----------------------------------------------------------------------------
+jkpp::Git::Status Workspace::getStatus (std::string& aStatusDetails) const
+{
+	if ( (!m_git)
+            || (!fs::exists(m_path)) )return jkpp::Git::Status::not_cloned;
+
+    return m_git->getStatus(aStatusDetails);
+}
+// -----------------------------------------------------------------------------
 Project::SPtr Workspace::initProject (const std::string& aName, jkpp::GitBuilder& aGitBuilder, const std::string& aFullName, const std::string& aRepoUrl)
 {
 	if (aName.empty()) return nullptr;
