@@ -181,6 +181,8 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
         	std::cerr << "Workspace initialization error.\n";
             return false;
         }
+
+        std::cout << "Workspace initialized successfully.\n";
     } else {
         if (aArg == aArgsEnd) {
             std::cerr << "Missing project full name.\n";
@@ -211,6 +213,7 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
         	std::cerr << "Project initialization error.\n";
             return false;
         }
+        std::cout << "Project initialized successfully.\n";
     }
 
 	return true;

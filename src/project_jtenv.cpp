@@ -28,7 +28,16 @@ bool Project::init (const std::string& aFullName, const std::string& aRepoUrl, j
 		return false;
 	}
 
-    return save();
+	if (!save()) return false;
+
+    std::ofstream file {(m_path / ".gitignore").string(), std::fstream::out};
+    if (!file) return false;
+
+    file << m_name + "_repo/\n";
+
+    file.close();
+
+    return true;
 }
 // -----------------------------------------------------------------------------
 bool Project::load (jkpp::GitBuilder& aGitBuilder)
