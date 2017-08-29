@@ -118,7 +118,7 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
     bool with_path {false};
     for (; aArg != aArgsEnd; ++aArg) {
         if ((*aArg)[0] == '-') {
-            for (int i = 1; i < aArg->size(); ++i) {
+            for (size_t i = 1; i < aArg->size(); ++i) {
                 if ((*aArg)[i] == 'c') cloned_only = true;
                 else if ((*aArg)[i] == 'p') with_path = true;
             }
@@ -150,7 +150,7 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
 
         for (auto proj : *ws) {
 
-        	if (!cloned_only || (!proj.second->getPath().empty())) {
+        	if (!cloned_only || (!proj.second->getRepoPath().empty())) {
             	std::cout << proj.first;
                 if (with_path) std::cout << " : " << proj.second->getPath().string();
                 std::cout << '\n';
@@ -294,17 +294,17 @@ bool MvcViewCliMain::onClone (ArgIterator& aArg, const ArgIterator& aArgsEnd)
         return false;
     }
 
-    if (names.second.empty())
-    	if (!m_ctrl.cloneProject(names.first, names.second)) {
-	    	std::cerr << "Clone item error\n";
-    	    return false;
-        }
-    else
+    if (names.second.empty()) {
     	if (!m_ctrl.cloneWorkspace(names.first, fs::current_path())) {
-	    	std::cerr << "Clone item error\n";
+	    	std::cerr << "Clone workspace error\n";
     	    return false;
         }
-
+	} else {
+    	if (!m_ctrl.cloneProject(names.first, names.second)) {
+	    	std::cerr << "Clone project error\n";
+    	    return false;
+        }
+	}
 
 	return false;
 }

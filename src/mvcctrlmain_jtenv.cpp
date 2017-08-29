@@ -131,10 +131,9 @@ bool MvcCtrlMain::cloneWorkspace (const std::string& aName, const fs::path& aPat
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::cloneProject (const std::string& aWsName, const std::string& aName)
 {
-    Workspace::SPtr ws {m_workspacesModel.getWorkspace(aName)};
-
+    Workspace::SPtr ws {m_workspacesModel.getWorkspace(aWsName)};
     if (!ws) return false;
-	if (!ws->getPath().empty()) return false;
+	if (ws->getPath().empty()) return false;
 
     Project::SPtr proj {ws->getProject(aName)};
     if (!proj) return false;

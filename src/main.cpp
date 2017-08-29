@@ -8,6 +8,6 @@ int main (int aArgc, char* aArgv[])
 	std::vector<std::string> args;
 	for (int i = 1; i < aArgc; ++i) args.push_back(aArgv[i]);
 
-	return app.run(args);
+	return app.run(args) ? 0 : 1;
 }
 // +++ -------------------------------------------------------------------------

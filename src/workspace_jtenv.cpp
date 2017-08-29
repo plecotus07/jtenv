@@ -16,9 +16,11 @@ bool Workspace::clone (const fs::path& aPath, const std::string& aUserName, cons
 	if (!m_remoteGit) return false;
     if (m_git) return false;
     if (aPath.empty()) return false;
-    if (fs::exists(aPath)) return false;
 
-	jkpp::Git::UPtr clonedGit {m_remoteGit->clone(aPath.string(), false)};
+	fs::path ws_path {aPath / m_name};
+    if (fs::exists(ws_path)) return false;
+
+	jkpp::Git::UPtr clonedGit {m_remoteGit->clone(ws_path.string(), false)};
     if (!clonedGit) return false;
 
     m_git = std::move(clonedGit);
