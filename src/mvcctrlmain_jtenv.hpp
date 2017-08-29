@@ -29,6 +29,9 @@ class MvcCtrlMain {
         bool initWorkspace (const std::string& aName, const fs::path& aPath);
         bool initProject (const std::string& aWsName, const std::string& aName, const std::string& aFullName, const std::string& aRepoUrl, bool clone);
 
+        bool cloneWorkspace (const std::string& aName, const fs::path& aPath);
+        bool cloneProject (const std::string& aWsName, const std::string& aName);
+
 	protected:
 		MvcModelConfig&     m_configModel;
 		MvcModelWorkspaces& m_workspacesModel;

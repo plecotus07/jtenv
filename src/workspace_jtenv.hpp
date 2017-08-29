@@ -15,17 +15,16 @@ class Workspace : public Item {
 		using SPtrByStrMap = std::map<std::string, SPtr>;
         using Iterator = SPtrByStrMap::iterator;
 
-        Workspace (const std::string& aName, jkpp::Git::UPtr&& aGit, const fs::path& aPath = fs::path());
+        Workspace (const std::string& aName, jkpp::Git::UPtr&& aRemoteGit, jkpp::Git::UPtr&& aGit = nullptr);
 
-        virtual bool clone (const std::string& aUserName, const std::string& aUserEmail);
+        virtual bool clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail);
         virtual bool git (const std::string& aCommand);
 
         virtual const std::string& getName () const { return m_name; }
-        virtual const fs::path&    getPath () const { return m_path; }
-        virtual void               setPath (const fs::path& aPath);
+        virtual fs::path           getPath () const { return getRepoPath(); }
+		virtual fs::path           getRepoPath () const { return m_git ? m_git->getUrl() : fs::path{}; }
 		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const;
 
-		Project::SPtr              initProject (const std::string& aName, jkpp::GitBuilder& aGitBuilder, const std::string& aFullName, const std::string& aRepoUrl);
 		Project::SPtr              addProject (const std::string& aName);
 		Project::SPtr              getProject (const std::string& aName);
 
@@ -35,6 +34,7 @@ class Workspace : public Item {
     protected:
     	std::string     m_name;
         fs::path        m_path;
+        jkpp::Git::UPtr m_remoteGit;
         jkpp::Git::UPtr m_git;
 
 		Project::SPtrByStrMap m_projects;

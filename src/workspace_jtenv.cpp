@@ -3,20 +3,22 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-Workspace::Workspace (const std::string& aName, jkpp::Git::UPtr&& aGit, const fs::path& aPath) :
+Workspace::Workspace (const std::string& aName, jkpp::Git::UPtr&& aRemoteGit, jkpp::Git::UPtr&& aGit) :
 	m_name{aName},
-    m_path{aPath},
-    m_git{std::move(aGit)}
+	m_remoteGit{std::move(aRemoteGit)},
+	m_git{std::move(aGit)}
 {
-///\todo assert(m_git)
+///\todo assert(m_remoteGit)
 }
 // -----------------------------------------------------------------------------
-bool Workspace::clone (const std::string& aUserName, const std::string& aUserEmail)
+bool Workspace::clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail)
 {
-	if (!m_git) return false;
-    if (m_path.empty()) return false;
+	if (!m_remoteGit) return false;
+    if (m_git) return false;
+    if (aPath.empty()) return false;
+    if (fs::exists(aPath)) return false;
 
-	jkpp::Git::UPtr clonedGit {m_git->clone(m_path.string(), false)};
+	jkpp::Git::UPtr clonedGit {m_remoteGit->clone(aPath.string(), false)};
     if (!clonedGit) return false;
 
     m_git = std::move(clonedGit);
@@ -34,44 +36,22 @@ bool Workspace::git (const std::string& aCommand)
     return m_git->command(aCommand);
 }
 // -----------------------------------------------------------------------------
-void Workspace::setPath (const fs::path& aPath)
-{
-	if (!m_git) return;
-
-    m_path = aPath;
-    m_git->set(aPath.string());
-}
-// -----------------------------------------------------------------------------
 jkpp::Git::Status Workspace::getStatus (std::string& aStatusDetails) const
 {
 	if ( (!m_git)
-            || (!fs::exists(m_path)) )return jkpp::Git::Status::not_cloned;
+            || (!fs::exists(m_git->getUrl())) ) return jkpp::Git::Status::not_cloned;
 
     return m_git->getStatus(aStatusDetails);
-}
-// -----------------------------------------------------------------------------
-Project::SPtr Workspace::initProject (const std::string& aName, jkpp::GitBuilder& aGitBuilder, const std::string& aFullName, const std::string& aRepoUrl)
-{
-	if (aName.empty()) return nullptr;
-    if (m_path.empty()) return nullptr;
-    if (m_projects.find(aName) != m_projects.end()) return nullptr;
-
-    Project::SPtr proj {std::make_shared<Project>(m_name, aName, m_path / aName)};
-
-    if (!proj->init(aFullName, aRepoUrl, aGitBuilder)) return nullptr;
-
-	m_projects.insert(std::make_pair(aName, proj));
-
-    return proj;
 }
 // -----------------------------------------------------------------------------
 Project::SPtr Workspace::addProject (const std::string& aName)
 {
 	if (aName.empty()) return nullptr;
-    if (m_path.empty()) return nullptr;
+	if (!m_git) return nullptr;
+	if (!fs::exists(m_git->getUrl())) return nullptr;
     if (m_projects.find(aName) != m_projects.end()) return nullptr;
 
-    Project::SPtr proj {std::make_shared<Project>(m_name, aName, m_path / aName)};
+    Project::SPtr proj {std::make_shared<Project>(m_name, aName, fs::path{m_git->getUrl()} / aName)};
     m_projects.insert(std::make_pair(aName, proj));
 
 	return proj;

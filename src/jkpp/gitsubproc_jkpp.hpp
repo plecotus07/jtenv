@@ -8,24 +8,24 @@ namespace jkpp {
 // +++ -------------------------------------------------------------------------
 class GitSubProc : public Git {
 	public:
-		GitSubProc ();
+		GitSubProc (const std::string& aUrl = {});
 
-		virtual const std::string& getPath () const  { return m_path; }
+		virtual const std::string& getUrl () const  { return m_url; }
 
-		virtual bool   init (const std::string& aPath, bool aBare);
-		virtual UPtr   clone (const std::string& aPath, bool aBare);
-        virtual void   set (const std::string& aPath) { m_path = aPath; }
+		virtual bool   init (const std::string& aUrl, bool aBare);
+		virtual UPtr   clone (const std::string& aUrl, bool aBare);
+
 		virtual Status getStatus (std::string& aStatusDetails) const;
 
-		virtual bool command (const std::string& aCommand) const;
+		virtual bool   command (const std::string& aCommand) const;
 
 	protected:
-		std::string m_path;
+		std::string m_url;
 };
 // +++ -------------------------------------------------------------------------
 class GitSubProcBuilder : public GitBuilder {
 	public:
-		virtual Git::UPtr create () const;
+		virtual Git::UPtr create (const std::string& aUrl = {}) const;
 };
 // +++ -------------------------------------------------------------------------
 } // jkpp

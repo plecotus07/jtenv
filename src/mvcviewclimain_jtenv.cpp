@@ -54,12 +54,13 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     bool result {true};
     ArgIterator arg {aArgs.begin() + 1};
 
-    if (command == "user-name")result = onUserName(arg, aArgs.end());
+    if (command == "user-name") result = onUserName(arg, aArgs.end());
     else if (command == "user-email") result = onUserEmail(arg, aArgs.end());
     else if (command == "path") result = onPath(arg, aArgs.end());
     else if (command == "list") result = onListItems(arg, aArgs.end());
     else if (command == "init") result = onInitItem(arg, aArgs.end());
     else if (command == "status") result = onStatus(arg, aArgs.end());
+    else if (command == "clone") result = onClone(arg, aArgs.end());
     else {
    	std::cerr << "Invalid command: " << command << '\n';
        return false;
@@ -149,7 +150,7 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
 
         for (auto proj : *ws) {
 
-        	if (!cloned_only || (proj.second->isCloned())) {
+        	if (!cloned_only || (!proj.second->getPath().empty())) {
             	std::cout << proj.first;
                 if (with_path) std::cout << " : " << proj.second->getPath().string();
                 std::cout << '\n';
@@ -271,6 +272,43 @@ bool MvcViewCliMain::onStatus (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 	return false;
 }
 // -----------------------------------------------------------------------------
+bool MvcViewCliMain::onClone (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+{
+	std::string addr;
+    if (aArg == aArgsEnd) {
+    	std::cerr << "Missing item address.\n";
+        return false;
+    }
+
+    addr = *aArg;
+
+    ++aArg;
+    if (aArg != aArgsEnd) {
+    	std::cerr << "Invalid argument: " << *aArg << '\n';
+        return false;
+    }
+
+	auto names {m_addressParser(addr)};
+    if (names.first.empty()) {
+    	std::cerr << "Invalid address: " << addr << '\n';
+        return false;
+    }
+
+    if (names.second.empty())
+    	if (!m_ctrl.cloneProject(names.first, names.second)) {
+	    	std::cerr << "Clone item error\n";
+    	    return false;
+        }
+    else
+    	if (!m_ctrl.cloneWorkspace(names.first, fs::current_path())) {
+	    	std::cerr << "Clone item error\n";
+    	    return false;
+        }
+
+
+	return false;
+}
+// -----------------------------------------------------------------------------
 void MvcViewCliMain::displayHelp () const
 {
 	std::cout << "\n  jtpm [-v | --version] [-h | --help] [COMMAND]\n\n"
@@ -290,6 +328,7 @@ void MvcViewCliMain::displayHelp () const
                  "      -c - clone\n"
                  "\n    status [ADDR] [-d]                 - get item status\n"
                  "      -d - display details\n"
+                 "\n    clone [ADDR]                       - clone item\n"
 				 "\n";
 }
 // -----------------------------------------------------------------------------

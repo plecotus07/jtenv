@@ -83,14 +83,15 @@ bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath
 
     if (!git->init((m_workspacesModel.getWorkspacesDirPath() / (aName + ".git")).string(), true)) return false;
 
-	Workspace::SPtr ws {m_workspacesModel.addWorkspace(aName, std::move(git), aPath / aName)};
+	Workspace::SPtr ws {m_workspacesModel.addWorkspace(aName, std::move(git))};
     if (!ws) return false;
+
+    if (!ws->clone(aPath / aName, m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
+
 	if (!m_workspacesModel.save()) return false;
 
-    if (!ws->clone(m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
-
     try {
-    	fs::copy(getConfDirPath() / "gitignore.tmpl", aPath / aName / ".gitignore");
+    	fs::copy(getConfDirPath() / "gitignore.tmpl", ws->getPath() / ".gitignore");
     } catch (...) {
     	return false;
     }
@@ -107,12 +108,43 @@ bool MvcCtrlMain::initProject (const std::string& aWsName, const std::string& aN
 	Workspace::SPtr ws {m_workspacesModel.getWorkspace(aWsName)};
     if (!ws) return false;
 
-    Project::SPtr proj {ws->initProject(aName, m_gitBuilder, aFullName, aRepoUrl)};
+    Project::SPtr proj {ws->addProject(aName)};
     if (!proj) return false;
 
-    if (aClone && !proj->clone(m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
+    if (!proj->init(aFullName, m_gitBuilder.create(aRepoUrl))) return false;
+
+    if (aClone && !proj->clone(ws->getPath() / aName, m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
 
 	return true;
+}
+// -----------------------------------------------------------------------------
+bool MvcCtrlMain::cloneWorkspace (const std::string& aName, const fs::path& aPath)
+{
+    Workspace::SPtr ws {m_workspacesModel.getWorkspace(aName)};
+
+    if (!ws) return false;
+	if (!ws->getPath().empty()) return false;
+    if (fs::exists(aPath / aName)) return false;
+
+    return ws->clone(aPath, m_configModel.getUserName(), m_configModel.getUserEmail());
+}
+// -----------------------------------------------------------------------------
+bool MvcCtrlMain::cloneProject (const std::string& aWsName, const std::string& aName)
+{
+    Workspace::SPtr ws {m_workspacesModel.getWorkspace(aName)};
+
+    if (!ws) return false;
+	if (!ws->getPath().empty()) return false;
+
+    Project::SPtr proj {ws->getProject(aName)};
+    if (!proj) return false;
+    if (!fs::exists(ws->getPath() / aName)) return false;
+
+    fs::path path {ws->getPath() / aName / (aName + "_repo")};
+
+    if (fs::exists(path)) return false;
+
+    return proj->clone(path, m_configModel.getUserName(), m_configModel.getUserEmail());
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

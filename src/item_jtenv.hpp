@@ -16,12 +16,13 @@ class Item {
 
 		virtual ~Item () = default;
 
-        virtual bool clone (const std::string& aUserName, const std::string& aUserEmail) = 0;
+        virtual bool clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail) = 0;
 		virtual bool git(const std::string& aCommand) = 0;
 
         virtual const std::string& getName () const = 0;
-		virtual const fs::path&    getPath () const = 0;
-        virtual void               setPath (const fs::path& aPath) = 0;
+		virtual fs::path           getPath () const = 0;
+		virtual fs::path           getRepoPath () const = 0;
+
 		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const = 0;
 
 };

@@ -19,11 +19,10 @@ class Git {
 
 		virtual ~Git () = default;
 
-		virtual const std::string& getPath () const = 0;
+		virtual const std::string& getUrl () const = 0;
 
 		virtual bool   init (const std::string& aPath, bool aBare) = 0;
 		virtual UPtr   clone (const std::string& aPath, bool aBare) = 0;
-        virtual void   set (const std::string& aPath) = 0;
 		virtual Status getStatus (std::string& aStatusDetails) const = 0;
 
 		virtual bool command (const std::string& aCommand) const = 0;
@@ -34,7 +33,7 @@ class GitBuilder {
 	public:
 		virtual ~GitBuilder () = default;
 
-        virtual Git::UPtr create () const = 0;
+        virtual Git::UPtr create (const std::string& aUrl = {}) const = 0;
 };
 // +++ -------------------------------------------------------------------------
 } // jkpp

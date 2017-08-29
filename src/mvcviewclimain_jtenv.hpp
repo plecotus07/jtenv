@@ -36,6 +36,7 @@ class MvcViewCliMain : public jkpp::MvcView {
 		bool onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onStatus (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onClone (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 
 		void displayHelp () const;
 		void displayVersion () const;

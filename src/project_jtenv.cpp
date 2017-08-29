@@ -16,11 +16,10 @@ Project::Project (const std::string& aWsName, const std::string& aName, const fs
 
 }
 // -----------------------------------------------------------------------------
-bool Project::init (const std::string& aFullName, const std::string& aRepoUrl, jkpp::GitBuilder& aGitBuilder)
+bool Project::init (const std::string& aFullName, jkpp::Git::UPtr&& aRemoteGit)
 {
 	m_fullName = aFullName;
-    m_remoteGit = aGitBuilder.create();
-    m_remoteGit->set(aRepoUrl);
+    m_remoteGit = std::move(aRemoteGit);
 
 	try {
 		fs::create_directories(m_path);
@@ -50,23 +49,22 @@ bool Project::load (jkpp::GitBuilder& aGitBuilder)
     std::string line {};
 
     while (std::getline(file, line)) {
-		auto pos {line.find_first_of('=')};
-        if (pos == std::string::npos) return false;
+        if (!line.empty()) {
+    		auto pos {line.find_first_of('=')};
+            if (pos == std::string::npos) return false;
 
-        std::string key {line.substr(0, pos)};
-        std::string value {line.substr(pos + 1)};
+            std::string key {line.substr(0, pos)};
+            std::string value {line.substr(pos + 1)};
 
-        if (key == "repo_url") {
-        	m_remoteGit = aGitBuilder.create();
-            m_remoteGit->set(value);
-        } else if (key == "full_name") m_fullName = value;
-        else if (key == "default_branch") m_defaultBranch = value;
-        else return false;
+            if (key == "repo_url") m_remoteGit = aGitBuilder.create(value);
+            else if (key == "full_name") m_fullName = value;
+            else if (key == "default_branch") m_defaultBranch = value;
+            else return false;
+        }
     }
 
 	if (fs::exists(m_path / (m_name + "_repo"))) {
-		m_git = aGitBuilder.create();
-	    m_git->set((m_path / (m_name + "_repo")).string());
+		m_git = aGitBuilder.create((m_path / (m_name + "_repo")).string());
 	}
 
 	return true;
@@ -80,7 +78,7 @@ bool Project::save ()
     if (!file) return false;
 
     file << "full_name=" << m_fullName << '\n';
-    file << "repo_url=" << m_remoteGit->getPath() << '\n';
+    file << "repo_url=" << m_remoteGit->getUrl() << '\n';
     file << "default_branch=" << m_defaultBranch << '\n';
 
     file.close();
@@ -88,7 +86,7 @@ bool Project::save ()
     return true;
 }
 // -----------------------------------------------------------------------------
-bool Project::clone (const std::string& aUserName, const std::string& aUserEmail)
+bool Project::clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail)
 {
 	if (!m_remoteGit) return false;
 

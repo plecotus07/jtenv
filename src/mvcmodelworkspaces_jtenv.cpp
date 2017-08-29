@@ -35,13 +35,13 @@ Workspace::SPtr MvcModelWorkspaces::getWorkspace (const std::string& aName)
 	return found->second;
 }
 // -----------------------------------------------------------------------------
-Workspace::SPtr MvcModelWorkspaces::addWorkspace (const std::string& aName, jkpp::Git::UPtr&& aGit, const fs::path& aPath)
+Workspace::SPtr MvcModelWorkspaces::addWorkspace (const std::string& aName, jkpp::Git::UPtr&& aRemoteGit, jkpp::Git::UPtr&& aGit)
 {
 	if (aName.empty()) return nullptr;
     if (m_workspaces.find(aName) != m_workspaces.end()) return nullptr;
 
     beginUpdate();
-    Workspace::SPtr ws {std::make_shared<Workspace>(aName, std::move(aGit), aPath)};
+    Workspace::SPtr ws {std::make_shared<Workspace>(aName, std::move(aRemoteGit), std::move(aGit))};
     m_workspaces.insert(std::make_pair(aName, ws));
     endUpdate();
 
@@ -64,6 +64,33 @@ bool MvcModelWorkspaces::removeWorkspace (const std::string& aName)
 // -----------------------------------------------------------------------------
 bool MvcModelWorkspaces::load (jkpp::GitBuilder& aGitBuilder)
 {
+	std::map<std::string, fs::path> cloned_ws {};
+
+    std::ifstream file {m_confFilePath.string(), std::fstream::in};
+    if (!file) return false;
+
+    std::string line {};
+    while (std::getline(file, line)) {
+    	if (!line.empty()) {
+            auto pos {line.find_first_of('=')};
+            if (pos == std::string::npos) return false;
+            std::string key {line.substr(0, pos)};
+            std::string value {line.substr(pos + 1)};
+
+            if (key == "workspace") {
+                auto ws_pos {value.find_first_of(':')};
+                if (ws_pos == std::string::npos) return false;
+
+                std::string name {value.substr(0, ws_pos)};
+                fs::path path {value.substr(ws_pos + 1)};
+                if (fs::exists(path)) cloned_ws.insert(std::make_pair(name, path));
+            }
+            else return false;
+        }
+    }
+
+    if (!file.eof()) return false;
+
     m_workspaces.clear();
 	if (!fs::exists(m_workspacesDirPath)) return false;
 
@@ -71,21 +98,37 @@ bool MvcModelWorkspaces::load (jkpp::GitBuilder& aGitBuilder)
 
     for (;dir != fs::directory_iterator(); ++dir) {
         if ( (fs::is_directory(dir->path()))
-		     && (dir->path().extension() == ".git") ) {
-        	jkpp::Git::UPtr git {aGitBuilder.create()};
-            git->set(dir->path().string());
-			if (!addWorkspace(dir->path().stem().string(), std::move(git))) return false;
+		         && (dir->path().extension() == ".git") ) {
+            std::string name {dir->path().stem().string()};
+			auto path {cloned_ws.find(name)};
+
+            jkpp::Git::UPtr git {path == cloned_ws.end() ? nullptr : aGitBuilder.create(path->second.string())};
+        	jkpp::Git::UPtr remote_git {aGitBuilder.create(dir->path().string())};
+            Workspace::SPtr ws {addWorkspace(name, std::move(remote_git), std::move(git))};
+            if (!ws) return false;
+
+            if (!ws->getPath().empty()) {
+    		    fs::directory_iterator dir {ws->getPath()};
+
+    		    for (;dir != fs::directory_iterator(); ++dir) {
+    		        if ( fs::is_directory(dir->path())
+    				         && fs::exists(dir->path() / "project.conf") ) {
+                    	std::string proj_name {dir->path().filename().string()};
+    					Project::SPtr proj {ws->addProject(proj_name)};
+                        if (!proj) return false;
+                        if (!proj->load(aGitBuilder)) return false;
+    		        }
+    		    }
+            }
         }
     }
 
-    std::ifstream file {m_confFilePath.string(), std::fstream::in};
-    if (!file) return false;
 
     beginUpdate();
-    bool result {loadLines (file, aGitBuilder)};
+
     endUpdate();
 
-	return result;
+	return true;
 }
 // -----------------------------------------------------------------------------
 bool MvcModelWorkspaces::save ()
@@ -98,45 +141,6 @@ bool MvcModelWorkspaces::save ()
 	    	file << "workspace=" << ws.first << ':' << ws.second->getPath().string() << '\n';
     }
 	return  true;
-}
-// -----------------------------------------------------------------------------
-bool MvcModelWorkspaces::loadLines (std::ifstream& aFile, jkpp::GitBuilder& aGitBuilder)
-{
-    std::string line {};
-    while (std::getline(aFile, line)) {
-        auto pos {line.find_first_of('=')};
-        if (pos == std::string::npos) return false;
-        std::string key {line.substr(0, pos)};
-        std::string value {line.substr(pos + 1)};
-
-        if (key == "workspace") {
-            auto ws_pos {value.find_first_of(':')};
-            if (ws_pos == std::string::npos) return false;
-
-            std::string name {value.substr(0, ws_pos)};
-            fs::path path {value.substr(ws_pos + 1)};
-			if (!fs::exists(path)) continue;
-
-            auto ws {m_workspaces.find(name)};
-            if (ws == m_workspaces.end()) return false;
-
-			ws->second->setPath(path);
-
-		    fs::directory_iterator dir {path};
-
-		    for (;dir != fs::directory_iterator(); ++dir) {
-		        if ( fs::is_directory(dir->path())
-				     && fs::exists(dir->path() / "project.conf") ) {
-                	std::string proj_name {dir->path().filename().string()};
-					Project::SPtr proj {ws->second->addProject(proj_name)};
-                    if (!proj) return false;
-                    if (!proj->load(aGitBuilder)) return false;
-		        }
-		    }
-        }
-        else return false;
-    }
-    return aFile.eof();
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

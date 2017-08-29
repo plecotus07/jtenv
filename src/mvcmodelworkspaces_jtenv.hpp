@@ -20,7 +20,7 @@ class MvcModelWorkspaces : public jkpp::MvcModelImpl {
 
 		Item::SPtr      getItem (const std::string& aWsName, const std::string& aProjName);
 		Workspace::SPtr getWorkspace (const std::string& aName);
-		Workspace::SPtr addWorkspace (const std::string& aName, jkpp::Git::UPtr&& aGit, const fs::path& aPath = fs::path());
+		Workspace::SPtr addWorkspace (const std::string& aName, jkpp::Git::UPtr&& aRemoteGit, jkpp::Git::UPtr&& aGit = nullptr);
         bool            removeWorkspace (const std::string& aName);
 
 		bool load (jkpp::GitBuilder& aGitBuilder);
