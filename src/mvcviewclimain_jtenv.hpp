@@ -39,6 +39,10 @@ class MvcViewCliMain : public jkpp::MvcView {
 		bool onCloneItem (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onClearItem (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onGit (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onCMake (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onCMakeAdd (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onCMakeRemove (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onCMakeList (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 
 		void displayHelp () const;
 		void displayVersion () const;

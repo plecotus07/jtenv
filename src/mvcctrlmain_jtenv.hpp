@@ -37,6 +37,10 @@ class MvcCtrlMain {
 
 		bool git (const std::string& aWsName, const std::string& aProjName, const std::string& aGitCmd);
 
+		bool cmakeAdd (const std::string& aName, const std::string& aCommand)
+		bool cmakeRemove (const std::string& aName)
+		bool cmakeExecute (const std::string& aWsName, const std::string aProjName, const std::string& aCmdName)
+
 	protected:
 		MvcModelConfig&     m_configModel;
 		MvcModelWorkspaces& m_workspacesModel;

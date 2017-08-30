@@ -63,6 +63,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     else if (command == "clone") result = onCloneItem(arg, aArgs.end());
     else if (command == "clear") result = onClearItem(arg, aArgs.end());
     else if (command == "git") result = onGit(arg, aArgs.end());
+    else if (command == "cmake") result = onCMake(arg, aArgs.end());
     else {
    	std::cerr << "Invalid command: " << command << '\n';
        return false;
@@ -410,6 +411,109 @@ bool MvcViewCliMain::onGit (ArgIterator& aArg, const ArgIterator& aArgsEnd)
     return true;
 }
 // -----------------------------------------------------------------------------
+bool MvcViewCliMain::onCMake (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+{
+    if (aArg == aArgsEnd) {
+    	std::cerr << "Missing arguments\n";
+        return false;
+    }
+
+    if (*aArg == "add") return onCMakeAdd (aArg, aArgsEnd);
+    else if (*aArg == "rem") return onCMakeRemove (aArg, aArgsEnd);
+    else if (*aArg == "list") return onCMakeList (aArg, aArgsEnd);
+
+    std::string addr {*aArg};
+
+    ++aArg;
+    if (aArg == aArgsEnd) {
+    	std::cerr << "Missing arguments.\n";
+        return false;
+    }
+    std::string name {*aArg};
+
+    ++aArg;
+    if (aArg != aArgsEnd) {
+    	std::cerr << "Invalid argument: " << *aArg << '\n';
+        return false;
+    }
+
+
+    if (!m_ctrl.onCMakeExecute(*aArg)) {
+    	std::cerr << "CMake command execute error\n";
+        return false;
+    }
+
+    return true;
+
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliMain::onCMakeAdd (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+{
+    ++aArg;
+    if (aArg == aArgsEnd) {
+    	std::cerr << "Missing arguments.\n";
+        return false;
+    }
+    std::string name {*aArg};
+
+    ++aArg;
+    if (aArg == aArgsEnd) {
+    	std::cerr << "Missing arguments.\n";
+        return false;
+    }
+    std::string cmd {*aArg};
+
+    ++aArg;
+    if (aArg != aArgsEnd) {
+    	std::cerr << "Invalid argument: " << *aArg << '\n';
+        return false;
+    }
+
+
+    if (!m_ctrl.cmakeAdd(name, cmd)) {
+    	std::cerr << "Add CMake command error.\n";
+        return false;
+    }
+
+    return true;
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliMain::onCMakeRemove (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+{
+    ++aArg;
+    if (aArg == aArgsEnd) {
+    	std::cerr << "Missing arguments.\n";
+        return false;
+    }
+    std::string name {*aArg};
+
+    ++aArg;
+    if (aArg != aArgsEnd) {
+    	std::cerr << "Invalid argument: " << *aArg << '\n';
+        return false;
+    }
+
+    if (!m_ctrl.cmakeRemove(name)) {
+    	std::cerr << "Remove CMake command error.\n";
+        return false;
+    }
+
+    return true;
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliMain::onCMakeList (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+{
+    ++aArg;
+    if (aArg != aArgsEnd) {
+    	std::cerr << "Invalid argument: " << *aArg << '\n';
+        return false;
+    }
+
+    for (auto cmd : m_cmakeModel.getCommands()) std::cout << cmd.first << " = " << cmd.second << '\n';
+
+    return true;
+}
+// -----------------------------------------------------------------------------
 void MvcViewCliMain::displayHelp () const
 {
 	std::cout << "\n  jtpm [-v | --version] [-h | --help] [COMMAND]\n\n"
@@ -433,6 +537,11 @@ void MvcViewCliMain::displayHelp () const
                  "\n    clear [ADDR] [-f]                  - clear item\n"
                  "      -f - force\n"
                  "\n    git [ADDR] -- [COMMAND]            - execute Git command\n"
+                 "\n    cmake [add] [rem] [list] [ADDR NAME] - CMake commands manager\n"
+                 "      ADDR NAME        - execute NAME command in ADDR project\n"
+                 "      add NAME COMMAND - add command\n"
+                 "      rem NAME         - remove command\n"
+                 "      list             - list commands\n"
 				 "\n";
 }
 // -----------------------------------------------------------------------------
