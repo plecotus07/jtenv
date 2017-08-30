@@ -61,6 +61,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     else if (command == "init") result = onInitItem(arg, aArgs.end());
     else if (command == "status") result = onStatus(arg, aArgs.end());
     else if (command == "clone") result = onClone(arg, aArgs.end());
+    else if (command == "clear") result = onItemClear(arg, aArgs.end());
     else {
    	std::cerr << "Invalid command: " << command << '\n';
        return false;
@@ -298,15 +299,71 @@ bool MvcViewCliMain::onClone (ArgIterator& aArg, const ArgIterator& aArgsEnd)
     	if (!m_ctrl.cloneWorkspace(names.first, fs::current_path())) {
 	    	std::cerr << "Clone workspace error\n";
     	    return false;
+        } else {
+        	std::cout << "Workspace cloned successfully\n";
         }
 	} else {
     	if (!m_ctrl.cloneProject(names.first, names.second)) {
 	    	std::cerr << "Clone project error\n";
     	    return false;
+        } else {
+        	std::cout << "Project cloned successfully\n";
         }
 	}
 
 	return false;
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliMain::onItemClear (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+{
+	std::string addr {};
+    bool        force {false};
+
+    for (;aArg != aArgsEnd; ++aArg) {
+    	if (*aArg == "-f"){
+        	if (force) {
+            	std::cerr << "Invalid argument: -f\n";
+                return false;
+            }
+            force = true;
+        } else {
+        	if (!addr.empty()) {
+        		std::cerr << "Invalid argument: " + *aArg + '\n';
+	            return false;
+    	    }
+			addr = *aArg;
+		}
+    }
+
+	auto names {m_addressParser(addr)};
+    if (names.first.empty()) {
+    	std::cerr << "Invalid address: " << addr << '\n';
+        return false;
+    }
+
+    std::string details {};
+
+    if (names.second.empty()) {
+    	if (!m_ctrl.clearWorkspace(names.first, details, force)) {
+        	if (details.empty()) std::cerr << "Clear workspace error\n";
+            else std::cout << details;
+
+            return false;
+        } else {
+        	std::cout << "Workspace clear successfully\n";
+        }
+	} else {
+    	if (!m_ctrl.clearProject(names.first, names.second, details, force)) {
+        	if (details.empty()) std::cerr << "Clear project error\n";
+            else std::cout << details;
+
+  		    return false;
+        } else {
+        	std::cout << "Project clear successfully\n";
+        }
+	}
+
+	return true;
 }
 // -----------------------------------------------------------------------------
 void MvcViewCliMain::displayHelp () const
@@ -329,6 +386,8 @@ void MvcViewCliMain::displayHelp () const
                  "\n    status [ADDR] [-d]                 - get item status\n"
                  "      -d - display details\n"
                  "\n    clone [ADDR]                       - clone item\n"
+                 "\n    clear [ADDR] [-f]                  - clear item\n"
+                 "      -f - force\n"
 				 "\n";
 }
 // -----------------------------------------------------------------------------

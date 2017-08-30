@@ -86,7 +86,7 @@ bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath
 	Workspace::SPtr ws {m_workspacesModel.addWorkspace(aName, std::move(git))};
     if (!ws) return false;
 
-    if (!ws->clone(aPath / aName, m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
+    if (!ws->clone(aPath, m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
 
 	if (!m_workspacesModel.save()) return false;
 
@@ -137,13 +137,75 @@ bool MvcCtrlMain::cloneProject (const std::string& aWsName, const std::string& a
 
     Project::SPtr proj {ws->getProject(aName)};
     if (!proj) return false;
-    if (!fs::exists(ws->getPath() / aName)) return false;
+    if (!fs::exists(proj->getPath())) return false;
 
-    fs::path path {ws->getPath() / aName / (aName + "_repo")};
+    fs::path path {proj->getPath() / (aName + "_repo")};
 
     if (fs::exists(path)) return false;
 
     return proj->clone(path, m_configModel.getUserName(), m_configModel.getUserEmail());
+}
+// -----------------------------------------------------------------------------
+bool MvcCtrlMain::clearWorkspace (const std::string& aName, std::string& aDetails, bool aForce)
+{
+    Workspace::SPtr ws {m_workspacesModel.getWorkspace(aName)};
+    if (!ws) return false;
+	if (!fs::exists(ws->getPath())) return false;
+
+    jkpp::Git::Status status = ws->getStatus(aDetails);
+	bool ws_edited {(status != jkpp::Git::Status::clean)
+                    && (status != jkpp::Git::Status::empty)};
+
+    bool projs_edited {false};
+    std::string projs_details {};
+
+	if (!aForce) {
+        for (auto proj : *ws) {
+            std::string proj_details {};
+            auto proj_status {proj.second->getStatus(proj_details)};
+            if ( (proj_status != jkpp::Git::Status::not_cloned)
+            	     && (proj_status != jkpp::Git::Status::clean)
+                     && (proj_status != jkpp::Git::Status::empty) ) {
+				projs_details += proj.second->getName() + '\n' + proj_details + '\n';
+				projs_edited = true;
+            }
+        }
+
+        aDetails += (aDetails.empty() ? "" : "\n") + projs_details;
+
+        if ( projs_edited
+             || ws_edited ) return false;
+
+	    aDetails.clear();
+    }
+
+    try { fs::remove_all(ws->getRepoPath()); } catch (...) { return false; }
+
+    return true;
+}
+// -----------------------------------------------------------------------------
+bool MvcCtrlMain::clearProject (const std::string& aWsName, const std::string& aName, std::string& aDetails, bool aForce)
+{
+    Workspace::SPtr ws {m_workspacesModel.getWorkspace(aWsName)};
+    if (!ws) return false;
+	if (!fs::exists(ws->getPath())) return false;
+
+    Project::SPtr proj {ws->getProject(aName)};
+    if (!proj) return false;
+    if (!fs::exists(proj->getPath())) return false;
+    if (!fs::exists(proj->getRepoPath())) return false;
+
+    auto status {proj->getStatus(aDetails)};
+
+    if (status != jkpp::Git::Status::clean
+        && status != jkpp::Git::Status::empty
+        && !aForce) return false;
+
+    aDetails.clear();
+
+    try { fs::remove_all(proj->getRepoPath()); } catch (...) { return false; }
+
+    return true;
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

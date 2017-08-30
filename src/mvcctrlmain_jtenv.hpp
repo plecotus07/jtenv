@@ -32,6 +32,9 @@ class MvcCtrlMain {
         bool cloneWorkspace (const std::string& aName, const fs::path& aPath);
         bool cloneProject (const std::string& aWsName, const std::string& aName);
 
+        bool clearWorkspace (const std::string& aName, std::string& aDetails, bool aForce);
+		bool clearProject (const std::string& aWsName, const std::string& aName, std::string& aDetails, bool aForce);
+
 	protected:
 		MvcModelConfig&     m_configModel;
 		MvcModelWorkspaces& m_workspacesModel;
