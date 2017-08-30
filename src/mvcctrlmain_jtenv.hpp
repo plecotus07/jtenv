@@ -35,6 +35,8 @@ class MvcCtrlMain {
         bool clearWorkspace (const std::string& aName, std::string& aDetails, bool aForce);
 		bool clearProject (const std::string& aWsName, const std::string& aName, std::string& aDetails, bool aForce);
 
+		bool git (const std::string& aWsName, const std::string& aProjName, const std::string& aGitCmd);
+
 	protected:
 		MvcModelConfig&     m_configModel;
 		MvcModelWorkspaces& m_workspacesModel;

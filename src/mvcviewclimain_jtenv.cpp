@@ -62,6 +62,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     else if (command == "status") result = onStatus(arg, aArgs.end());
     else if (command == "clone") result = onClone(arg, aArgs.end());
     else if (command == "clear") result = onItemClear(arg, aArgs.end());
+    else if (command == "git") result = onGit(arg, aArgs.end());
     else {
    	std::cerr << "Invalid command: " << command << '\n';
        return false;
@@ -366,6 +367,49 @@ bool MvcViewCliMain::onItemClear (ArgIterator& aArg, const ArgIterator& aArgsEnd
 	return true;
 }
 // -----------------------------------------------------------------------------
+bool MvcViewCliMain::onGit (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+{
+	if (aArg == aArgsEnd) {
+    	std::cerr << "Missing arguments\n";
+        return false;
+    }
+
+	std::string addr {};
+	if (*aArg != "--") {
+        addr = *aArg;
+        ++aArg;
+    }
+
+    auto names {m_addressParser(addr)};
+    if (names.first.empty()) {
+    	std::cerr << "Invalid address: " << addr << '\n';
+        return false;
+    }
+
+    if ( (aArg == aArgsEnd)
+         || (*aArg != "--") ) {
+    	std::cerr << "Missing arguments";
+        return false;
+    }
+
+    ++aArg;
+	if (aArg == aArgsEnd) {
+    	std::cerr << "Missing git command\n";
+        return false;
+    }
+
+	std::string git_cmd {};
+
+    for (;aArg != aArgsEnd; ++aArg) git_cmd += *aArg + " ";
+
+    if (!m_ctrl.git(names.first, names.second, git_cmd)) {
+    	std::cerr << "Execute git command error" << '\n';
+        return false;
+    }
+
+    return true;
+}
+// -----------------------------------------------------------------------------
 void MvcViewCliMain::displayHelp () const
 {
 	std::cout << "\n  jtpm [-v | --version] [-h | --help] [COMMAND]\n\n"
@@ -388,6 +432,7 @@ void MvcViewCliMain::displayHelp () const
                  "\n    clone [ADDR]                       - clone item\n"
                  "\n    clear [ADDR] [-f]                  - clear item\n"
                  "      -f - force\n"
+                 "\n    git [ADDR] -- [COMMAND]            - execute Git command\n"
 				 "\n";
 }
 // -----------------------------------------------------------------------------

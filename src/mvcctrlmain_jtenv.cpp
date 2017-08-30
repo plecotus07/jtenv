@@ -207,6 +207,15 @@ bool MvcCtrlMain::clearProject (const std::string& aWsName, const std::string& a
 
     return true;
 }
+// -----------------------------------------------------------------------------
+bool MvcCtrlMain::git (const std::string& aWsName, const std::string& aProjName, const std::string& aGitCmd)
+{
+    std::cerr << "+++: " << aGitCmd << '\n';
+    Item::SPtr item {m_workspacesModel.getItem(aWsName, aProjName)};
+    if (!item) return false;
+
+    return item->git(aGitCmd);
+}
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
