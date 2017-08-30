@@ -59,9 +59,9 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     else if (command == "path") result = onPath(arg, aArgs.end());
     else if (command == "list") result = onListItems(arg, aArgs.end());
     else if (command == "init") result = onInitItem(arg, aArgs.end());
-    else if (command == "status") result = onStatus(arg, aArgs.end());
-    else if (command == "clone") result = onClone(arg, aArgs.end());
-    else if (command == "clear") result = onItemClear(arg, aArgs.end());
+    else if (command == "status") result = onStatusItem(arg, aArgs.end());
+    else if (command == "clone") result = onCloneItem(arg, aArgs.end());
+    else if (command == "clear") result = onClearItem(arg, aArgs.end());
     else if (command == "git") result = onGit(arg, aArgs.end());
     else {
    	std::cerr << "Invalid command: " << command << '\n';
@@ -223,7 +223,7 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 	return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::onStatus (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliMain::onStatusItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
 	std::string addr;
     bool showDetails {false};
@@ -260,11 +260,11 @@ bool MvcViewCliMain::onStatus (ArgIterator& aArg, const ArgIterator& aArgsEnd)
     jkpp::Git::Status status { item->getStatus(statusDetails) };
 
     switch (status) {
-   		case jkpp::Git::Status::empty: std::cout << "Empty\n"; break;
-    	case jkpp::Git::Status::clean: std::cout << "Clean\n"; break;
-    	case jkpp::Git::Status::not_cloned: std::cout << "Not cloned\n"; break;
-    	case jkpp::Git::Status::not_commited: std::cout << "Not commited\n"; break;
-    	case jkpp::Git::Status::not_pushed: std::cout << "Not pushed\n"; break;
+   		case jkpp::Git::Status::empty: std::cout << "empty\n"; break;
+    	case jkpp::Git::Status::clean: std::cout << "clean\n"; break;
+    	case jkpp::Git::Status::not_cloned: std::cout << "not cloned\n"; break;
+    	case jkpp::Git::Status::not_commited: std::cout << "not commited\n"; break;
+    	case jkpp::Git::Status::not_pushed: std::cout << "not pushed\n"; break;
 		case jkpp::Git::Status::unknown:
         default: std::cerr << "Get status error\n";
     }
@@ -274,7 +274,7 @@ bool MvcViewCliMain::onStatus (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 	return false;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::onClone (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliMain::onCloneItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
 	std::string addr;
     if (aArg == aArgsEnd) {
@@ -315,7 +315,7 @@ bool MvcViewCliMain::onClone (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 	return false;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::onItemClear (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliMain::onClearItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
 	std::string addr {};
     bool        force {false};
