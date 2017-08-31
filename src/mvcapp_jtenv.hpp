@@ -5,6 +5,7 @@
 #include "mvcviewclimain_jtenv.hpp"
 #include "mvcmodelconfig_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
+#include "mvcmodelitem_jtenv.hpp"
 #include "mvcctrlmain_jtenv.hpp"
 
 #include <mvcapp_jkpp.hpp>
@@ -21,6 +22,7 @@ class MvcApp : public jkpp::MvcApp {
 	protected:
 		MvcModelConfig 	        m_configModel;
 		MvcModelWorkspaces      m_workspacesModel;
+		MvcModelItem            m_itemModel;
 		MvcViewCliMain 	        m_mainView;
         jkpp::GitSubProcBuilder m_gitBuilder;
 		MvcCtrlMain             m_mainCtrl;

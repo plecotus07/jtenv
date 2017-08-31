@@ -1,21 +1,21 @@
 // +++ -------------------------------------------------------------------------
-#include "mvcapp_jtenv.hpp"
+#include "mvcmodelitem_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcApp::MvcApp () :
-    m_configModel {},
-    m_workspacesModel {},
-    m_itemModel {},
-    m_gitBuilder {},
-    m_mainCtrl {m_configModel, m_workspacesModel, m_itemModel, m_gitBuilder},
-    m_mainView {m_mainCtrl, m_configModel, m_workspacesModel, m_itemModel}
+MvcModelItem::MvcModelItem () :
+    jkpp::MvcModelImpl(),
+    m_item{}
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcApp::run (const std::vector<std::string>& aArgs)
+void MvcModelItem::setItem (Item::SPtr aItem)
 {
-	return m_mainView.parse(aArgs);
+    beginUpdate();
+
+    m_item = aItem;
+
+    endUpdate();
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

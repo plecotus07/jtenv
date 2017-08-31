@@ -14,10 +14,11 @@ namespace jtenv {
 class MvcCtrlMain;
 class MvcModelConfig;
 class MvcModelWorkspaces;
+class MvcModelItem;
 // +++ -------------------------------------------------------------------------
 class MvcViewCliMain : public jkpp::MvcView {
 	public:
-		MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel);
+		MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelItem& aItemModel);
 
 		void update () {};
 		bool parse (const std::vector<std::string>& aArgs);
@@ -28,6 +29,7 @@ class MvcViewCliMain : public jkpp::MvcView {
 		MvcCtrlMain&        m_ctrl;
         MvcModelConfig&     m_configModel;
 		MvcModelWorkspaces& m_workspacesModel;
+		MvcModelItem&       m_itemModel;
         AddressParser       m_addressParser;
 
 		bool onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd);
@@ -46,6 +48,22 @@ class MvcViewCliMain : public jkpp::MvcView {
 
 		void displayHelp () const;
 		void displayVersion () const;
+
+		using Handlers = std::map<std::string, bool (MvcViewCliMain::*)(ArgIterator& aArg, const ArgIterator& aArgsEnd)>;
+		const Handlers m_handlers;
+
+};
+// +++ -------------------------------------------------------------------------
+class ProjectsLister : public ItemVisitor {
+	public:
+		ProjectsLister (bool aCloneOnly, bool aWithPath);
+
+		virtual void Visit (Workspace* aWs);
+		virtual void Visit (Project* aProj);
+
+	protected:
+    	bool m_clonedOnly;
+		bool m_withPath;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

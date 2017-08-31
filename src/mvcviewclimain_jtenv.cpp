@@ -5,33 +5,37 @@
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvcmodelconfig_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
+#include "mvcmodelitem_jtenv.hpp"
 
 #include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel) :
+MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelItem& aItemModel) :
     m_ctrl {aCtrl},
     m_configModel {aConfigModel},
     m_workspacesModel {aWorkspacesModel},
-    m_addressParser {aWorkspacesModel.getWorkspaces()}
+    m_itemModel {aItemModel},
+    m_addressParser {aWorkspacesModel.getWorkspaces()},
+    m_handlers {{"user-name", onUserName}, {"user-email", onUserEmail},
+                {"path", onPath}, {"list", onListItems}, {"init", onInitItem},
+                {"status", onStatusItem}, {"clone", onCloneItem},
+                {"clear", onClearItem}, {"git", onGit},
+                {"cmake", onCMake}}
 {
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
 {
-	std::string command {};
-    if (!aArgs.empty()) {
-    	command = aArgs[0];
-    }
+	auto arg {aArgs.begin()};
 
-	if ( (command.empty())
-	        || (command == "-h")
-	        || (command == "--help") ) {
+	if ( (aArgs.empty())
+	        || (*arg == "-h")
+	        || (*arg == "--help") ) {
 		displayHelp();
 		return true;
-	} else if ( (command == "-v")
-	                || (command == "--version") ) {
+	} else if ( (*arg == "-v")
+	                || (*arg == "--version") ) {
 		displayVersion();
 		return true;
 	}
@@ -51,25 +55,31 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
 	// std::cerr << "+++ -------------------\n";
 
 
-    bool result {true};
-    ArgIterator arg {aArgs.begin() + 1};
-
-    if (command == "user-name") result = onUserName(arg, aArgs.end());
-    else if (command == "user-email") result = onUserEmail(arg, aArgs.end());
-    else if (command == "path") result = onPath(arg, aArgs.end());
-    else if (command == "list") result = onListItems(arg, aArgs.end());
-    else if (command == "init") result = onInitItem(arg, aArgs.end());
-    else if (command == "status") result = onStatusItem(arg, aArgs.end());
-    else if (command == "clone") result = onCloneItem(arg, aArgs.end());
-    else if (command == "clear") result = onClearItem(arg, aArgs.end());
-    else if (command == "git") result = onGit(arg, aArgs.end());
-    else if (command == "cmake") result = onCMake(arg, aArgs.end());
-    else {
-   	std::cerr << "Invalid command: " << command << '\n';
-       return false;
+    auto handler {m_handlers.find(*arg)};
+    std::string addr;
+    std::string command;
+    if (handler == m_handlers.end()) {
+    	addr = *arg;
+        ++arg;
+        if (arg == aArgs.end()) {
+        	std::cerr << "Missing command.\n";
+            return false;
+        }
+        command = *arg;
+        handler = m_handlers.find(command);
+        if (handler == m_handlers.end()) {
+        	std::cerr << "Invalid command: " << command << '\n';
+            return false;
+        }
+        ++arg;
     }
 
-	return result;
+    auto names {m_addressParser(addr)};
+    m_ctrl.selectItem(m_workspacesModel.getItem(names.first, names.second));
+
+    auto handler_func {handler->second};
+
+    return (this->*handler_func)(arg, aArgs.end());
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd)
@@ -96,16 +106,9 @@ bool MvcViewCliMain::onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-	std::string addr {};
-
-    if (aArg != aArgsEnd) addr = *aArg;
-
-	auto names {m_addressParser(addr)};
-
-	Item::SPtr item {m_workspacesModel.getItem(names.first, names.second)};
-
+	Item::SPtr item {m_itemModel.getItem()};
 	if (!item) {
-        std::cerr << "Invalid address or workspace is not cloned.\n";
+        std::cerr << "Invalid address.\n";
         return false;
     }
 
@@ -116,23 +119,37 @@ bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-    std::string root_ws_name {};
     bool cloned_only {false};
     bool with_path {false};
     for (; aArg != aArgsEnd; ++aArg) {
         if ((*aArg)[0] == '-') {
             for (size_t i = 1; i < aArg->size(); ++i) {
-                if ((*aArg)[i] == 'c') cloned_only = true;
-                else if ((*aArg)[i] == 'p') with_path = true;
+                if ((*aArg)[i] == 'c') {
+                	if (cloned_only) {
+                    	std::cerr << "Duplication of '-c' option.\n";
+                        return false;
+                    }
+	                cloned_only = true;
+                } else if ((*aArg)[i] == 'p') {
+                	if (with_path) {
+                    	std::cerr << "Duplication of '-p' option.\n";
+                        return false;
+                    }
+					with_path = true;
+                } else {
+		            std::cerr << "Invalid option: -" << (*aArg)[i] << '\n';
+                }
             }
-        } else if (root_ws_name.empty()) root_ws_name = *aArg;
+        }
         else {
-            std::cerr << "Invalid option: " << *aArg << '\n';
+            std::cerr << "Invalid argument: " << *aArg << '\n';
             return false;
         }
     }
 
-    if (root_ws_name.empty()) {
+	Item::SPtr item {m_itemModel.getItem()};
+
+    if (!item) {
     	for (auto ws : m_workspacesModel) {
         	if (!cloned_only || !ws.second->getPath().empty()) {
             	std::cout << ws.first;
@@ -141,24 +158,10 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
             }
         }
     } else {
-    	Workspace::SPtr ws {m_workspacesModel.getWorkspace(root_ws_name)};
-        if (!ws) {
-            std::cerr << "Workspace " << root_ws_name << " not exists\n";
-            return false;
-        }
-        if (ws->getPath().empty()) {
-            std::cerr << "Workspace " << root_ws_name << " is not cloned\n";
-            return false;
-        }
+    	ProjectsLister lister {cloned_only, with_path};
 
-        for (auto proj : *ws) {
+        item->Accept(lister);
 
-        	if (!cloned_only || (!proj.second->getRepoPath().empty())) {
-            	std::cout << proj.first;
-                if (with_path) std::cout << " : " << proj.second->getPath().string();
-                std::cout << '\n';
-            }
-        }
     }
 
     return true;
@@ -173,7 +176,10 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 
     auto names { m_addressParser(*aArg)};
 
-    if (names.first.empty()) return false;
+    if (names.first.empty()) {
+    	std::cerr << "Invalid address.\n";
+    	return false;
+    }
 
     ++aArg;
     if (names.second.empty()) {
@@ -226,39 +232,20 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onStatusItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-	std::string addr;
-    bool showDetails {false};
-
-    for (;aArg != aArgsEnd; ++aArg) {
-    	if (*aArg == "-d"){
-        	if (showDetails) {
-            	std::cerr << "Invalid argument: -d\n";
-                return false;
-            }
-            showDetails = true;
-        } else {
-        	if (!addr.empty()) {
-        		std::cerr << "Invalid argument: " + *aArg + '\n';
-	            return false;
-    	    }
-			addr = *aArg;
-		}
+    bool show_details {false};
+    if ( (aArg != aArgsEnd)
+         && ((*aArg) == "-d") ) {
+        show_details = true;
     }
 
-    auto names {m_addressParser(addr)};
-    if (names.first.empty()) {
-    	std::cerr << "Invalid address: " << addr << '\n';
-    	return false;
-    }
-
-	Item::SPtr item { m_workspacesModel.getItem(names.first, names.second) };
+	Item::SPtr item { m_itemModel.getItem() };
     if (!item) {
     	std::cout << "Not exists\n";
     	return true;
     }
 
-	std::string statusDetails {};
-    jkpp::Git::Status status { item->getStatus(statusDetails) };
+	std::string details {};
+    jkpp::Git::Status status { item->getStatus(details) };
 
     switch (status) {
    		case jkpp::Git::Status::empty: std::cout << "empty\n"; break;
@@ -270,7 +257,7 @@ bool MvcViewCliMain::onStatusItem (ArgIterator& aArg, const ArgIterator& aArgsEn
         default: std::cerr << "Get status error\n";
     }
 
-	if (showDetails && !statusDetails.empty()) std::cout << statusDetails << '\n';
+	if (show_details && !details.empty()) std::cout << details << '\n';
 
 	return false;
 }
@@ -438,7 +425,7 @@ bool MvcViewCliMain::onCMake (ArgIterator& aArg, const ArgIterator& aArgsEnd)
     }
 
 
-    if (!m_ctrl.onCMakeExecute(*aArg)) {
+    if (!m_ctrl.cmakeExecute(*aArg)) {
     	std::cerr << "CMake command execute error\n";
         return false;
     }
@@ -509,7 +496,7 @@ bool MvcViewCliMain::onCMakeList (ArgIterator& aArg, const ArgIterator& aArgsEnd
         return false;
     }
 
-    for (auto cmd : m_cmakeModel.getCommands()) std::cout << cmd.first << " = " << cmd.second << '\n';
+//    for (auto cmd : m_cmakeModel.getCommands()) std::cout << cmd.first << " = " << cmd.second << '\n';
 
     return true;
 }
@@ -517,37 +504,76 @@ bool MvcViewCliMain::onCMakeList (ArgIterator& aArg, const ArgIterator& aArgsEnd
 void MvcViewCliMain::displayHelp () const
 {
 	std::cout << "\n  jtpm [-v | --version] [-h | --help] [COMMAND]\n\n"
-	             "    -v, --version                      - Display version.\n"
-	             "    -h, --help                         - Display help.\n"
+	               "    -v, --version                      - Display version.\n"
+	               "    -h, --help                         - Display help.\n"
+
                  "\n    user-name [USER_NAME]              - Set or get user name.\n"
-                 "    user-email [USER_EMAIL]            - Set or get user email.\n"
-                 "\n    path [ADDR]                        - Get item path.\n"
+                   "    user-email [USER_EMAIL]            - Set or get user email.\n"
+
+                 "\n    [ADDR] path                        - Get item path.\n"
+
                  "\n    list [-c]                          - List workspaces.\n"
-                 "      -c - only cloned\n"
-                 "      -p - with path\n"
-                 "    list WS_NAME [-c]                  - List workspace projects.\n"
-                 "      -c - only cloned\n"
-                 "      -p - with path\n"
+                   "      -c - only cloned\n"
+                   "      -p - with path\n"
+                   "    WS_NAME list [-c]                  - List workspace projects.\n"
+                   "      -c - only cloned\n"
+                   "      -p - with path\n"
+
                  "\n    init WS_NAME                       - Init workspace.\n"
-	             "    init ADDR FULL_NAME REPO_URL [-c]  - Init project.\n"
-                 "      -c - clone\n"
-                 "\n    status [ADDR] [-d]                 - get item status\n"
-                 "      -d - display details\n"
-                 "\n    clone [ADDR]                       - clone item\n"
-                 "\n    clear [ADDR] [-f]                  - clear item\n"
-                 "      -f - force\n"
-                 "\n    git [ADDR] -- [COMMAND]            - execute Git command\n"
-                 "\n    cmake [add] [rem] [list] [ADDR NAME] - CMake commands manager\n"
-                 "      ADDR NAME        - execute NAME command in ADDR project\n"
-                 "      add NAME COMMAND - add command\n"
-                 "      rem NAME         - remove command\n"
-                 "      list             - list commands\n"
-				 "\n";
+	               "    init ADDR FULL_NAME REPO_URL [-c]  - Init project.\n"
+                   "      -c - clone\n"
+
+                 "\n    [ADDR] status [-d]                 - get item status\n"
+                   "      -d - display details\n"
+
+                 "\n    [ADDR] clone                       - clone item\n"
+
+                 "\n    [ADDR] clear [-f]                  - clear item\n"
+                   "      -f - force\n"
+
+                 "\n    [ADDR] git [COMMAND]               - execute Git command\n"
+
+                 "\n    [ADDR] cmake [add] [rem] [list] [NAME] - CMake commands manager\n"
+                   "      NAME             - execute NAME command in ADDR project\n"
+                   "      add NAME COMMAND - add command\n"
+                   "      rem NAME         - remove command\n"
+                   "      list             - list commands\n"
+			  	 "\n";
 }
 // -----------------------------------------------------------------------------
 void MvcViewCliMain::displayVersion () const
 {
 	std::cout << getFullName() << " - v" << getVersion() << '\n';
+}
+// +++ -------------------------------------------------------------------------
+ProjectsLister::ProjectsLister (bool aClonedOnly, bool aWithPath) :
+    m_clonedOnly{aClonedOnly},
+    m_withPath{aWithPath}
+{
+}
+// -----------------------------------------------------------------------------
+void ProjectsLister::Visit (Workspace* aWs)
+{
+///\todo assert(aWn)
+
+    if (aWs->getPath().empty()) {
+        std::cerr << "Workspace " << aWs->getName() << " is not cloned\n";
+        return;
+    }
+
+    for (auto proj : *aWs) {
+        if (!m_clonedOnly || (!proj.second->getRepoPath().empty())) {
+            std::cout << proj.first;
+            if (m_withPath) std::cout << " : " << proj.second->getPath().string();
+            std::cout << '\n';
+        }
+    }
+
+}
+// -----------------------------------------------------------------------------
+void ProjectsLister::Visit (Project* aProj)
+{
+///\todo assert(true)
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

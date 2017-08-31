@@ -10,6 +10,8 @@
 namespace fs = boost::filesystem;
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
+class ItemVisitor;
+// +++ -------------------------------------------------------------------------
 class Item {
     public:
     	using SPtr = std::shared_ptr<Item>;
@@ -25,6 +27,19 @@ class Item {
 
 		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const = 0;
 
+        virtual Accept (ItemVisitor& aVisitor) = 0;
+
+};
+// +++ -------------------------------------------------------------------------
+class Workspace;
+class Project;
+// +++ -------------------------------------------------------------------------
+class ItemVisitor {
+	public:
+    	virtual ~ItemVisitor () = default;
+
+		virtual void Visit (Workspace* aWs) = 0;
+		virtual void Visit (Project* aProj) = 0;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

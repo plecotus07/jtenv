@@ -3,6 +3,7 @@
 
 #include "mvcmodelconfig_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
+#include "mvcmodelitem_jtenv.hpp"
 #include "projectconf_jtenv.hpp"
 
 #include <git_jkpp.hpp>
@@ -10,9 +11,10 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcCtrlMain::MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, jkpp::GitBuilder& aGitBuilder) :
+MvcCtrlMain::MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelItem& aItemModel, jkpp::GitBuilder& aGitBuilder) :
     m_configModel {aConfigModel},
     m_workspacesModel {aWorkspacesModel},
+    m_itemModel {aItemModel},
     m_gitBuilder {aGitBuilder}
 {
 ///\todo assert (m_git != nullptr)
@@ -73,6 +75,12 @@ bool MvcCtrlMain::setUserEmail (const std::string& aUserEmail)
 {
     m_configModel.setUserEmail(aUserEmail);
     return saveConfig();
+}
+// -----------------------------------------------------------------------------
+void MvcCtrlMain::selectItem (Item::SPtr aItem)
+{
+    std::cerr << "+++: ctrl select: " << (aItem ? aItem->getName() : "null") << '\n';
+    m_itemModel.setItem(aItem);
 }
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath)
@@ -224,7 +232,7 @@ bool MvcCtrlMain::cmakeRemove (const std::string& aName)
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcCtrlMain::cmakeExecute (const std::string& aWsName, const std::string aProjName, const std::string& aCmdName)
+bool MvcCtrlMain::cmakeExecute (const std::string& aCmdName)
 {
 }
 // +++ -------------------------------------------------------------------------
