@@ -15,6 +15,9 @@ class MvcModelItem : public jkpp::MvcModelImpl {
 		void       setItem (Item::SPtr aItem);
 		Item::SPtr getItem () const { return m_item; }
 
+		bool       clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail);
+		bool       clear (bool aForce, std::string& aDetails);
+
 	protected:
         Item::SPtr m_item;
 };

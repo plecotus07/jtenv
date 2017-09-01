@@ -102,6 +102,24 @@ bool Project::clone (const fs::path& aPath, const std::string& aUserName, const 
 	return true;
 }
 // -----------------------------------------------------------------------------
+bool Project::clear (bool aForce, std::string& aDetails)
+{
+    if (!fs::exists(getPath())) return false;
+    if (!fs::exists(getRepoPath())) return false;
+
+    auto status {getStatus(aDetails)};
+
+    if (status != jkpp::Git::Status::clean
+        && status != jkpp::Git::Status::empty
+        && !aForce) return false;
+
+    aDetails.clear();
+
+    try { fs::remove_all(getRepoPath()); } catch (...) { return false; }
+
+    return true;
+}
+// -----------------------------------------------------------------------------
 bool Project::git (const std::string& aCommand)
 {
 	if (!m_git) return false;

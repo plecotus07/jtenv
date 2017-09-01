@@ -18,6 +18,7 @@ class Workspace : public Item {
         Workspace (const std::string& aName, jkpp::Git::UPtr&& aRemoteGit, jkpp::Git::UPtr&& aGit = nullptr);
 
         virtual bool clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail);
+        virtual bool clear (bool aForce, std::string& aDetails);
         virtual bool git (const std::string& aCommand);
 
         virtual const std::string& getName () const { return m_name; }

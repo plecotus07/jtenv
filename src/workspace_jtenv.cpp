@@ -31,6 +31,43 @@ bool Workspace::clone (const fs::path& aPath, const std::string& aUserName, cons
 	return true;
 }
 // -----------------------------------------------------------------------------
+bool Workspace::clear (bool aForce, std::string& aDetails)
+{
+	if (!fs::exists(getPath())) return false;
+
+    jkpp::Git::Status status = getStatus(aDetails);
+	bool ws_edited {(status != jkpp::Git::Status::clean)
+                    && (status != jkpp::Git::Status::empty)};
+
+    bool projs_edited {false};
+    std::string projs_details {};
+
+	if (!aForce) {
+        for (auto proj : *this) {
+            std::string proj_details {};
+            auto proj_status {proj.second->getStatus(proj_details)};
+            if ( (proj_status != jkpp::Git::Status::not_cloned)
+            	     && (proj_status != jkpp::Git::Status::clean)
+                     && (proj_status != jkpp::Git::Status::empty) ) {
+				projs_details += proj.second->getName() + '\n' + proj_details + '\n';
+				projs_edited = true;
+            }
+        }
+
+        aDetails += (aDetails.empty() ? "" : "\n") + projs_details;
+
+        if ( projs_edited
+             || ws_edited ) return false;
+
+	    aDetails.clear();
+    }
+
+    try { fs::remove_all(getRepoPath()); } catch (...) { return false; }
+
+    return true;
+
+}
+// -----------------------------------------------------------------------------
 bool Workspace::git (const std::string& aCommand)
 {
 	if (!m_git) return false;

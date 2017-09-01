@@ -19,6 +19,7 @@ class Item {
 		virtual ~Item () = default;
 
         virtual bool clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail) = 0;
+        virtual bool clear (bool aForce, std::string& aDetails) = 0;
 		virtual bool git(const std::string& aCommand) = 0;
 
         virtual const std::string& getName () const = 0;

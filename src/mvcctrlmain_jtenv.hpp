@@ -34,11 +34,14 @@ class MvcCtrlMain {
         bool initWorkspace (const std::string& aName, const fs::path& aPath);
         bool initProject (const std::string& aWsName, const std::string& aName, const std::string& aFullName, const std::string& aRepoUrl, bool clone);
 
-        bool cloneWorkspace (const std::string& aName, const fs::path& aPath);
+		bool cloneItem (const fs::path& aPath);
+
+		bool cloneWorkspace (const std::string& aName, const fs::path& aPath);
         bool cloneProject (const std::string& aWsName, const std::string& aName);
 
-        bool clearWorkspace (const std::string& aName, std::string& aDetails, bool aForce);
-		bool clearProject (const std::string& aWsName, const std::string& aName, std::string& aDetails, bool aForce);
+		bool clearItem (bool aForce, std::string& aDetails);
+        // bool clearWorkspace (const std::string& aName, std::string& aDetails, bool aForce);
+		// bool clearProject (const std::string& aWsName, const std::string& aName, std::string& aDetails, bool aForce);
 
 		bool git (const std::string& aWsName, const std::string& aProjName, const std::string& aGitCmd);
 

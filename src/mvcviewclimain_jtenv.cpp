@@ -18,7 +18,7 @@ MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel
     m_itemModel {aItemModel},
     m_addressParser {aWorkspacesModel.getWorkspaces()},
     m_handlers {{"user-name", onUserName}, {"user-email", onUserEmail},
-                {"path", onPath}, {"list", onListItems}, {"init", onInitItem},
+                {"path", onPath}, {"list", onListItems},
                 {"status", onStatusItem}, {"clone", onCloneItem},
                 {"clear", onClearItem}, {"git", onGit},
                 {"cmake", onCMake}}
@@ -54,25 +54,28 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     // }
 	// std::cerr << "+++ -------------------\n";
 
+	if ((*arg) == "init") return onInitItem(++arg, aArgs.end());
 
     auto handler {m_handlers.find(*arg)};
     std::string addr;
-    std::string command;
     if (handler == m_handlers.end()) {
     	addr = *arg;
         ++arg;
-        if (arg == aArgs.end()) {
-        	std::cerr << "Missing command.\n";
-            return false;
-        }
-        command = *arg;
-        handler = m_handlers.find(command);
-        if (handler == m_handlers.end()) {
-        	std::cerr << "Invalid command: " << command << '\n';
-            return false;
-        }
-        ++arg;
+	}
+
+    if (arg == aArgs.end()) {
+        std::cerr << "Missing command.\n";
+        return false;
     }
+
+    std::string command {};
+    command = *arg;
+    handler = m_handlers.find(command);
+    if (handler == m_handlers.end()) {
+        std::cerr << "Invalid command: " << command << '\n';
+        return false;
+    }
+    ++arg;
 
     auto names {m_addressParser(addr)};
     m_ctrl.selectItem(m_workspacesModel.getItem(names.first, names.second));
@@ -173,6 +176,7 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
         std::cerr << "Missing arguments.\n";
         return false;
     }
+    std::cerr << "+++:  init item: " << *aArg << '\n';
 
     auto names { m_addressParser(*aArg)};
 
@@ -264,93 +268,56 @@ bool MvcViewCliMain::onStatusItem (ArgIterator& aArg, const ArgIterator& aArgsEn
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onCloneItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-	std::string addr;
-    if (aArg == aArgsEnd) {
-    	std::cerr << "Missing item address.\n";
-        return false;
-    }
-
-    addr = *aArg;
-
-    ++aArg;
     if (aArg != aArgsEnd) {
     	std::cerr << "Invalid argument: " << *aArg << '\n';
         return false;
     }
 
-	auto names {m_addressParser(addr)};
-    if (names.first.empty()) {
-    	std::cerr << "Invalid address: " << addr << '\n';
+    if (!m_itemModel.getItem()) {
+        std::cerr << "Invalid address.\n";
         return false;
     }
 
-    if (names.second.empty()) {
-    	if (!m_ctrl.cloneWorkspace(names.first, fs::current_path())) {
-	    	std::cerr << "Clone workspace error\n";
-    	    return false;
-        } else {
-        	std::cout << "Workspace cloned successfully\n";
-        }
-	} else {
-    	if (!m_ctrl.cloneProject(names.first, names.second)) {
-	    	std::cerr << "Clone project error\n";
-    	    return false;
-        } else {
-        	std::cout << "Project cloned successfully\n";
-        }
-	}
+    if (!m_ctrl.cloneItem(fs::current_path())) {
+    	std::cerr << "Clone item error.\n";
+        return false;
+    }
 
-	return false;
+   	std::cout << "Item cloned successfully\n";
+
+	return true;
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onClearItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-	std::string addr {};
-    bool        force {false};
+	bool force {false};
+    if (aArg != aArgsEnd) {
+		if (*aArg != "-f") {
+        	std::cerr << "Invalid argument: " << *aArg << '\n';
+        	return false;
+        }
+        force = true;
 
-    for (;aArg != aArgsEnd; ++aArg) {
-    	if (*aArg == "-f"){
-        	if (force) {
-            	std::cerr << "Invalid argument: -f\n";
-                return false;
-            }
-            force = true;
-        } else {
-        	if (!addr.empty()) {
-        		std::cerr << "Invalid argument: " + *aArg + '\n';
-	            return false;
-    	    }
-			addr = *aArg;
-		}
+        ++aArg;
+	    if (aArg != aArgsEnd) {
+        	std::cerr << "Invalid argument: " << *aArg << '\n';
+        	return false;
+    	}
     }
 
-	auto names {m_addressParser(addr)};
-    if (names.first.empty()) {
-    	std::cerr << "Invalid address: " << addr << '\n';
+    if (!m_itemModel.getItem()) {
+        std::cerr << "Invalid address.\n";
         return false;
     }
 
     std::string details {};
 
-    if (names.second.empty()) {
-    	if (!m_ctrl.clearWorkspace(names.first, details, force)) {
-        	if (details.empty()) std::cerr << "Clear workspace error\n";
-            else std::cout << details;
-
-            return false;
-        } else {
-        	std::cout << "Workspace clear successfully\n";
-        }
-	} else {
-    	if (!m_ctrl.clearProject(names.first, names.second, details, force)) {
-        	if (details.empty()) std::cerr << "Clear project error\n";
-            else std::cout << details;
-
-  		    return false;
-        } else {
-        	std::cout << "Project clear successfully\n";
-        }
-	}
+    if (!m_ctrl.clearItem(force, details)) {
+    	if (details.empty()) std::cerr << "Clear item error.\n";
+        else std::cout << details;
+    } else {
+      	std::cout << "Item clear successfully\n";
+    }
 
 	return true;
 }
