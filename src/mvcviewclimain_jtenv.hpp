@@ -8,6 +8,7 @@
 
 #include <vector>
 #include <string>
+#include <functional>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -24,13 +25,13 @@ class MvcViewCliMain : public jkpp::MvcView {
 		bool parse (const std::vector<std::string>& aArgs);
 
 	protected:
-    	using ArgIterator = std::vector<std::string>::const_iterator;
-
 		MvcCtrlMain&        m_ctrl;
         MvcModelConfig&     m_configModel;
 		MvcModelWorkspaces& m_workspacesModel;
 		MvcModelItem&       m_itemModel;
         AddressParser       m_addressParser;
+
+    	using ArgIterator = std::vector<std::string>::const_iterator;
 
 		bool onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd);
@@ -49,7 +50,7 @@ class MvcViewCliMain : public jkpp::MvcView {
 		void displayHelp () const;
 		void displayVersion () const;
 
-		using Handlers = std::map<std::string, bool (MvcViewCliMain::*)(ArgIterator& aArg, const ArgIterator& aArgsEnd)>;
+		using Handlers = std::map<std::string, bool(*)(MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd)>;
 		const Handlers m_handlers;
 
 };

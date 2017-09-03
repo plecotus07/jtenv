@@ -29,7 +29,7 @@ class Project : public Item {
 		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const;
         virtual const std::string& getWsName () const { return m_wsName; }
 
-        virtual Accept (ItemVisitor& aVisitor) { aVisitor.Visit(this); }
+        virtual void               Accept (ItemVisitor& aVisitor) { aVisitor.Visit(this); }
 
     protected:
 		std::string     m_wsName;

@@ -26,7 +26,7 @@ class Workspace : public Item {
 		virtual fs::path           getRepoPath () const { return m_git ? m_git->getUrl() : fs::path{}; }
 		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const;
 
-        virtual                    Accept (ItemVisitor& aVisitor) { aVisitor.Visit(this); }
+        virtual void               Accept (ItemVisitor& aVisitor) { aVisitor.Visit(this); }
 
 		Project::SPtr              addProject (const std::string& aName);
 		Project::SPtr              getProject (const std::string& aName);

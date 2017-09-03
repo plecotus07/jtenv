@@ -17,11 +17,15 @@ MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel
     m_workspacesModel {aWorkspacesModel},
     m_itemModel {aItemModel},
     m_addressParser {aWorkspacesModel.getWorkspaces()},
-    m_handlers {{"user-name", onUserName}, {"user-email", onUserEmail},
-                {"path", onPath}, {"list", onListItems},
-                {"status", onStatusItem}, {"clone", onCloneItem},
-                {"clear", onClearItem}, {"git", onGit},
-                {"cmake", onCMake}}
+    m_handlers {{"user-name", [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onUserName(aArg, aArgsEnd);}},
+                 {"user-email", [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onUserEmail(aArg, aArgsEnd);}},
+                 {"path",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onPath(aArg, aArgsEnd);}},
+                 {"list",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onListItems(aArg, aArgsEnd);}},
+                 {"status",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onStatusItem(aArg, aArgsEnd);}},
+                 {"clone",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onCloneItem(aArg, aArgsEnd);}},
+                 {"clear",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onClearItem(aArg, aArgsEnd);}},
+                 {"git",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onGit(aArg, aArgsEnd);}},
+                 {"cmake",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onCMake(aArg, aArgsEnd);}}}
 {
 }
 // -----------------------------------------------------------------------------
@@ -80,9 +84,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     auto names {m_addressParser(addr)};
     m_ctrl.selectItem(m_workspacesModel.getItem(names.first, names.second));
 
-    auto handler_func {handler->second};
-
-    return (this->*handler_func)(arg, aArgs.end());
+    return (handler->second)(this, arg, aArgs.end());
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd)

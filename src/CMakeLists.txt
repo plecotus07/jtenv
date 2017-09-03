@@ -13,17 +13,17 @@ configure_file (${CMAKE_CURRENT_SOURCE_DIR}/projectconf_jtenv.cpp.in
 
 add_executable (jtenv
 	main.cpp
-  workspace_jtenv.cpp
+	workspace_jtenv.cpp
 	project_jtenv.cpp
 	mvcapp_jtenv.cpp
-  addressparser_jtenv.cpp
+	addressparser_jtenv.cpp
 
 	mvcviewclimain_jtenv.cpp
 	mvcctrlmain_jtenv.cpp
-  mvcmodelitem_jtenv.cpp
-  mvcmodelconfig_jtenv.cpp
-  mvcmodelworkspaces_jtenv.cpp
-  mvcmodelcmake_jtenv.cpp
+	mvcmodelitem_jtenv.cpp
+	mvcmodelconfig_jtenv.cpp
+	mvcmodelworkspaces_jtenv.cpp
+	mvcmodelcmake_jtenv.cpp
 	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
 	jkpp/mvcmodelimpl_jkpp.cpp
 	jkpp/filesystem_jkpp.cpp
@@ -41,9 +41,9 @@ find_package(Catch REQUIRED)
 add_executable (utjtenv EXCLUDE_FROM_ALL
 	test.cpp
 	project_jtenv.cpp
-  workspace_jtenv.cpp
-  addressparser_jtenv.cpp
-  addressparser_test_jtenv.cpp
+	workspace_jtenv.cpp
+	addressparser_jtenv.cpp
+	addressparser_test_jtenv.cpp
 	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
 	jkpp/filesystem_jkpp.cpp)
 
