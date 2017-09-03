@@ -136,10 +136,12 @@ bool MvcCtrlMain::cloneItem (const fs::path& aPath)
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::clearItem (bool aForce, std::string& aDetails)
 {
+std::cerr << "+++1\n";
 	if (!m_itemModel.getItem()) return false;
+std::cerr << "+++2\n";
 
 	if (!m_itemModel.clear(aForce, aDetails)) return false;
-
+std::cerr << "+++3\n";
     return m_workspacesModel.save();
 }
 // -----------------------------------------------------------------------------

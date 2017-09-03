@@ -64,6 +64,8 @@ bool Workspace::clear (bool aForce, std::string& aDetails)
 
     try { fs::remove_all(getRepoPath()); } catch (...) { return false; }
 
+	m_git.reset();
+
     return true;
 
 }
