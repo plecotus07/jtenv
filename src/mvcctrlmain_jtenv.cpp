@@ -136,77 +136,15 @@ bool MvcCtrlMain::cloneItem (const fs::path& aPath)
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::clearItem (bool aForce, std::string& aDetails)
 {
-std::cerr << "+++1\n";
 	if (!m_itemModel.getItem()) return false;
-std::cerr << "+++2\n";
 
-	if (!m_itemModel.clear(aForce, aDetails)) return false;
-std::cerr << "+++3\n";
-    return m_workspacesModel.save();
+    bool result {true};
+	if (!m_itemModel.clear(aForce, aDetails)) result = false;
+    if (!m_workspacesModel.save()) result = false;
+
+    return result;
 }
 // -----------------------------------------------------------------------------
-//bool MvcCtrlMain::clearWorkspace (const std::string& aName, std::string& aDetails, bool aForce)
-//{
-//    Workspace::SPtr ws {m_workspacesModel.getWorkspace(aName)};
-//    if (!ws) return false;
-//	if (!fs::exists(ws->getPath())) return false;
-//
-//    jkpp::Git::Status status = ws->getStatus(aDetails);
-//	bool ws_edited {(status != jkpp::Git::Status::clean)
-//                    && (status != jkpp::Git::Status::empty)};
-//
-//    bool projs_edited {false};
-//    std::string projs_details {};
-//
-//	if (!aForce) {
-//        for (auto proj : *ws) {
-//            std::string proj_details {};
-//            auto proj_status {proj.second->getStatus(proj_details)};
-//            if ( (proj_status != jkpp::Git::Status::not_cloned)
-//            	     && (proj_status != jkpp::Git::Status::clean)
-//                     && (proj_status != jkpp::Git::Status::empty) ) {
-//				projs_details += proj.second->getName() + '\n' + proj_details + '\n';
-//				projs_edited = true;
-//            }
-//        }
-//
-//        aDetails += (aDetails.empty() ? "" : "\n") + projs_details;
-//
-//        if ( projs_edited
-//             || ws_edited ) return false;
-//
-//	    aDetails.clear();
-//    }
-//
-//    try { fs::remove_all(ws->getRepoPath()); } catch (...) { return false; }
-//
-//    return true;
-//}
-//// -----------------------------------------------------------------------------
-//bool MvcCtrlMain::clearProject (const std::string& aWsName, const std::string& aName, std::string& aDetails, bool aForce)
-//{
-//    Workspace::SPtr ws {m_workspacesModel.getWorkspace(aWsName)};
-//    if (!ws) return false;
-//	if (!fs::exists(ws->getPath())) return false;
-//
-//    Project::SPtr proj {ws->getProject(aName)};
-//    if (!proj) return false;
-//    if (!fs::exists(proj->getPath())) return false;
-//    if (!fs::exists(proj->getRepoPath())) return false;
-//
-//    auto status {proj->getStatus(aDetails)};
-//
-//    if (status != jkpp::Git::Status::clean
-//        && status != jkpp::Git::Status::empty
-//        && !aForce) return false;
-//
-//    aDetails.clear();
-//
-//    try { fs::remove_all(proj->getRepoPath()); } catch (...) { return false; }
-//
-//    return true;
-//}
-//// -----------------------------------------------------------------------------
 bool MvcCtrlMain::git (const std::string& aWsName, const std::string& aProjName, const std::string& aGitCmd)
 {
     Item::SPtr item {m_workspacesModel.getItem(aWsName, aProjName)};

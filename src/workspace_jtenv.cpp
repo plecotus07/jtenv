@@ -62,12 +62,12 @@ bool Workspace::clear (bool aForce, std::string& aDetails)
 	    aDetails.clear();
     }
 
-    try { fs::remove_all(getRepoPath()); } catch (...) { return false; }
+    bool result {true};
+    try { fs::remove_all(getRepoPath()); } catch (...) { result = false; }
 
 	m_git.reset();
 
-    return true;
-
+    return result;
 }
 // -----------------------------------------------------------------------------
 bool Workspace::git (const std::string& aCommand)

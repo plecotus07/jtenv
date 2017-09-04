@@ -178,7 +178,6 @@ bool MvcViewCliMain::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
         std::cerr << "Missing arguments.\n";
         return false;
     }
-    std::cerr << "+++:  init item: " << *aArg << '\n';
 
     auto names { m_addressParser(*aArg)};
 
