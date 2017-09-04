@@ -40,10 +40,8 @@ class MvcCtrlMain {
         bool cloneProject (const std::string& aWsName, const std::string& aName);
 
 		bool clearItem (bool aForce, std::string& aDetails);
-        // bool clearWorkspace (const std::string& aName, std::string& aDetails, bool aForce);
-		// bool clearProject (const std::string& aWsName, const std::string& aName, std::string& aDetails, bool aForce);
 
-		bool git (const std::string& aWsName, const std::string& aProjName, const std::string& aGitCmd);
+		bool git (const std::string& aGitCmd);
 
 		bool cmakeAdd (const std::string& aName, const std::string& aCommand);
 		bool cmakeRemove (const std::string& aName);

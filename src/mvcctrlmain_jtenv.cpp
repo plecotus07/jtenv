@@ -145,12 +145,11 @@ bool MvcCtrlMain::clearItem (bool aForce, std::string& aDetails)
     return result;
 }
 // -----------------------------------------------------------------------------
-bool MvcCtrlMain::git (const std::string& aWsName, const std::string& aProjName, const std::string& aGitCmd)
+bool MvcCtrlMain::git (const std::string& aGitCmd)
 {
-    Item::SPtr item {m_workspacesModel.getItem(aWsName, aProjName)};
-    if (!item) return false;
+    if (!m_itemModel.getItem()) return false;
 
-    return item->git(aGitCmd);
+    return m_itemModel.git(aGitCmd);
 }
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::cmakeAdd (const std::string& aName, const std::string& aCommand)

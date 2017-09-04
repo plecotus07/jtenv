@@ -17,6 +17,7 @@ class MvcModelItem : public jkpp::MvcModelImpl {
 
 		bool       clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail);
 		bool       clear (bool aForce, std::string& aDetails);
+		bool       git (const std::string& aGitCmd);
 
 	protected:
         Item::SPtr m_item;

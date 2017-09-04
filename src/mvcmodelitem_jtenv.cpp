@@ -37,6 +37,17 @@ bool MvcModelItem::clear (bool aForce, std::string& aDetails)
 
     return result;
 }
+// -----------------------------------------------------------------------------
+bool MvcModelItem::git (const std::string& aGitCmd)
+{
+    if (!m_item) return false;
+
+	beginUpdate();
+    bool result {m_item->git(aGitCmd)};
+    endUpdate();
+
+    return result;
+}
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------

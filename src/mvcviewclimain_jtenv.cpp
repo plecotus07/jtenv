@@ -326,30 +326,6 @@ bool MvcViewCliMain::onClearItem (ArgIterator& aArg, const ArgIterator& aArgsEnd
 bool MvcViewCliMain::onGit (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
 	if (aArg == aArgsEnd) {
-    	std::cerr << "Missing arguments\n";
-        return false;
-    }
-
-	std::string addr {};
-	if (*aArg != "--") {
-        addr = *aArg;
-        ++aArg;
-    }
-
-    auto names {m_addressParser(addr)};
-    if (names.first.empty()) {
-    	std::cerr << "Invalid address: " << addr << '\n';
-        return false;
-    }
-
-    if ( (aArg == aArgsEnd)
-         || (*aArg != "--") ) {
-    	std::cerr << "Missing arguments";
-        return false;
-    }
-
-    ++aArg;
-	if (aArg == aArgsEnd) {
     	std::cerr << "Missing git command\n";
         return false;
     }
@@ -358,7 +334,7 @@ bool MvcViewCliMain::onGit (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 
     for (;aArg != aArgsEnd; ++aArg) git_cmd += *aArg + " ";
 
-    if (!m_ctrl.git(names.first, names.second, git_cmd)) {
+    if (!m_ctrl.git(git_cmd)) {
     	std::cerr << "Execute git command error" << '\n';
         return false;
     }
