@@ -19,7 +19,7 @@ class Project : public Item {
         virtual bool init (const std::string& aFullName, jkpp::Git::UPtr&& aRemoteGit);
 		virtual bool load (jkpp::GitBuilder& aGitBuilder);
 		virtual bool save ();
-        
+
         virtual bool clone (const std::string& aUserName, const std::string& aUserEmail, const fs::path& aPath = fs::path {});
         virtual bool clear (bool aForce, std::string& aDetails);
         virtual bool git (const std::string& aCommand);
@@ -37,8 +37,8 @@ class Project : public Item {
     	std::string     m_name;
 		std::string     m_fullName;
         fs::path        m_path;
-        jkpp::Git::UPtr m_git;
         jkpp::Git::UPtr m_remoteGit;
+        jkpp::Git::UPtr m_git;
 		std::string     m_defaultBranch;
 };
 // +++ -------------------------------------------------------------------------

@@ -2,9 +2,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 if (CMAKE_COMPILER_IS_GNUCXX)
-  set(COMPIILE_OPTIONS "-Wall -Weffc++ -Wextra -Wold-style-cast")
+  set(CMAKE_CXX_FLAGS "-Wall -Weffc++ -Wextra -Wold-style-cast")
 elseif (MSVC)
-  set(COMPIILE_OPTIONS "/W4")
+  set(COMPILE_OPTIONS "/W4")
 endif()
 
 configure_file (${CMAKE_CURRENT_SOURCE_DIR}/projectconf_jtenv.cpp.in
@@ -17,7 +17,6 @@ add_executable (jtenv
 	project_jtenv.cpp
 	mvcapp_jtenv.cpp
 	addressparser_jtenv.cpp
-
 	mvcviewclimain_jtenv.cpp
 	mvcctrlmain_jtenv.cpp
   mvcmodelitem_jtenv.cpp
@@ -52,7 +51,6 @@ add_executable (utjtenv EXCLUDE_FROM_ALL
 target_include_directories(utjtenv PRIVATE ${Catch_INCLUDE_DIRS})
 target_include_directories(utjtenv PRIVATE ${CMAKE_CURRENT_LIST_DIR})
 target_include_directories(utjtenv PRIVATE ${CMAKE_CURRENT_LIST_DIR}/jkpp)
-target_compile_options(utjtenv PRIVATE ${COMPILE_OPTIONS})
 target_link_libraries(utjtenv
   ${Boost_FILESYSTEM_LIBRARY}
   ${Boost_SYSTEM_LIBRARY}

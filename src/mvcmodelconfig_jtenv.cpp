@@ -9,9 +9,9 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 MvcModelConfig::MvcModelConfig () :
     jkpp::MvcModelImpl(),
+    m_confFilePath {(getConfDirPath() / "main.conf").string()},
     m_userName {},
-    m_userEmail {},
-    m_confFilePath {(getConfDirPath() / "main.conf").string()}
+    m_userEmail {}
 {
 }
 // -----------------------------------------------------------------------------

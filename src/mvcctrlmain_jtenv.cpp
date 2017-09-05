@@ -170,16 +170,19 @@ bool MvcCtrlMain::git (const std::string& aGitCmd)
     return model->git(aGitCmd);
 }
 // -----------------------------------------------------------------------------
-bool MvcCtrlMain::cmakeAdd (const std::string& aName, const std::string& aCommand)
+bool MvcCtrlMain::cmakeAdd (const std::string& , const std::string&)
 {
+	return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcCtrlMain::cmakeRemove (const std::string& aName)
+bool MvcCtrlMain::cmakeRemove (const std::string&)
 {
+	return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcCtrlMain::cmakeExecute (const std::string& aCmdName)
+bool MvcCtrlMain::cmakeExecute (const std::string&)
 {
+	return true;
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

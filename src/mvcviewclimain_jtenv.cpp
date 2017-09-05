@@ -126,7 +126,7 @@ bool MvcViewCliMain::onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliMain::onPath (ArgIterator& , const ArgIterator&)
 {
 	Item::SPtr item {};
     if (auto ws = m_wsModel.getWorkspace(); ws) item = ws;
