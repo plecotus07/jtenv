@@ -4,7 +4,7 @@
 // +++ -------------------------------------------------------------------------
 #include "addressparser_jtenv.hpp"
 
-#include <mvcview_jkpp.hpp>
+#include <mvcviewcli_jkpp.hpp>
 
 #include <vector>
 #include <string>
@@ -19,12 +19,12 @@ class MvcModelWorkspace;
 class MvcModelProject;
 class MvcModelModel;
 // +++ -------------------------------------------------------------------------
-class MvcViewCliMain : public jkpp::MvcView {
+class MvcViewCliMain : public jkpp::MvcViewCli {
 	public:
 		MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel);
 
 		void update () {};
-		bool parse (const std::vector<std::string>& aArgs);
+		bool parse (ArgIterator& aArg, const ArgIterator aArgsEnd);
 
 	protected:
 		MvcCtrlMain&        m_ctrl;
@@ -33,8 +33,6 @@ class MvcViewCliMain : public jkpp::MvcView {
 		MvcModelWorkspace&  m_wsModel;
 		MvcModelProject&    m_projModel;
         AddressParser       m_addressParser;
-
-    	using ArgIterator = std::vector<std::string>::const_iterator;
 
 		bool onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd);
 		bool onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd);
@@ -53,21 +51,8 @@ class MvcViewCliMain : public jkpp::MvcView {
 		void displayHelp () const;
 		void displayVersion () const;
 
-		using Handlers = std::map<std::string, bool(*)(MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd)>;
-		const Handlers m_handlers;
+		const Handlers<MvcViewCliMain> m_handlers;
 
-};
-// +++ -------------------------------------------------------------------------
-class ProjectsLister : public ItemVisitor {
-	public:
-		ProjectsLister (bool aCloneOnly, bool aWithPath);
-
-		virtual void Visit (Workspace* aWs);
-		virtual void Visit (Project* aProj);
-
-	protected:
-    	bool m_clonedOnly;
-		bool m_withPath;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

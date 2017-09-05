@@ -16,7 +16,8 @@ MvcApp::MvcApp () :
 // -----------------------------------------------------------------------------
 bool MvcApp::run (const std::vector<std::string>& aArgs)
 {
-	return m_mainView.parse(aArgs);
+    auto arg = aArgs.begin();
+	return m_mainView.parse(arg, aArgs.end());
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

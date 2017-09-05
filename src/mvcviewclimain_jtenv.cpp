@@ -31,17 +31,16 @@ MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
+bool MvcViewCliMain::parse (ArgIterator& aArg, const ArgIterator aArgsEnd)
 {
-	auto arg {aArgs.begin()};
 
-	if ( (aArgs.empty())
-	        || (*arg == "-h")
-	        || (*arg == "--help") ) {
+	if ( (aArg == aArgsEnd)
+	        || (*aArg == "-h")
+	        || (*aArg == "--help") ) {
 		displayHelp();
 		return true;
-	} else if ( (*arg == "-v")
-	                || (*arg == "--version") ) {
+	} else if ( (*aArg == "-v")
+	                || (*aArg == "--version") ) {
 		displayVersion();
 		return true;
 	}
@@ -60,28 +59,28 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     // }
 	// std::cerr << "+++ -------------------\n";
 
-	if ((*arg) == "init") return onInitItem(++arg, aArgs.end());
+	if ((*aArg) == "init") return onInitItem(++aArg, aArgsEnd);
 
-    auto handler {m_handlers.find(*arg)};
+    auto handler {m_handlers.find(*aArg)};
     std::string addr;
     if (handler == m_handlers.end()) {
-    	addr = *arg;
-        ++arg;
+    	addr = *aArg;
+        ++aArg;
 	}
 
-    if (arg == aArgs.end()) {
+    if (aArg == aArgsEnd) {
         std::cerr << "Missing command.\n";
         return false;
     }
 
     std::string command {};
-    command = *arg;
+    command = *aArg;
     handler = m_handlers.find(command);
     if (handler == m_handlers.end()) {
         std::cerr << "Invalid command: " << command << '\n';
         return false;
     }
-    ++arg;
+    ++aArg;
 
     auto names {m_addressParser(addr)};
 
@@ -102,7 +101,7 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     }
 
 
-    return (handler->second)(this, arg, aArgs.end());
+    return (handler->second)(this, aArg, aArgsEnd);
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd)
@@ -148,22 +147,23 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
     bool cloned_only {false};
     bool with_path {false};
     for (; aArg != aArgsEnd; ++aArg) {
-        if ((*aArg)[0] == '-') {
-            for (auto c : *aArg) {
-                if (c == 'c') {
+        if ( !(*aArg).empty()
+             && (*aArg)[0] == '-') {
+            for (auto c = aArg->begin() + 1; c != aArg->end(); ++c) {
+                if (*c == 'c') {
                 	if (cloned_only) {
                     	std::cerr << "Duplication of '-c' option.\n";
                         return false;
                     }
 	                cloned_only = true;
-                } else if (c == 'p') {
+                } else if (*c == 'p') {
                 	if (with_path) {
                     	std::cerr << "Duplication of '-p' option.\n";
                         return false;
                     }
 					with_path = true;
                 } else {
-		            std::cerr << "Invalid option: -" << c << '\n';
+		            std::cerr << "Invalid option: -" << *c << '\n';
                 }
             }
         }
@@ -510,36 +510,6 @@ void MvcViewCliMain::displayHelp () const
 void MvcViewCliMain::displayVersion () const
 {
 	std::cout << getFullName() << " - v" << getVersion() << '\n';
-}
-// +++ -------------------------------------------------------------------------
-ProjectsLister::ProjectsLister (bool aClonedOnly, bool aWithPath) :
-    m_clonedOnly{aClonedOnly},
-    m_withPath{aWithPath}
-{
-}
-// -----------------------------------------------------------------------------
-void ProjectsLister::Visit (Workspace* aWs)
-{
-///\todo assert(aWn)
-
-    if (aWs->getPath().empty()) {
-        std::cerr << "Workspace " << aWs->getName() << " is not cloned\n";
-        return;
-    }
-
-    for (auto proj : *aWs) {
-        if (!m_clonedOnly || (!proj.second->getRepoPath().empty())) {
-            std::cout << proj.first;
-            if (m_withPath) std::cout << " : " << proj.second->getPath().string();
-            std::cout << '\n';
-        }
-    }
-
-}
-// -----------------------------------------------------------------------------
-void ProjectsLister::Visit (Project* aProj)
-{
-///\todo assert(true)
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv
