@@ -5,27 +5,29 @@
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvcmodelconfig_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
-#include "mvcmodelitem_jtenv.hpp"
+#include "mvcmodelworkspace_jtenv.hpp"
+#include "mvcmodelproject_jtenv.hpp"
 
 #include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelItem& aItemModel) :
+MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel) :
     m_ctrl {aCtrl},
     m_configModel {aConfigModel},
     m_workspacesModel {aWorkspacesModel},
-    m_itemModel {aItemModel},
+    m_wsModel {aWsModel},
+    m_projModel {aProjModel},
     m_addressParser {aWorkspacesModel.getWorkspaces()},
     m_handlers {{"user-name", [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onUserName(aArg, aArgsEnd);}},
-                 {"user-email", [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onUserEmail(aArg, aArgsEnd);}},
-                 {"path",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onPath(aArg, aArgsEnd);}},
-                 {"list",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onListItems(aArg, aArgsEnd);}},
-                 {"status",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onStatusItem(aArg, aArgsEnd);}},
-                 {"clone",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onCloneItem(aArg, aArgsEnd);}},
-                 {"clear",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onClearItem(aArg, aArgsEnd);}},
-                 {"git",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onGit(aArg, aArgsEnd);}},
-                 {"cmake",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onCMake(aArg, aArgsEnd);}}}
+                {"user-email", [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onUserEmail(aArg, aArgsEnd);}},
+                {"path",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onPath(aArg, aArgsEnd);}},
+                {"list",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onListItems(aArg, aArgsEnd);}},
+                {"status",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onStatusItem(aArg, aArgsEnd);}},
+                {"clone",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onCloneItem(aArg, aArgsEnd);}},
+                {"clear",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onClearItem(aArg, aArgsEnd);}},
+                {"git",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onGit(aArg, aArgsEnd);}},
+                {"cmake",  [] (MvcViewCliMain* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onCMake(aArg, aArgsEnd);}}}
 {
 }
 // -----------------------------------------------------------------------------
@@ -82,7 +84,27 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     ++arg;
 
     auto names {m_addressParser(addr)};
-    m_ctrl.selectItem(m_workspacesModel.getItem(names.first, names.second));
+	// if (names.first.empty()) {
+    //     std::cerr << "Invalid address: " << addr << '\n';
+    // 	return false;
+    // }
+
+    Workspace::SPtr ws {m_workspacesModel.getWorkspace(names.first)};
+    // if (!ws) {
+    // 	std::cerr << "Workspace '" << names.first << "' not exists.\n";
+    //     return false;
+    // }
+
+    if (names.second.empty()) {
+	    m_ctrl.selectWorkspace(ws);
+    } else {
+        Project::SPtr proj {ws->getProject(names.second)};
+        if (!proj) {
+        	std::cerr << "Project '" << names.second << "' not exists in workspace '" << names.first << "'.\n";
+            return false;
+        }
+        m_ctrl.selectProject(proj);
+    }
 
     return (handler->second)(this, arg, aArgs.end());
 }
@@ -111,7 +133,10 @@ bool MvcViewCliMain::onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd
 // -----------------------------------------------------------------------------
 bool MvcViewCliMain::onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 {
-	Item::SPtr item {m_itemModel.getItem()};
+	Item::SPtr item {};
+    if (auto ws = m_wsModel.getWorkspace(); ws) item = ws;
+    else if (auto proj = m_projModel.getProject(); proj) item = proj;
+
 	if (!item) {
         std::cerr << "Invalid address.\n";
         return false;
@@ -152,9 +177,9 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
         }
     }
 
-	Item::SPtr item {m_itemModel.getItem()};
+	Workspace::SPtr sel_ws {m_wsModel.getWorkspace()};
 
-    if (!item) {
+    if (!sel_ws) {
     	for (auto ws : m_workspacesModel) {
         	if (!cloned_only || !ws.second->getPath().empty()) {
             	std::cout << ws.first;
@@ -163,10 +188,18 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
             }
         }
     } else {
-    	ProjectsLister lister {cloned_only, with_path};
+        if (sel_ws->getPath().empty()) {
+            std::cerr << "Workspace " << sel_ws->getName() << " is not cloned\n";
+            return false;
+        }
 
-        item->Accept(lister);
-
+        for (auto proj : *sel_ws) {
+            if (!cloned_only || (!proj.second->getRepoPath().empty())) {
+                std::cout << proj.first;
+                if (with_path) std::cout << " : " << proj.second->getPath().string();
+                std::cout << '\n';
+            }
+        }
     }
 
     return true;
@@ -243,10 +276,13 @@ bool MvcViewCliMain::onStatusItem (ArgIterator& aArg, const ArgIterator& aArgsEn
         show_details = true;
     }
 
-	Item::SPtr item { m_itemModel.getItem() };
-    if (!item) {
-    	std::cout << "Not exists\n";
-    	return true;
+	Item::SPtr item {};
+    if (auto ws = m_wsModel.getWorkspace(); ws) item = ws;
+    else if (auto proj = m_projModel.getProject(); proj) item = proj;
+
+	if (!item) {
+        std::cerr << "Invalid address.\n";
+        return false;
     }
 
 	std::string details {};
@@ -271,11 +307,6 @@ bool MvcViewCliMain::onCloneItem (ArgIterator& aArg, const ArgIterator& aArgsEnd
 {
     if (aArg != aArgsEnd) {
     	std::cerr << "Invalid argument: " << *aArg << '\n';
-        return false;
-    }
-
-    if (!m_itemModel.getItem()) {
-        std::cerr << "Invalid address.\n";
         return false;
     }
 
@@ -304,11 +335,6 @@ bool MvcViewCliMain::onClearItem (ArgIterator& aArg, const ArgIterator& aArgsEnd
         	std::cerr << "Invalid argument: " << *aArg << '\n';
         	return false;
     	}
-    }
-
-    if (!m_itemModel.getItem()) {
-        std::cerr << "Invalid address.\n";
-        return false;
     }
 
     std::string details {};

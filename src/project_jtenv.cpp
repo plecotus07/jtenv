@@ -86,7 +86,7 @@ bool Project::save ()
     return true;
 }
 // -----------------------------------------------------------------------------
-bool Project::clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail)
+bool Project::clone (const std::string& aUserName, const std::string& aUserEmail, const fs::path&)
 {
 	if (!m_remoteGit) return false;
 

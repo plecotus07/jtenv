@@ -1,27 +1,27 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCMODELITEM_JTENV_HPP
-#define MVCMODELITEM_JTENV_HPP
+#ifndef MVCMODELPROJECT_JTENV_HPP
+#define MVCMODELPROJECT_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include "item_jtenv.hpp"
+#include "project_jtenv.hpp"
 
-#include <mvcmodelimpl_jkpp.hpp>
+#include "mvcmodelitem_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcModelItem : public jkpp::MvcModelImpl {
+class MvcModelProject : public MvcModelItem {
 	public:
-		MvcModelItem ();
+		MvcModelProject ();
 
-		bool clone (const std::string& aUserName, const std::string& aUserEmail, const fs::path& aPath = fs::path{});
-		bool clear (bool aForce, std::string& aDetails);
-		bool git (const std::string& aGitCmd);
+		void          setProject (Project::SPtr aProject);
+		Project::SPtr getProject () const { return m_project; }
 
 	protected:
-        virtual Item::SPtr getItem () = 0;
+    	Item::SPtr getItem () { return m_project; };
 
+        Project::SPtr m_project;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // MVCMODELITEM_JTENV_HPP
+#endif // MVCMODELPROJECT_JTENV_HPP
 // +++ -------------------------------------------------------------------------

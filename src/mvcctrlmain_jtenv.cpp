@@ -3,7 +3,8 @@
 
 #include "mvcmodelconfig_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
-#include "mvcmodelitem_jtenv.hpp"
+#include "mvcmodelproject_jtenv.hpp"
+#include "mvcmodelworkspace_jtenv.hpp"
 #include "projectconf_jtenv.hpp"
 
 #include <git_jkpp.hpp>
@@ -11,10 +12,11 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcCtrlMain::MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelItem& aItemModel, jkpp::GitBuilder& aGitBuilder) :
+MvcCtrlMain::MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel, jkpp::GitBuilder& aGitBuilder) :
     m_configModel {aConfigModel},
     m_workspacesModel {aWorkspacesModel},
-    m_itemModel {aItemModel},
+    m_wsModel {aWsModel},
+    m_projModel {aProjModel},
     m_gitBuilder {aGitBuilder}
 {
 ///\todo assert (m_git != nullptr)
@@ -77,9 +79,16 @@ bool MvcCtrlMain::setUserEmail (const std::string& aUserEmail)
     return saveConfig();
 }
 // -----------------------------------------------------------------------------
-void MvcCtrlMain::selectItem (Item::SPtr aItem)
+void MvcCtrlMain::selectProject (Project::SPtr aProject)
 {
-    m_itemModel.setItem(aItem);
+    m_wsModel.setWorkspace(nullptr);
+    m_projModel.setProject(aProject);
+}
+// -----------------------------------------------------------------------------
+void MvcCtrlMain::selectWorkspace (Workspace::SPtr aWorkspace)
+{
+    m_projModel.setProject(nullptr);
+    m_wsModel.setWorkspace(aWorkspace);
 }
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath)
@@ -93,7 +102,7 @@ bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath
 	Workspace::SPtr ws {m_workspacesModel.addWorkspace(aName, std::move(git))};
     if (!ws) return false;
 
-    if (!ws->clone(aPath, m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
+    if (!ws->clone(m_configModel.getUserName(), m_configModel.getUserEmail(), aPath)) return false;
 
 	if (!m_workspacesModel.save()) return false;
 
@@ -120,26 +129,32 @@ bool MvcCtrlMain::initProject (const std::string& aWsName, const std::string& aN
 
     if (!proj->init(aFullName, m_gitBuilder.create(aRepoUrl))) return false;
 
-    if (aClone && !proj->clone(ws->getPath() / aName, m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
+    if (aClone && !proj->clone(m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
 
 	return true;
 }
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::cloneItem (const fs::path& aPath)
 {
-	if (!m_itemModel.getItem()) return false;
+	MvcModelItem* model;
+    if (m_wsModel.getWorkspace()) model = &m_wsModel;
+    else if (m_projModel.getProject()) model = &m_projModel;
+    if (!model) return false;
 
-	if (!m_itemModel.clone(aPath, m_configModel.getUserName(), m_configModel.getUserEmail())) return false;
+	if (!model->clone(m_configModel.getUserName(), m_configModel.getUserEmail(), aPath)) return false;
 
     return m_workspacesModel.save();
 }
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::clearItem (bool aForce, std::string& aDetails)
 {
-	if (!m_itemModel.getItem()) return false;
+	MvcModelItem* model;
+    if (m_wsModel.getWorkspace()) model = &m_wsModel;
+    else if (m_projModel.getProject()) model = &m_projModel;
+    if (!model) return false;
 
     bool result {true};
-	if (!m_itemModel.clear(aForce, aDetails)) result = false;
+	if (!model->clear(aForce, aDetails)) result = false;
     if (!m_workspacesModel.save()) result = false;
 
     return result;
@@ -147,9 +162,12 @@ bool MvcCtrlMain::clearItem (bool aForce, std::string& aDetails)
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::git (const std::string& aGitCmd)
 {
-    if (!m_itemModel.getItem()) return false;
+	MvcModelItem* model;
+    if (m_wsModel.getWorkspace()) model = &m_wsModel;
+    else if (m_projModel.getProject()) model = &m_projModel;
+    if (!model) return false;
 
-    return m_itemModel.git(aGitCmd);
+    return model->git(aGitCmd);
 }
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::cmakeAdd (const std::string& aName, const std::string& aCommand)

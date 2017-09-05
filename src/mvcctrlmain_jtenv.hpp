@@ -2,7 +2,8 @@
 #ifndef MVCCTRLMAIN_JTENV_HPP
 #define MVCCTRLMAIN_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include "item_jtenv.hpp"
+#include "project_jtenv.hpp"
+#include "workspace_jtenv.hpp"
 
 #include <boost/filesystem.hpp>
 #include <string>
@@ -17,11 +18,12 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcModelConfig;
 class MvcModelWorkspaces;
-class MvcModelItem;
+class MvcModelWorkspace;
+class MvcModelProject;
 // +++ -------------------------------------------------------------------------
 class MvcCtrlMain {
 	public:
-		MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelItem& aItemModel, jkpp::GitBuilder& aGitBuilder);
+		MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel, jkpp::GitBuilder& aGitBuilder);
 
 		bool loadConfig ();
 		bool saveConfig ();
@@ -29,15 +31,13 @@ class MvcCtrlMain {
         bool setUserName (const std::string& aUserName);
         bool setUserEmail (const std::string& aUserEmail);
 
-		void selectItem (Item::SPtr aItem);
+		void selectProject (Project::SPtr aProject);
+		void selectWorkspace (Workspace::SPtr aWorkspace);
 
         bool initWorkspace (const std::string& aName, const fs::path& aPath);
         bool initProject (const std::string& aWsName, const std::string& aName, const std::string& aFullName, const std::string& aRepoUrl, bool clone);
 
 		bool cloneItem (const fs::path& aPath);
-
-		bool cloneWorkspace (const std::string& aName, const fs::path& aPath);
-        bool cloneProject (const std::string& aWsName, const std::string& aName);
 
 		bool clearItem (bool aForce, std::string& aDetails);
 
@@ -50,7 +50,8 @@ class MvcCtrlMain {
 	protected:
 		MvcModelConfig&     m_configModel;
 		MvcModelWorkspaces& m_workspacesModel;
-		MvcModelItem&       m_itemModel;
+		MvcModelWorkspace&  m_wsModel;
+		MvcModelProject&    m_projModel;
         jkpp::GitBuilder&   m_gitBuilder;
 };
 // +++ -------------------------------------------------------------------------

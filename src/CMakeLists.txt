@@ -20,7 +20,9 @@ add_executable (jtenv
 
 	mvcviewclimain_jtenv.cpp
 	mvcctrlmain_jtenv.cpp
-	mvcmodelitem_jtenv.cpp
+  mvcmodelitem_jtenv.cpp
+	mvcmodelworkspace_jtenv.cpp
+	mvcmodelproject_jtenv.cpp
 	mvcmodelconfig_jtenv.cpp
 	mvcmodelworkspaces_jtenv.cpp
 	mvcmodelcmake_jtenv.cpp

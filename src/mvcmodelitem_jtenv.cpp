@@ -4,24 +4,17 @@
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
 MvcModelItem::MvcModelItem () :
-    jkpp::MvcModelImpl(),
-    m_item{}
+    jkpp::MvcModelImpl()
 {
 }
 // -----------------------------------------------------------------------------
-void MvcModelItem::setItem (Item::SPtr aItem)
+bool MvcModelItem::clone (const std::string& aUserName, const std::string& aUserEmail, const fs::path& aPath)
 {
-    beginUpdate();
-    m_item = aItem;
-    endUpdate();
-}
-// -----------------------------------------------------------------------------
-bool MvcModelItem::clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail)
-{
-	if (!m_item) return false;
+	Item::SPtr item {getItem()};
+	if (!item) return false;
 
 	beginUpdate();
-    bool result {m_item->clone(aPath, aUserName, aUserEmail)};
+    bool result {item->clone(aUserName, aUserEmail, aPath)};
     endUpdate();
 
     return result;
@@ -29,10 +22,11 @@ bool MvcModelItem::clone (const fs::path& aPath, const std::string& aUserName, c
 // -----------------------------------------------------------------------------
 bool MvcModelItem::clear (bool aForce, std::string& aDetails)
 {
-	if (!m_item) return false;
+	Item::SPtr item {getItem()};
+	if (!item) return false;
 
 	beginUpdate();
-    bool result {m_item->clear(aForce, aDetails)};
+    bool result {item->clear(aForce, aDetails)};
     endUpdate();
 
     return result;
@@ -40,10 +34,11 @@ bool MvcModelItem::clear (bool aForce, std::string& aDetails)
 // -----------------------------------------------------------------------------
 bool MvcModelItem::git (const std::string& aGitCmd)
 {
-    if (!m_item) return false;
+	Item::SPtr item {getItem()};
+	if (!item) return false;
 
 	beginUpdate();
-    bool result {m_item->git(aGitCmd)};
+    bool result {item->git(aGitCmd)};
     endUpdate();
 
     return result;

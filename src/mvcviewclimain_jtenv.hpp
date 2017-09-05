@@ -15,11 +15,13 @@ namespace jtenv {
 class MvcCtrlMain;
 class MvcModelConfig;
 class MvcModelWorkspaces;
-class MvcModelItem;
+class MvcModelWorkspace;
+class MvcModelProject;
+class MvcModelModel;
 // +++ -------------------------------------------------------------------------
 class MvcViewCliMain : public jkpp::MvcView {
 	public:
-		MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelItem& aItemModel);
+		MvcViewCliMain (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel);
 
 		void update () {};
 		bool parse (const std::vector<std::string>& aArgs);
@@ -28,7 +30,8 @@ class MvcViewCliMain : public jkpp::MvcView {
 		MvcCtrlMain&        m_ctrl;
         MvcModelConfig&     m_configModel;
 		MvcModelWorkspaces& m_workspacesModel;
-		MvcModelItem&       m_itemModel;
+		MvcModelWorkspace&  m_wsModel;
+		MvcModelProject&    m_projModel;
         AddressParser       m_addressParser;
 
     	using ArgIterator = std::vector<std::string>::const_iterator;

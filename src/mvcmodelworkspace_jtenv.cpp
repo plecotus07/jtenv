@@ -1,22 +1,19 @@
 // +++ -------------------------------------------------------------------------
-#include "mvcapp_jtenv.hpp"
+#include "mvcmodelworkspace_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcApp::MvcApp () :
-    m_configModel {},
-    m_workspacesModel {},
-    m_wsModel {},
-    m_projModel {},
-    m_gitBuilder {},
-    m_mainCtrl {m_configModel, m_workspacesModel, m_wsModel, m_projModel, m_gitBuilder},
-    m_mainView {m_mainCtrl, m_configModel, m_workspacesModel, m_wsModel, m_projModel}
+MvcModelWorkspace::MvcModelWorkspace () :
+    MvcModelItem(),
+    m_ws{}
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcApp::run (const std::vector<std::string>& aArgs)
+void MvcModelWorkspace::setWorkspace (Workspace::SPtr aWs)
 {
-	return m_mainView.parse(aArgs);
+    beginUpdate();
+    m_ws = aWs;
+    endUpdate();
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

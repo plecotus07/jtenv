@@ -1,27 +1,27 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCMODELITEM_JTENV_HPP
-#define MVCMODELITEM_JTENV_HPP
+#ifndef MVCMODELWORKSPACE_JTENV_HPP
+#define MVCMODELWORKSPACE_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include "item_jtenv.hpp"
+#include "workspace_jtenv.hpp"
 
-#include <mvcmodelimpl_jkpp.hpp>
+#include "mvcmodelitem_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcModelItem : public jkpp::MvcModelImpl {
+class MvcModelWorkspace : public MvcModelItem {
 	public:
-		MvcModelItem ();
+		MvcModelWorkspace ();
 
-		bool clone (const std::string& aUserName, const std::string& aUserEmail, const fs::path& aPath = fs::path{});
-		bool clear (bool aForce, std::string& aDetails);
-		bool git (const std::string& aGitCmd);
+		void            setWorkspace (Workspace::SPtr aWs);
+		Workspace::SPtr getWorkspace () const { return m_ws; }
 
 	protected:
-        virtual Item::SPtr getItem () = 0;
+    	Item::SPtr getItem () { return m_ws; };
 
+        Workspace::SPtr m_ws;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // MVCMODELITEM_JTENV_HPP
+#endif // MVCMODELWORKSPACE_JTENV_HPP
 // +++ -------------------------------------------------------------------------

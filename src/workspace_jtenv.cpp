@@ -11,7 +11,7 @@ Workspace::Workspace (const std::string& aName, jkpp::Git::UPtr&& aRemoteGit, jk
 ///\todo assert(m_remoteGit)
 }
 // -----------------------------------------------------------------------------
-bool Workspace::clone (const fs::path& aPath, const std::string& aUserName, const std::string& aUserEmail)
+bool Workspace::clone (const std::string& aUserName, const std::string& aUserEmail, const fs::path& aPath)
 {
 	if (!m_remoteGit) return false;
     if (m_git) return false;
