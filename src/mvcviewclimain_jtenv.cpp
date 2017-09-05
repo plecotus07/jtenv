@@ -84,27 +84,23 @@ bool MvcViewCliMain::parse (const std::vector<std::string>& aArgs)
     ++arg;
 
     auto names {m_addressParser(addr)};
-	// if (names.first.empty()) {
-    //     std::cerr << "Invalid address: " << addr << '\n';
-    // 	return false;
-    // }
 
     Workspace::SPtr ws {m_workspacesModel.getWorkspace(names.first)};
-    // if (!ws) {
-    // 	std::cerr << "Workspace '" << names.first << "' not exists.\n";
-    //     return false;
-    // }
 
     if (names.second.empty()) {
 	    m_ctrl.selectWorkspace(ws);
-    } else {
+    } else if (ws) {
         Project::SPtr proj {ws->getProject(names.second)};
         if (!proj) {
         	std::cerr << "Project '" << names.second << "' not exists in workspace '" << names.first << "'.\n";
             return false;
         }
         m_ctrl.selectProject(proj);
+    } else {
+        std::cerr << "Workspace '" << names.first << "' not exists.\n";
+        return false;
     }
+
 
     return (handler->second)(this, arg, aArgs.end());
 }
@@ -153,21 +149,21 @@ bool MvcViewCliMain::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd
     bool with_path {false};
     for (; aArg != aArgsEnd; ++aArg) {
         if ((*aArg)[0] == '-') {
-            for (size_t i = 1; i < aArg->size(); ++i) {
-                if ((*aArg)[i] == 'c') {
+            for (auto c : *aArg) {
+                if (c == 'c') {
                 	if (cloned_only) {
                     	std::cerr << "Duplication of '-c' option.\n";
                         return false;
                     }
 	                cloned_only = true;
-                } else if ((*aArg)[i] == 'p') {
+                } else if (c == 'p') {
                 	if (with_path) {
                     	std::cerr << "Duplication of '-p' option.\n";
                         return false;
                     }
 					with_path = true;
                 } else {
-		            std::cerr << "Invalid option: -" << (*aArg)[i] << '\n';
+		            std::cerr << "Invalid option: -" << c << '\n';
                 }
             }
         }
