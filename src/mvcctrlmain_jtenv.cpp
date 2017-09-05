@@ -136,7 +136,7 @@ bool MvcCtrlMain::initProject (const std::string& aWsName, const std::string& aN
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::cloneItem (const fs::path& aPath)
 {
-	MvcModelItem* model;
+	MvcModelItem* model {};
     if (m_wsModel.getWorkspace()) model = &m_wsModel;
     else if (m_projModel.getProject()) model = &m_projModel;
     if (!model) return false;
