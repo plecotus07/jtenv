@@ -4,6 +4,7 @@
 #include "projectconf_jtenv.hpp"
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvcviewclicommon_jtenv.hpp"
+#include "mvcviewcliproject_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
 #include "addressparser_jtenv.hpp"
 
@@ -11,9 +12,10 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcViewCliCommon& aCommonView, MvcModelWorkspaces& aWssModel) :
+MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcViewCliCommon& aCommonView, MvcViewCliProject& aProjView, MvcModelWorkspaces& aWssModel) :
     m_ctrl {aCtrl},
     m_commonView {aCommonView},
+    m_projView {aProjView},
     m_wssModel {aWssModel}
 {
 }
@@ -68,6 +70,8 @@ bool MvcViewCliMain::parse (ArgIterator& aArg, const ArgIterator aArgsEnd)
     else m_ctrl.selectProject(proj);
 
 	if (m_commonView.containsCommand(cmd)) return m_commonView.parse(aArg, aArgsEnd);
+
+    if (proj && m_projView.containsCommand(cmd)) return m_projView.parse(aArg, aArgsEnd);
 
     std::cerr << "Invalid command: " << cmd << '\n';
     return false;

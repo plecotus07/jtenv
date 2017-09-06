@@ -13,6 +13,7 @@ class Project : public Item {
     	using SPtr = std::shared_ptr<Project>;
 		using SPtrByStrMap = std::map<std::string, SPtr>;
 		using Iterator = SPtrByStrMap::iterator;
+        using CMakeCmdsMap = std::map<std::string, std::string>;
 
         Project (const std::string& aWsName, const std::string& aName, const fs::path& aPath);
 
@@ -30,7 +31,12 @@ class Project : public Item {
 		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const;
         virtual const std::string& getWsName () const { return m_wsName; }
 
-        virtual void               Accept (ItemVisitor& aVisitor) { aVisitor.Visit(this); }
+		virtual bool                 addCMakeCmd (const std::string& aName, const std::string& aCmd);
+		virtual bool                 removeCMakeCmd (const std::string& aName);
+        virtual std::string          getCMakeCmd (const std::string& aName) const;
+        virtual const CMakeCmdsMap&  getCMakeCmds () const { return m_cmakeCmds; }
+
+        virtual void Accept (ItemVisitor& aVisitor) { aVisitor.Visit(this); }
 
     protected:
 		std::string     m_wsName;
@@ -40,6 +46,9 @@ class Project : public Item {
         jkpp::Git::UPtr m_remoteGit;
         jkpp::Git::UPtr m_git;
 		std::string     m_defaultBranch;
+
+        CMakeCmdsMap    m_cmakeCmds;
+
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

@@ -1,7 +1,6 @@
 // +++ -------------------------------------------------------------------------
 #include "mvcviewclicommon_jtenv.hpp"
 
-#include "projectconf_jtenv.hpp"
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvcmodelconfig_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"

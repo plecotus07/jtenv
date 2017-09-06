@@ -8,6 +8,7 @@
 #include "mvcmodelproject_jtenv.hpp"
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvcviewclicommon_jtenv.hpp"
+#include "mvcviewcliproject_jtenv.hpp"
 #include "mvcviewclimain_jtenv.hpp"
 
 #include <mvcapp_jkpp.hpp>
@@ -29,6 +30,7 @@ class MvcApp : public jkpp::MvcApp {
 		jkpp::GitSubProcBuilder m_gitBuilder;
 		MvcCtrlMain             m_mainCtrl;
         MvcViewCliCommon        m_commonView;
+		MvcViewCliProject       m_projView;
 		MvcViewCliMain 	        m_mainView;
 };
 // +++ -------------------------------------------------------------------------

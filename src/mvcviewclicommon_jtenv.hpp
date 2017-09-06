@@ -3,9 +3,6 @@
 #define MVCVIEWCLICOMMON_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 #include <mvcviewcli_jkpp.hpp>
-
-#include <vector>
-#include <string>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -14,7 +11,6 @@ class MvcModelConfig;
 class MvcModelWorkspaces;
 class MvcModelWorkspace;
 class MvcModelProject;
-class MvcModelModel;
 // +++ -------------------------------------------------------------------------
 class MvcViewCliCommon : public jkpp::MvcViewCli {
 	public:

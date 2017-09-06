@@ -11,7 +11,8 @@ Project::Project (const std::string& aWsName, const std::string& aName, const fs
     m_path {aPath},
     m_remoteGit {},
     m_git {},
-    m_defaultBranch {"master"}
+    m_defaultBranch {"master"},
+    m_cmakeCmds {}
 {
 
 }
@@ -132,6 +133,36 @@ jkpp::Git::Status Project::getStatus (std::string& aStatusDetails) const
 	if (!m_git) return jkpp::Git::Status::not_cloned;
 
     return m_git->getStatus(aStatusDetails);
+}
+// -----------------------------------------------------------------------------
+bool Project::addCMakeCmd (const std::string& aName, const std::string& aCmd)
+{
+	if (aName.empty() || aCmd.empty()) return false;
+
+    auto found {m_cmakeCmds.find(aName)};
+    if (found != m_cmakeCmds.end()) return false;
+
+	m_cmakeCmds.insert(std::make_pair(aName, aCmd));
+
+    return true;
+}
+// -----------------------------------------------------------------------------
+bool Project::removeCMakeCmd (const std::string& aName)
+{
+	auto found (m_cmakeCmds.find(aName));
+    if (found == m_cmakeCmds.end()) return false;
+
+    m_cmakeCmds.erase(found);
+
+    return true;
+}
+// -----------------------------------------------------------------------------
+std::string Project::getCMakeCmd (const std::string& aName) const
+{
+    auto found {m_cmakeCmds.find(aName)};
+    if (found != m_cmakeCmds.end()) return std::string{};
+
+    return found->second;
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

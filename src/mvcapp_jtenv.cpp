@@ -11,7 +11,8 @@ MvcApp::MvcApp () :
     m_gitBuilder {},
     m_mainCtrl {m_configModel, m_workspacesModel, m_wsModel, m_projModel, m_gitBuilder},
     m_commonView {m_mainCtrl, m_configModel, m_workspacesModel, m_wsModel, m_projModel},
-    m_mainView {m_mainCtrl, m_commonView, m_workspacesModel}
+    m_projView {m_mainCtrl, m_projModel},
+    m_mainView {m_mainCtrl, m_commonView, m_projView, m_workspacesModel}
 {
 }
 // -----------------------------------------------------------------------------

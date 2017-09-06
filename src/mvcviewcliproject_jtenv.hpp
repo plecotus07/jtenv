@@ -1,35 +1,36 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCVIEWCLIMAIN_JTENV_HPP
-#define MVCVIEWCLIMAIN_JTENV_HPP
+#ifndef MVCVIEWCLIPROJECT_JTENV_HPP
+#define MVCVIEWCLIPROJECT_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 #include <mvcviewcli_jkpp.hpp>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcCtrlMain;
-class MvcViewCliCommon;
-class MvcViewCliProject;
-class MvcModelWorkspaces;
+class MvcModelProject;
 // +++ -------------------------------------------------------------------------
-class MvcViewCliMain : public jkpp::MvcViewCli {
+class MvcViewCliProject : public jkpp::MvcViewCli {
 	public:
-		MvcViewCliMain (MvcCtrlMain& aCtrl, MvcViewCliCommon& aCommonView, MvcViewCliProject& aProjView, MvcModelWorkspaces& aWssModel);
+		MvcViewCliProject (MvcCtrlMain& aCtrl, MvcModelProject& aProjModel);
 
 		virtual void update () {};
 		virtual bool parse (ArgIterator& aArg, const ArgIterator aArgsEnd);
-		virtual bool containsCommand (const std::string&) { return false; }
+        virtual bool containsCommand (const std::string& aCmd);
 
 	protected:
 		MvcCtrlMain&        m_ctrl;
-    	MvcViewCliCommon&   m_commonView;
-		MvcViewCliProject&  m_projView;
-		MvcModelWorkspaces& m_wssModel;
+		MvcModelProject&    m_projModel;
 
-		void displayHelp () const;
-		void displayVersion () const;
+		bool onCMake (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onCMakeAdd (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onCMakeRemove (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onCMakeList (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+
+		const Handlers<MvcViewCliProject> m_handlers;
+
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // MVCVIEWCLIMAIN_JTENV_HPP
+#endif // MVCVIEWCLIPROJECT_JTENV_HPP
 // +++ -------------------------------------------------------------------------
