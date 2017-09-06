@@ -2,12 +2,13 @@
 #ifndef MVCAPP_JTENV_HPP
 #define MVCAPP_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include "mvcviewclimain_jtenv.hpp"
 #include "mvcmodelconfig_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
 #include "mvcmodelworkspace_jtenv.hpp"
 #include "mvcmodelproject_jtenv.hpp"
 #include "mvcctrlmain_jtenv.hpp"
+#include "mvcviewclicommon_jtenv.hpp"
+#include "mvcviewclimain_jtenv.hpp"
 
 #include <mvcapp_jkpp.hpp>
 #include <gitsubproc_jkpp.hpp>
@@ -27,6 +28,7 @@ class MvcApp : public jkpp::MvcApp {
 		MvcModelProject         m_projModel;
 		jkpp::GitSubProcBuilder m_gitBuilder;
 		MvcCtrlMain             m_mainCtrl;
+        MvcViewCliCommon        m_commonView;
 		MvcViewCliMain 	        m_mainView;
 };
 // +++ -------------------------------------------------------------------------

@@ -17,7 +17,8 @@ add_executable (jtenv
 	project_jtenv.cpp
 	mvcapp_jtenv.cpp
 	addressparser_jtenv.cpp
-	mvcviewclimain_jtenv.cpp
+	mvcviewclicommon_jtenv.cpp
+  mvcviewclimain_jtenv.cpp
 	mvcctrlmain_jtenv.cpp
   mvcmodelitem_jtenv.cpp
 	mvcmodelworkspace_jtenv.cpp
