@@ -28,15 +28,15 @@ bool MvcViewCliConfig::parse ()
     if (m_arg == m_argsEnd) {
     	onDisplayConfig();
         return true;
-	} else {
-    	std::string key {*m_arg};
-		++m_arg;
+	}
 
-	    if (key == "user-name") return onUserName();
-    	else if (key == "user-email") return onUserEmail();
-    }
+    std::string key {*m_arg};
+	++m_arg;
 
-    std::cerr << "Invalid argument: " << *m_arg << '\n';
+    if (key == "user-name") return onUserName();
+	else if (key == "user-email") return onUserEmail();
+
+    std::cerr << "Invalid argument: " << key << '\n';
 
     return false;
 }
@@ -55,7 +55,7 @@ void MvcViewCliConfig::onDisplayConfig ()
 bool MvcViewCliConfig::onUserName ()
 {
     if (m_arg == m_argsEnd) {
-    	std::cerr << "Missing argument";
+    	std::cerr << "Missing argument.\n";
     	return false;
     }
 
@@ -67,7 +67,7 @@ bool MvcViewCliConfig::onUserName ()
 bool MvcViewCliConfig::onUserEmail ()
 {
     if (m_arg == m_argsEnd) {
-    	std::cerr << "Missing argument";
+    	std::cerr << "Missing argument.\n";
     	return false;
     }
 

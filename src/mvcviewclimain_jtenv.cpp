@@ -85,11 +85,12 @@ bool MvcViewCliMain::parse ()
 bool MvcViewCliMain::onConfig ()
 {
 	++m_arg;
+
     m_configView.show();
 
 	if (!m_configView.getResult()) return false; 	// window->showModeal() == mrok
 
-	if (m_configView.submitEdit()) {
+	if (!m_configView.submitEdit()) {
     	std::cerr << "Edit config error.\n";
         return false;
     }

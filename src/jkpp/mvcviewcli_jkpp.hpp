@@ -22,9 +22,9 @@ class MvcViewCli : public MvcView {
 		bool getResult () { return m_result; }
 
 	protected:
-		ArgIterator m_arg;
-		ArgIterator m_argsEnd;
-		bool        m_result;
+		ArgIterator& m_arg;
+		ArgIterator  m_argsEnd;
+		bool         m_result;
 
     	template <class T>
 		using Handlers = std::map<std::string, bool(*)(T* aView)>;
