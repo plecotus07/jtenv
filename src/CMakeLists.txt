@@ -30,6 +30,7 @@ add_executable (jtenv
 	mvcmodelconfigedit_jtenv.cpp
 	mvcmodelworkspaces_jtenv.cpp
 	mvcmodelcmake_jtenv.cpp
+    mvceditorcliconfig_jtenv.cpp
 	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
     jkpp/mvcapp_jkpp.cpp
     jkpp/mvcviewcli_jkpp.cpp

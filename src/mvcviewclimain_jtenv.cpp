@@ -3,7 +3,7 @@
 
 #include "projectconf_jtenv.hpp"
 #include "mvcctrlmain_jtenv.hpp"
-#include "mvcviewcliconfig_jtenv.hpp"
+#include "mvceditorcliconfig_jtenv.hpp"
 #include "mvcviewclicommon_jtenv.hpp"
 #include "mvcviewcliproject_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
@@ -13,10 +13,10 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliMain::MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcViewCliConfig& aConfigView, MvcViewCliCommon& aCommonView, MvcViewCliProject& aProjView, MvcModelWorkspaces& aWssModel) :
+MvcViewCliMain::MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcEditorCliConfig& aConfigEditor, MvcViewCliCommon& aCommonView, MvcViewCliProject& aProjView, MvcModelWorkspaces& aWssModel) :
     MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
-    m_configView {aConfigView},
+    m_configEditor {aConfigEditor},
     m_commonView {aCommonView},
     m_projView {aProjView},
     m_wssModel {aWssModel}
@@ -64,7 +64,8 @@ bool MvcViewCliMain::parse ()
 
     std::string cmd {m_arg->substr(2)};
 
-    if (cmd == "config") return onConfig();
+    ++m_arg;
+    if (cmd == "config") return m_configEditor.edit();
 
     auto names {AddressParser{m_wssModel.getWorkspaces()}(addr)};
     Workspace::SPtr ws {m_wssModel.getWorkspace(names.first)};
@@ -80,22 +81,6 @@ bool MvcViewCliMain::parse ()
 
     std::cerr << "Invalid command: " << cmd << '\n';
     return false;
-}
-// -----------------------------------------------------------------------------
-bool MvcViewCliMain::onConfig ()
-{
-	++m_arg;
-
-    m_configView.show();
-
-	if (!m_configView.getResult()) return false; 	// window->showModeal() == mrok
-
-	if (!m_configView.submitEdit()) {
-    	std::cerr << "Edit config error.\n";
-        return false;
-    }
-
-    return true;
 }
 // -----------------------------------------------------------------------------
 void MvcViewCliMain::onDisplayHelp () const

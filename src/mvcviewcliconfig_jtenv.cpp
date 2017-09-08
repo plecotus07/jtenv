@@ -1,7 +1,6 @@
 // +++ -------------------------------------------------------------------------
 #include "mvcviewcliconfig_jtenv.hpp"
 
-#include "mvcctrlmain_jtenv.hpp"
 #include "mvcctrlconfigedit_jtenv.hpp"
 #include "mvcmodelconfigedit_jtenv.hpp"
 
@@ -18,7 +17,12 @@ MvcViewCliConfig::MvcViewCliConfig (ArgIterator& aArg, const ArgIterator& aArgsE
 // -----------------------------------------------------------------------------
 bool MvcViewCliConfig::submitEdit ()
 {
-	return m_ctrl.submitEdit();
+	if (!m_ctrl.submitEdit()) {
+        std::cerr << "Edit config error.\n";
+        return false;
+    }
+
+    return true;
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliConfig::parse ()
