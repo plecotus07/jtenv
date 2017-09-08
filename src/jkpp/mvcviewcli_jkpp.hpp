@@ -6,7 +6,6 @@
 
 #include <vector>
 #include <map>
-
 // +++ -------------------------------------------------------------------------
 namespace jkpp {
 // +++ -------------------------------------------------------------------------
@@ -14,13 +13,21 @@ class MvcViewCli : public MvcView {
 	public:
     	using ArgIterator = std::vector<std::string>::const_iterator;
 
-		virtual bool parse (ArgIterator& aArg, const ArgIterator aArgsEnd) = 0;
+		MvcViewCli (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+
+		virtual void show ();
+		virtual bool parse () = 0;
 		virtual bool containsCommand (const std::string& aCmd) = 0;
 
-	protected:
-    	template <class T>
-		using Handlers = std::map<std::string, bool(*)(T* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd)>;
+		bool getResult () { return m_result; }
 
+	protected:
+		ArgIterator m_arg;
+		ArgIterator m_argsEnd;
+		bool        m_result;
+
+    	template <class T>
+		using Handlers = std::map<std::string, bool(*)(T* aView)>;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

@@ -15,7 +15,6 @@ class MvcModelImpl : public MvcModel {
 		virtual void attachView (MvcView* aView);
 		virtual void detachView (MvcView* aView);
 
-	protected:
 		virtual void beginUpdate () { ++m_updateCount; }
 		virtual void endUpdate ();
 

@@ -8,27 +8,28 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliProject::MvcViewCliProject (MvcCtrlMain& aCtrl, MvcModelProject& aProjModel) :
+MvcViewCliProject::MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcModelProject& aProjModel) :
+    MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
     m_projModel {aProjModel},
-    m_handlers {{"cmake", [] (MvcViewCliProject* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onCMake(aArg, aArgsEnd);}}}
+    m_handlers {{"cmake", [] (MvcViewCliProject* aView) -> bool {return aView->onCMake();}}}
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliProject::parse (ArgIterator& aArg, const ArgIterator aArgsEnd)
+bool MvcViewCliProject::parse ()
 {
-    if ( (aArg == aArgsEnd)
-             || (aArg->substr(0,2) != "--") ) {
+    if ( (m_arg == m_argsEnd)
+             || (m_arg->substr(0,2) != "--") ) {
         std::cerr << "Missing command.\n";
         return false;
     }
 
-    auto handler = m_handlers.find(aArg->substr(2));
+    auto handler = m_handlers.find(m_arg->substr(2));
 ///\todo assert (handler != m_handlers.end();
 
-    ++aArg;
+    ++m_arg;
 
-    return (handler->second)(this, aArg, aArgsEnd);
+    return (handler->second)(this);
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliProject::containsCommand (const std::string& aCmd)
@@ -36,27 +37,36 @@ bool MvcViewCliProject::containsCommand (const std::string& aCmd)
     return (m_handlers.find(aCmd) != m_handlers.end());
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliProject::onCMake (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliProject::onCMake ()
 {
-    if (aArg == aArgsEnd) {
+    if (m_arg == m_argsEnd) {
     	std::cerr << "Missing arguments\n";
         return false;
     }
 
-    if (*aArg == "add") return onCMakeAdd (++aArg, aArgsEnd);
-    else if (*aArg == "rem") return onCMakeRemove (++aArg, aArgsEnd);
-    else if (*aArg == "list") return onCMakeList (++aArg, aArgsEnd);
+    std::string arg {*m_arg};
 
-    std::string name {*aArg};
+    ++m_arg;
 
-    ++aArg;
-    if (aArg != aArgsEnd) {
-    	std::cerr << "Invalid argument: " << *aArg << '\n';
+    if (*m_arg == "add") return onCMakeAdd ();
+    else if (*m_arg == "rem") return onCMakeRemove ();
+    else if (*m_arg == "list") return onCMakeList ();
+
+    if (m_arg == m_argsEnd) {
+    	std::cout << "Missing CMake command name.\n";
+    	return false;
+    }
+
+    std::string name {*m_arg};
+
+    ++m_arg;
+    if (m_arg != m_argsEnd) {
+    	std::cerr << "Invalid argument: " << *m_arg << '\n';
         return false;
     }
 
 
-    if (!m_ctrl.cmakeExecute(*aArg)) {
+    if (!m_ctrl.cmakeExecute(name)) {
     	std::cerr << "CMake command execute error\n";
         return false;
     }
@@ -65,24 +75,24 @@ bool MvcViewCliProject::onCMake (ArgIterator& aArg, const ArgIterator& aArgsEnd)
 
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliProject::onCMakeAdd (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliProject::onCMakeAdd ()
 {
-    if (aArg == aArgsEnd) {
+    if (m_arg == m_argsEnd) {
     	std::cerr << "Missing arguments.\n";
         return false;
     }
-    std::string name {*aArg};
+    std::string name {*m_arg};
 
-    ++aArg;
-    if (aArg == aArgsEnd) {
+    ++m_arg;
+    if (m_arg == m_argsEnd) {
     	std::cerr << "Missing arguments.\n";
         return false;
     }
-    std::string cmd {*aArg};
+    std::string cmd {*m_arg};
 
-    ++aArg;
-    if (aArg != aArgsEnd) {
-    	std::cerr << "Invalid argument: " << *aArg << '\n';
+    ++m_arg;
+    if (m_arg != m_argsEnd) {
+    	std::cerr << "Invalid argument: " << *m_arg << '\n';
         return false;
     }
 
@@ -94,17 +104,16 @@ bool MvcViewCliProject::onCMakeAdd (ArgIterator& aArg, const ArgIterator& aArgsE
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliProject::onCMakeRemove (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliProject::onCMakeRemove ()
 {
-    if (aArg == aArgsEnd) {
+    if (m_arg == m_argsEnd) {
     	std::cerr << "Missing arguments.\n";
         return false;
     }
-    std::string name {*aArg};
-
-    ++aArg;
-    if (aArg != aArgsEnd) {
-    	std::cerr << "Invalid argument: " << *aArg << '\n';
+    std::string name {*m_arg};
+    ++m_arg;
+    if (m_arg != m_argsEnd) {
+    	std::cerr << "Invalid argument: " << *m_arg << '\n';
         return false;
     }
 
@@ -116,10 +125,10 @@ bool MvcViewCliProject::onCMakeRemove (ArgIterator& aArg, const ArgIterator& aAr
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliProject::onCMakeList (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliProject::onCMakeList ()
 {
-    if (aArg != aArgsEnd) {
-    	std::cerr << "Invalid argument: " << *aArg << '\n';
+    if (m_arg != m_argsEnd) {
+    	std::cerr << "Invalid argument: " << *m_arg << '\n';
         return false;
     }
 

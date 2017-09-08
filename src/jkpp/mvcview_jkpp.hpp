@@ -12,6 +12,7 @@ class MvcView {
 
     	virtual ~MvcView () = default;
 
+		virtual void show () = 0;
         virtual void update () = 0;
 };
 // +++ -------------------------------------------------------------------------

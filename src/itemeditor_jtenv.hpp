@@ -1,25 +1,24 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCAPP_JKPP_HPP
-#define MVCAPP_JKPP_HPP
+#ifndef ITEMEDITOR_JTENV_HPP
+#define ITEMEDITOR_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include <vector>
-#include <string>
+#include "item_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
-namespace jkpp {
+namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcApp {
+class ItemEditor: public ItemVisitor {
 	public:
-	             MvcApp (const std::vector<std::string>& aArgs);
-		virtual ~MvcApp () = default;
+    	ItemVisitor (MvcViewProject& aProjView, MvcViewWorkspace& aWsView, MvcCtrlMain& aMainCtrl);
 
-		virtual bool run () = 0;
+		virtual void Visit (Workspace* aWs);
+		virtual void Visit (Project* aProj);
 
-	protected:
-    	const std::vector<std::string>           m_args;
-		std::vector<std::string>::const_iterator m_arg;
+    private:
+        MvcViewProject&   m_projView;
+        MvcViewWorkspace& m_wsView;
 };
 // +++ -------------------------------------------------------------------------
-} // jkpp
+} // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // MVCAPP_JKPP_HPP
+#endif // ITEMEDITOR_JTENV_HPP
 // +++ -------------------------------------------------------------------------

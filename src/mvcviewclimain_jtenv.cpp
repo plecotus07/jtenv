@@ -3,6 +3,7 @@
 
 #include "projectconf_jtenv.hpp"
 #include "mvcctrlmain_jtenv.hpp"
+#include "mvcviewcliconfig_jtenv.hpp"
 #include "mvcviewclicommon_jtenv.hpp"
 #include "mvcviewcliproject_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
@@ -12,24 +13,26 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliMain::MvcViewCliMain (MvcCtrlMain& aCtrl, MvcViewCliCommon& aCommonView, MvcViewCliProject& aProjView, MvcModelWorkspaces& aWssModel) :
+MvcViewCliMain::MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcViewCliConfig& aConfigView, MvcViewCliCommon& aCommonView, MvcViewCliProject& aProjView, MvcModelWorkspaces& aWssModel) :
+    MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
+    m_configView {aConfigView},
     m_commonView {aCommonView},
     m_projView {aProjView},
     m_wssModel {aWssModel}
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliMain::parse (ArgIterator& aArg, const ArgIterator aArgsEnd)
+bool MvcViewCliMain::parse ()
 {
-	if ( (aArg == aArgsEnd)
-	        || (*aArg == "-h")
-	        || (*aArg == "--help") ) {
-		displayHelp();
+	if ( (m_arg == m_argsEnd)
+	        || (*m_arg == "-h")
+	        || (*m_arg == "--help") ) {
+		onDisplayHelp();
 		return true;
-	} else if ( (*aArg == "-v")
-	                || (*aArg == "--version") ) {
-		displayVersion();
+	} else if ( (*m_arg == "-v")
+	                || (*m_arg == "--version") ) {
+		onDisplayVersion();
 		return true;
 	}
 
@@ -48,18 +51,20 @@ bool MvcViewCliMain::parse (ArgIterator& aArg, const ArgIterator aArgsEnd)
 	// std::cerr << "+++ -------------------\n";
 
     std::string addr {};
-    if (aArg->substr(0,2) != "--") {
-    	addr = *aArg;
-        ++aArg;
+    if (m_arg->substr(0,2) != "--") {
+    	addr = *m_arg;
+        ++m_arg;
     }
 
-    if ( (aArg == aArgsEnd)
-         || (aArg->substr(0,2) != "--") ){
+    if ( (m_arg == m_argsEnd)
+         || (m_arg->substr(0,2) != "--") ){
         std::cerr << "Missing command.\n";
         return false;
     }
 
-    std::string cmd {aArg->substr(2)};
+    std::string cmd {m_arg->substr(2)};
+
+    if (cmd == "config") return onConfig();
 
     auto names {AddressParser{m_wssModel.getWorkspaces()}(addr)};
     Workspace::SPtr ws {m_wssModel.getWorkspace(names.first)};
@@ -69,22 +74,38 @@ bool MvcViewCliMain::parse (ArgIterator& aArg, const ArgIterator aArgsEnd)
     if (!proj) m_ctrl.selectWorkspace(ws);
     else m_ctrl.selectProject(proj);
 
-	if (m_commonView.containsCommand(cmd)) return m_commonView.parse(aArg, aArgsEnd);
+	if (m_commonView.containsCommand(cmd)) return m_commonView.parse();
 
-    if (proj && m_projView.containsCommand(cmd)) return m_projView.parse(aArg, aArgsEnd);
+    if (proj && m_projView.containsCommand(cmd)) return m_projView.parse();
 
     std::cerr << "Invalid command: " << cmd << '\n';
     return false;
 }
 // -----------------------------------------------------------------------------
-void MvcViewCliMain::displayHelp () const
+bool MvcViewCliMain::onConfig ()
+{
+	++m_arg;
+    m_configView.show();
+
+	if (!m_configView.getResult()) return false; 	// window->showModeal() == mrok
+
+	if (m_configView.submitEdit()) {
+    	std::cerr << "Edit config error.\n";
+        return false;
+    }
+
+    return true;
+}
+// -----------------------------------------------------------------------------
+void MvcViewCliMain::onDisplayHelp () const
 {
 	std::cout << "\n  jtpm [-v | --version] [-h | --help] [COMMAND]\n\n"
 	               "    -v, --version                      - Display version.\n"
 	               "    -h, --help                         - Display help.\n"
-
-                 "\n    user-name [USER_NAME]              - Set or get user name.\n"
-                   "    user-email [USER_EMAIL]            - Set or get user email.\n"
+                 "\n    --config [ARG]                     - Config manager\n"
+                   "                            - Display configuration\n"
+                   "    user-name [USER_NAME]   - Set or get user name.\n"
+                   "    user-email [USER_EMAIL] - Set or get user email.\n"
 
                  "\n    [ADDR] path                        - Get item path.\n"
 
@@ -117,7 +138,7 @@ void MvcViewCliMain::displayHelp () const
 			  	 "\n";
 }
 // -----------------------------------------------------------------------------
-void MvcViewCliMain::displayVersion () const
+void MvcViewCliMain::onDisplayVersion () const
 {
 	std::cout << getFullName() << " - v" << getVersion() << '\n';
 }

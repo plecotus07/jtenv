@@ -14,10 +14,10 @@ class MvcModelProject;
 // +++ -------------------------------------------------------------------------
 class MvcViewCliCommon : public jkpp::MvcViewCli {
 	public:
-		MvcViewCliCommon (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWssModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel);
+		MvcViewCliCommon (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWssModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel);
 
 		virtual void update () {};
-		virtual bool parse (ArgIterator& aArg, const ArgIterator aArgsEnd);
+		virtual bool parse ();
         virtual bool containsCommand (const std::string& aCmd);
 
 	protected:
@@ -27,15 +27,13 @@ class MvcViewCliCommon : public jkpp::MvcViewCli {
 		MvcModelWorkspace&  m_wsModel;
 		MvcModelProject&    m_projModel;
 
-		bool onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd);
-		bool onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd);
-		bool onPath (ArgIterator& aArg, const ArgIterator& aArgsEnd);
-		bool onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd);
-		bool onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd);
-		bool onStatusItem (ArgIterator& aArg, const ArgIterator& aArgsEnd);
-		bool onCloneItem (ArgIterator& aArg, const ArgIterator& aArgsEnd);
-		bool onClearItem (ArgIterator& aArg, const ArgIterator& aArgsEnd);
-		bool onGit (ArgIterator& aArg, const ArgIterator& aArgsEnd);
+		bool onPath ();
+		bool onListItems ();
+		bool onInitItem ();
+		bool onStatusItem ();
+		bool onCloneItem ();
+		bool onClearItem ();
+		bool onGit ();
 
 		const Handlers<MvcViewCliCommon> m_handlers;
 

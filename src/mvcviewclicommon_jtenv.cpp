@@ -12,38 +12,37 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliCommon::MvcViewCliCommon (MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWssModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel) :
+MvcViewCliCommon::MvcViewCliCommon (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWssModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel) :
+    MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
     m_configModel {aConfigModel},
     m_wssModel {aWssModel},
     m_wsModel {aWsModel},
     m_projModel {aProjModel},
-    m_handlers {{"user-name", [] (MvcViewCliCommon* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onUserName(aArg, aArgsEnd);}},
-                {"user-email", [] (MvcViewCliCommon* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onUserEmail(aArg, aArgsEnd);}},
-                {"path",  [] (MvcViewCliCommon* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onPath(aArg, aArgsEnd);}},
-                {"list",  [] (MvcViewCliCommon* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onListItems(aArg, aArgsEnd);}},
-                {"init",  [] (MvcViewCliCommon* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onInitItem(aArg, aArgsEnd);}},
-                {"status",  [] (MvcViewCliCommon* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onStatusItem(aArg, aArgsEnd);}},
-                {"clone",  [] (MvcViewCliCommon* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onCloneItem(aArg, aArgsEnd);}},
-                {"clear",  [] (MvcViewCliCommon* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onClearItem(aArg, aArgsEnd);}},
-                {"git",  [] (MvcViewCliCommon* aView, ArgIterator& aArg, const ArgIterator& aArgsEnd) -> bool {return aView->onGit(aArg, aArgsEnd);}}}
+    m_handlers {{"path",  [] (MvcViewCliCommon* aView) -> bool {return aView->onPath();}},
+                {"list",  [] (MvcViewCliCommon* aView) -> bool {return aView->onListItems();}},
+                {"init",  [] (MvcViewCliCommon* aView) -> bool {return aView->onInitItem();}},
+                {"status",  [] (MvcViewCliCommon* aView) -> bool {return aView->onStatusItem();}},
+                {"clone",  [] (MvcViewCliCommon* aView) -> bool {return aView->onCloneItem();}},
+                {"clear",  [] (MvcViewCliCommon* aView) -> bool {return aView->onClearItem();}},
+                {"git",  [] (MvcViewCliCommon* aView) -> bool {return aView->onGit();}}}
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliCommon::parse (ArgIterator& aArg, const ArgIterator aArgsEnd)
+bool MvcViewCliCommon::parse ()
 {
-    if ( (aArg == aArgsEnd)
-             || (aArg->substr(0,2) != "--") ) {
+    if ( (m_arg == m_argsEnd)
+             || (m_arg->substr(0,2) != "--") ) {
         std::cerr << "Missing command.\n";
         return false;
     }
 
-    auto handler = m_handlers.find(aArg->substr(2));
+    auto handler = m_handlers.find(m_arg->substr(2));
 ///\todo assert (handler != m_handlers.end();
 
-    ++aArg;
+    ++m_arg;
 
-    return (handler->second)(this, aArg, aArgsEnd);
+    return (handler->second)(this);
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliCommon::containsCommand (const std::string& aCmd)
@@ -51,29 +50,7 @@ bool MvcViewCliCommon::containsCommand (const std::string& aCmd)
     return (m_handlers.find(aCmd) != m_handlers.end());
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliCommon::onUserName (ArgIterator& aArg, const ArgIterator& aArgsEnd)
-{
-    if (aArg == aArgsEnd) std::cout << m_configModel.getUserName() << '\n';
-    else  if (!m_ctrl.setUserName(*aArg)) {
-        std::cerr << "Edit user name error\n";
-        return false;
-    }
-
-    return true;
-}
-// -----------------------------------------------------------------------------
-bool MvcViewCliCommon::onUserEmail (ArgIterator& aArg, const ArgIterator& aArgsEnd)
-{
-    if (aArg == aArgsEnd) std::cout << m_configModel.getUserEmail() << '\n';
-    else  if (!m_ctrl.setUserEmail(*aArg)) {
-        std::cerr << "Edit user email error\n";
-        return false;
-    }
-
-    return true;
-}
-// -----------------------------------------------------------------------------
-bool MvcViewCliCommon::onPath (ArgIterator& , const ArgIterator&)
+bool MvcViewCliCommon::onPath ()
 {
 	Item::SPtr item {};
     if (auto ws = m_wsModel.getWorkspace(); ws) item = ws;
@@ -89,14 +66,14 @@ bool MvcViewCliCommon::onPath (ArgIterator& , const ArgIterator&)
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliCommon::onListItems (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliCommon::onListItems ()
 {
     bool cloned_only {false};
     bool with_path {false};
-    for (; aArg != aArgsEnd; ++aArg) {
-        if ( !(*aArg).empty()
-             && (*aArg)[0] == '-') {
-            for (auto c = aArg->begin() + 1; c != aArg->end(); ++c) {
+    for (; m_arg != m_argsEnd; ++m_arg) {
+        if ( !(*m_arg).empty()
+             && (*m_arg)[0] == '-') {
+            for (auto c = m_arg->begin() + 1; c != m_arg->end(); ++c) {
                 if (*c == 'c') {
                 	if (cloned_only) {
                     	std::cerr << "Duplication of '-c' option.\n";
@@ -115,7 +92,7 @@ bool MvcViewCliCommon::onListItems (ArgIterator& aArg, const ArgIterator& aArgsE
             }
         }
         else {
-            std::cerr << "Invalid argument: " << *aArg << '\n';
+            std::cerr << "Invalid argument: " << *m_arg << '\n';
             return false;
         }
     }
@@ -148,24 +125,24 @@ bool MvcViewCliCommon::onListItems (ArgIterator& aArg, const ArgIterator& aArgsE
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliCommon::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliCommon::onInitItem ()
 {
-    if (aArg == aArgsEnd) {
+    if (m_arg == m_argsEnd) {
         std::cerr << "Missing arguments.\n";
         return false;
     }
 
-    auto names {AddressParser{m_wssModel.getWorkspaces()}(*aArg)};
+    auto names {AddressParser{m_wssModel.getWorkspaces()}(*m_arg)};
 
     if (names.first.empty()) {
     	std::cerr << "Invalid address.\n";
     	return false;
     }
 
-    ++aArg;
+    ++m_arg;
     if (names.second.empty()) {
-    	if (aArg != aArgsEnd) {
-        	std::cerr << "Unknown argument: " << *aArg << '\n';
+    	if (m_arg != m_argsEnd) {
+        	std::cerr << "Unknown argument: " << *m_arg << '\n';
             return false;
         }
 
@@ -176,27 +153,27 @@ bool MvcViewCliCommon::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEn
 
         std::cout << "Workspace initialized successfully.\n";
     } else {
-        if (aArg == aArgsEnd) {
+        if (m_arg == m_argsEnd) {
             std::cerr << "Missing project full name.\n";
             return false;
         }
-    	std::string full_name {*aArg};
+    	std::string full_name {*m_arg};
 
-        ++aArg;
-        if (aArg == aArgsEnd) {
+        ++m_arg;
+        if (m_arg == m_argsEnd) {
             std::cerr << "Missing project repository URL.\n";
             return false;
         }
 
-        std::string repo_url {*aArg};
+        std::string repo_url {*m_arg};
 
         bool clone {false};
-        ++aArg;
-        if (aArg != aArgsEnd) {
-        	if ((*aArg) == "-c") {
+        ++m_arg;
+        if (m_arg != m_argsEnd) {
+        	if ((*m_arg) == "-c") {
 				clone = true;
             } else {
-            	std::cerr << "Invalid argument: " << *aArg << '\n';
+            	std::cerr << "Invalid argument: " << *m_arg << '\n';
                 return false;
             }
 		}
@@ -211,11 +188,11 @@ bool MvcViewCliCommon::onInitItem (ArgIterator& aArg, const ArgIterator& aArgsEn
 	return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliCommon::onStatusItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliCommon::onStatusItem ()
 {
     bool show_details {false};
-    if ( (aArg != aArgsEnd)
-         && ((*aArg) == "-d") ) {
+    if ( (m_arg != m_argsEnd)
+         && ((*m_arg) == "-d") ) {
         show_details = true;
     }
 
@@ -246,10 +223,10 @@ bool MvcViewCliCommon::onStatusItem (ArgIterator& aArg, const ArgIterator& aArgs
 	return false;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliCommon::onCloneItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliCommon::onCloneItem ()
 {
-    if (aArg != aArgsEnd) {
-    	std::cerr << "Invalid argument: " << *aArg << '\n';
+    if (m_arg != m_argsEnd) {
+    	std::cerr << "Invalid argument: " << *m_arg << '\n';
         return false;
     }
 
@@ -263,19 +240,19 @@ bool MvcViewCliCommon::onCloneItem (ArgIterator& aArg, const ArgIterator& aArgsE
 	return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliCommon::onClearItem (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliCommon::onClearItem ()
 {
 	bool force {false};
-    if (aArg != aArgsEnd) {
-		if (*aArg != "-f") {
-        	std::cerr << "Invalid argument: " << *aArg << '\n';
+    if (m_arg != m_argsEnd) {
+		if (*m_arg != "-f") {
+        	std::cerr << "Invalid argument: " << *m_arg << '\n';
         	return false;
         }
         force = true;
 
-        ++aArg;
-	    if (aArg != aArgsEnd) {
-        	std::cerr << "Invalid argument: " << *aArg << '\n';
+        ++m_arg;
+	    if (m_arg != m_argsEnd) {
+        	std::cerr << "Invalid argument: " << *m_arg << '\n';
         	return false;
     	}
     }
@@ -292,16 +269,16 @@ bool MvcViewCliCommon::onClearItem (ArgIterator& aArg, const ArgIterator& aArgsE
 	return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliCommon::onGit (ArgIterator& aArg, const ArgIterator& aArgsEnd)
+bool MvcViewCliCommon::onGit ()
 {
-	if (aArg == aArgsEnd) {
+	if (m_arg == m_argsEnd) {
     	std::cerr << "Missing git command\n";
         return false;
     }
 
 	std::string git_cmd {};
 
-    for (;aArg != aArgsEnd; ++aArg) git_cmd += *aArg + " ";
+    for (;m_arg != m_argsEnd; ++m_arg) git_cmd += *m_arg + " ";
 
     if (!m_ctrl.git(git_cmd)) {
     	std::cerr << "Execute git command error" << '\n';

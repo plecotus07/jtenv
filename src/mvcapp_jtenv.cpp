@@ -3,23 +3,27 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcApp::MvcApp () :
+MvcApp::MvcApp (const std::vector<std::string>& aArgs) :
+    jkpp::MvcApp(aArgs),
     m_configModel {},
+    m_configEditModel {},
     m_workspacesModel {},
     m_wsModel {},
     m_projModel {},
     m_gitBuilder {},
     m_mainCtrl {m_configModel, m_workspacesModel, m_wsModel, m_projModel, m_gitBuilder},
-    m_commonView {m_mainCtrl, m_configModel, m_workspacesModel, m_wsModel, m_projModel},
-    m_projView {m_mainCtrl, m_projModel},
-    m_mainView {m_mainCtrl, m_commonView, m_projView, m_workspacesModel}
+    m_configEditCtrl {m_configEditModel, m_configModel},
+    m_commonView {m_arg, m_args.end(), m_mainCtrl, m_configModel, m_workspacesModel, m_wsModel, m_projModel},
+    m_projView {m_arg, m_args.end(), m_mainCtrl, m_projModel},
+    m_configView {m_arg, m_args.end(), m_configEditCtrl, m_configEditModel},
+    m_mainView {m_arg, m_args.end(), m_mainCtrl, m_configView, m_commonView, m_projView, m_workspacesModel}
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcApp::run (const std::vector<std::string>& aArgs)
+bool MvcApp::run ()
 {
-    auto arg = aArgs.begin();
-	return m_mainView.parse(arg, aArgs.end());
+	m_mainView.show();
+	return m_mainView.getResult();
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

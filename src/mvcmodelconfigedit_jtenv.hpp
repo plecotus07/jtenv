@@ -1,25 +1,27 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCAPP_JKPP_HPP
-#define MVCAPP_JKPP_HPP
+#ifndef MVCMODELCONFIGEDIT_JTENV_HPP
+#define MVCMODELCONFIGEDIT_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include <vector>
-#include <string>
+#include <mvcmodelimpl_jkpp.hpp>
 // +++ -------------------------------------------------------------------------
-namespace jkpp {
+namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcApp {
+class MvcModelConfigEdit : public jkpp::MvcModelImpl {
 	public:
-	             MvcApp (const std::vector<std::string>& aArgs);
-		virtual ~MvcApp () = default;
+		MvcModelConfigEdit ();
 
-		virtual bool run () = 0;
+		const std::string & getUserName () const { return m_userName; }
+		void setUserName (const std::string& aUserName);
+
+		const std::string & getUserEmail () const { return m_userEmail; }
+		void setUserEmail (const std::string& aUserEmail);
 
 	protected:
-    	const std::vector<std::string>           m_args;
-		std::vector<std::string>::const_iterator m_arg;
+		std::string m_userName;
+		std::string m_userEmail;
 };
 // +++ -------------------------------------------------------------------------
-} // jkpp
+} // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // MVCAPP_JKPP_HPP
+#endif // MVCMODELCONFIGEDIT_JTENV_HPP
 // +++ -------------------------------------------------------------------------

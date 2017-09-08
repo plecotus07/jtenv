@@ -12,10 +12,10 @@ class MvcModel {
 
 		virtual void attachView (MvcView* aView) = 0;
 		virtual void detachView (MvcView* aView) = 0;
-
-	protected:
 		virtual void beginUpdate () = 0;
 		virtual void endUpdate () = 0;
+
+	private:
 		virtual void notify () = 0;
 };
 // +++ -------------------------------------------------------------------------

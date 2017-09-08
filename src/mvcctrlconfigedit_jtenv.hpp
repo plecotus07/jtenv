@@ -1,36 +1,30 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCVIEWCLIPROJECT_JTENV_HPP
-#define MVCVIEWCLIPROJECT_JTENV_HPP
+#ifndef MVCCTRLCONFIGEDIT_JTENV_HPP
+#define MVCCTRLCONFIGEDIT_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include <mvcviewcli_jkpp.hpp>
+#include <string>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcCtrlMain;
-class MvcModelProject;
+class MvcModelConfigEdit;
+class MvcModelConfig;
 // +++ -------------------------------------------------------------------------
-class MvcViewCliProject : public jkpp::MvcViewCli {
+class MvcCtrlConfigEdit {
 	public:
-		MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcModelProject& aProjModel);
+		MvcCtrlConfigEdit (MvcModelConfigEdit& aEditModel, MvcModelConfig& aModel);
 
-		virtual void update () {};
-		virtual bool parse ();
-        virtual bool containsCommand (const std::string& aCmd);
+        void prepareEdit ();
+        bool submitEdit ();
+
+        void setUserName (const std::string& aUserName);
+        void setUserEmail (const std::string& aUserEmail);
 
 	protected:
-		MvcCtrlMain&        m_ctrl;
-		MvcModelProject&    m_projModel;
-
-		bool onCMake ();
-		bool onCMakeAdd ();
-		bool onCMakeRemove ();
-		bool onCMakeList ();
-
-		const Handlers<MvcViewCliProject> m_handlers;
-
+		MvcModelConfigEdit& m_editModel;
+		MvcModelConfig&     m_model;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // MVCVIEWCLIPROJECT_JTENV_HPP
+#endif // MVCCTRLCONFIGEDIT_JTENV_HPP
 // +++ -------------------------------------------------------------------------
