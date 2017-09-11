@@ -1,19 +1,13 @@
 // +++ -------------------------------------------------------------------------
-#include "mvcmodelworkspace_jtenv.hpp"
+#include "mvcctrlprojectedit_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcModelWorkspace::MvcModelWorkspace () :
-    MvcModelItem(),
-    m_ws{}
+MvcCtrlProjectEdit::MvcCtrlProjectEdit (MvcModelProject& aModel, MvcModelItemSelection& aItemSelModel) :
+    m_model {aModel},
+    m_itemSelModel {aItemSelModel}
 {
-}
-// -----------------------------------------------------------------------------
-void MvcModelWorkspace::setWorkspace (Workspace::SPtr aWs)
-{
-    beginUpdate();
-    m_ws = aWs;
-    endUpdate();
+///\todo assert (m_git != nullptr)
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

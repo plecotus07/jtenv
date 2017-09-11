@@ -18,7 +18,7 @@ bool MvcEditorCliConfig::edit ()
 	if (!m_view.getResult()) return false; 	// window->showModeal() == mrok
 	if (!m_view.submitEdit()) return false;
 
-	return false;
+	return true;
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

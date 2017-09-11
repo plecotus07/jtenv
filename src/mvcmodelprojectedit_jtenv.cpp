@@ -1,19 +1,12 @@
 // +++ -------------------------------------------------------------------------
-#include "mvcmodelproject_jtenv.hpp"
+#include "mvcmodelprojectedit_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcModelProject::MvcModelProject () :
-    MvcModelItem(),
-    m_project{}
+MvcModelProjectEdit::MvcModelProjectEdit () :
+    MvcModelImpl(),
+	m_fullName {}
 {
-}
-// -----------------------------------------------------------------------------
-void MvcModelProject::setProject (Project::SPtr aProject)
-{
-    beginUpdate();
-    m_project = aProject;
-    endUpdate();
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

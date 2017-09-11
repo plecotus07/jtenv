@@ -6,25 +6,25 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcCtrlMain;
-class MvcModelProject;
+class MvcCtrlProjectEdit;
+class MvcModelProjectEdit;
 // +++ -------------------------------------------------------------------------
 class MvcViewCliProject : public jkpp::MvcViewCli {
 	public:
-		MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcModelProject& aProjModel);
+		MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlProjectEdit& aCtrl, MvcModelProjectEdit& aModel);
 
 		virtual void update () {};
 		virtual bool parse ();
         virtual bool containsCommand (const std::string& aCmd);
 
 	protected:
-		MvcCtrlMain&        m_ctrl;
-		MvcModelProject&    m_projModel;
+		MvcCtrlProjectEdit&  m_ctrl;
+		MvcModelProjectEdit& m_model;
 
-		bool onCMake ();
-		bool onCMakeAdd ();
-		bool onCMakeRemove ();
-		bool onCMakeList ();
+//		bool onCMake ();
+//		bool onCMakeAdd ();
+//		bool onCMakeRemove ();
+//		bool onCMakeList ();
 
 		const Handlers<MvcViewCliProject> m_handlers;
 

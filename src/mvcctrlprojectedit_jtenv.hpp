@@ -1,24 +1,22 @@
 // +++ -------------------------------------------------------------------------
-#ifndef ITEMEDITOR_JTENV_HPP
-#define ITEMEDITOR_JTENV_HPP
-// +++ -------------------------------------------------------------------------
-#include "item_jtenv.hpp"
+#ifndef MVCCTRLPROJECTEDIT_JTENV_HPP
+#define MVCCTRLPROJECTEDIT_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class ItemEditor: public ItemVisitor {
+class MvcModelProjectEdit;
+class MvcModelItemSelection;
+// +++ -------------------------------------------------------------------------
+class MvcCtrlProjectEdit {
 	public:
-    	ItemVisitor (MvcViewProject& aProjView, MvcViewWorkspace& aWsView, MvcCtrlMain& aMainCtrl);
+		MvcCtrlProjectEdit (MvcModelProjectEdit& aModel, MvcModelItemSelection& aItemSelModel);
 
-		virtual void Visit (Workspace* aWs);
-		virtual void Visit (Project* aProj);
-
-    private:
-        MvcViewProject&   m_projView;
-        MvcViewWorkspace& m_wsView;
+	protected:
+	    MvcModelProjectEdit&   m_model;
+        MvcModelItemSelection& m_itemSelModel;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // ITEMEDITOR_JTENV_HPP
+#endif // MVCCTRLPROJECTEDIT_JTENV_HPP
 // +++ -------------------------------------------------------------------------

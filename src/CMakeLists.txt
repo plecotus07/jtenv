@@ -23,17 +23,17 @@ add_executable (jtenv
 	mvcviewclimain_jtenv.cpp
 	mvcctrlmain_jtenv.cpp
 	mvcctrlconfigedit_jtenv.cpp
-	mvcmodelitem_jtenv.cpp
-	mvcmodelworkspace_jtenv.cpp
-	mvcmodelproject_jtenv.cpp
+  mvcctrlprojectedit_jtenv.cpp
 	mvcmodelconfig_jtenv.cpp
 	mvcmodelconfigedit_jtenv.cpp
+	mvcmodelitemselection_jtenv.cpp
+	mvcmodelprojectedit_jtenv.cpp
 	mvcmodelworkspaces_jtenv.cpp
-	mvcmodelcmake_jtenv.cpp
-    mvceditorcliconfig_jtenv.cpp
+  mvceditorcliconfig_jtenv.cpp
+  mvceditorcliitem_jtenv.cpp
 	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
-    jkpp/mvcapp_jkpp.cpp
-    jkpp/mvcviewcli_jkpp.cpp
+  jkpp/mvcapp_jkpp.cpp
+  jkpp/mvcviewcli_jkpp.cpp
 	jkpp/mvcmodelimpl_jkpp.cpp
 	jkpp/filesystem_jkpp.cpp
 	jkpp/gitsubproc_jkpp.cpp)

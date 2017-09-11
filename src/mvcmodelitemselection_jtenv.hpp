@@ -1,6 +1,6 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCMODELITEM_JTENV_HPP
-#define MVCMODELITEM_JTENV_HPP
+#ifndef MVCMODELITEMSELECTION_JTENV_HPP
+#define MVCMODELITEMSELECTION_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 #include "item_jtenv.hpp"
 
@@ -8,20 +8,23 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcModelItem : public jkpp::MvcModelImpl {
+class MvcModelItemSelection : public jkpp::MvcModelImpl {
 	public:
-		MvcModelItem ();
+		MvcModelItemSelection ();
 
 		bool clone (const std::string& aUserName, const std::string& aUserEmail, const fs::path& aPath = fs::path{});
 		bool clear (bool aForce, std::string& aDetails);
 		bool git (const std::string& aGitCmd);
 
+        virtual void       setItem (Item::SPtr aItem);
+        virtual Item::SPtr getItem () { return m_item; }
+
 	protected:
-        virtual Item::SPtr getItem () = 0;
+    	Item::SPtr m_item;
 
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // MVCMODELITEM_JTENV_HPP
+#endif // MVCMODELITEMSELECTION_JTENV_HPP
 // +++ -------------------------------------------------------------------------

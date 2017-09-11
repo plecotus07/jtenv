@@ -18,41 +18,28 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcModelConfig;
 class MvcModelWorkspaces;
-class MvcModelWorkspace;
-class MvcModelProject;
+class MvcModelItemSelection;
 // +++ -------------------------------------------------------------------------
 class MvcCtrlMain {
 	public:
-		MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel, jkpp::GitBuilder& aGitBuilder);
+		MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelItemSelection& aItemSelModel, jkpp::GitBuilder& aGitBuilder);
 
 		bool loadConfig ();
 		bool saveConfig ();
 
-        bool setUserName (const std::string& aUserName);
-        bool setUserEmail (const std::string& aUserEmail);
-
-		void selectProject (Project::SPtr aProject);
-		void selectWorkspace (Workspace::SPtr aWorkspace);
-
         bool initWorkspace (const std::string& aName, const fs::path& aPath);
         bool initProject (const std::string& aWsName, const std::string& aName, const std::string& aFullName, const std::string& aRepoUrl, bool clone);
 
+		void selectItem (Item::SPtr aItem);
 		bool cloneItem (const fs::path& aPath);
-
 		bool clearItem (bool aForce, std::string& aDetails);
-
 		bool git (const std::string& aGitCmd);
 
-		bool cmakeAdd (const std::string& aName, const std::string& aCommand);
-		bool cmakeRemove (const std::string& aName);
-		bool cmakeExecute (const std::string& aCmdName);
-
 	protected:
-		MvcModelConfig&     m_configModel;
-		MvcModelWorkspaces& m_workspacesModel;
-		MvcModelWorkspace&  m_wsModel;
-		MvcModelProject&    m_projModel;
-        jkpp::GitBuilder&   m_gitBuilder;
+		MvcModelConfig&        m_configModel;
+		MvcModelWorkspaces&    m_workspacesModel;
+		MvcModelItemSelection& m_itemSelModel;
+        jkpp::GitBuilder&      m_gitBuilder;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

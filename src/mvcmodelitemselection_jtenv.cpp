@@ -1,44 +1,49 @@
 // +++ -------------------------------------------------------------------------
-#include "mvcmodelitem_jtenv.hpp"
+#include "mvcmodelitemselection_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcModelItem::MvcModelItem () :
-    jkpp::MvcModelImpl()
+MvcModelItemSelection::MvcModelItemSelection () :
+    jkpp::MvcModelImpl(),
+    m_item {}
 {
 }
 // -----------------------------------------------------------------------------
-bool MvcModelItem::clone (const std::string& aUserName, const std::string& aUserEmail, const fs::path& aPath)
+void MvcModelItemSelection::setItem (Item::SPtr aItem)
 {
-	Item::SPtr item {getItem()};
-	if (!item) return false;
+	beginUpdate();
+	m_item = aItem;
+    endUpdate();
+}
+// -----------------------------------------------------------------------------
+bool MvcModelItemSelection::clone (const std::string& aUserName, const std::string& aUserEmail, const fs::path& aPath)
+{
+	if (!m_item) return false;
 
 	beginUpdate();
-    bool result {item->clone(aUserName, aUserEmail, aPath)};
+    bool result {m_item->clone(aUserName, aUserEmail, aPath)};
     endUpdate();
 
     return result;
 }
 // -----------------------------------------------------------------------------
-bool MvcModelItem::clear (bool aForce, std::string& aDetails)
+bool MvcModelItemSelection::clear (bool aForce, std::string& aDetails)
 {
-	Item::SPtr item {getItem()};
-	if (!item) return false;
+	if (!m_item) return false;
 
 	beginUpdate();
-    bool result {item->clear(aForce, aDetails)};
+    bool result {m_item->clear(aForce, aDetails)};
     endUpdate();
 
     return result;
 }
 // -----------------------------------------------------------------------------
-bool MvcModelItem::git (const std::string& aGitCmd)
+bool MvcModelItemSelection::git (const std::string& aGitCmd)
 {
-	Item::SPtr item {getItem()};
-	if (!item) return false;
+	if (!m_item) return false;
 
 	beginUpdate();
-    bool result {item->git(aGitCmd)};
+    bool result {m_item->git(aGitCmd)};
     endUpdate();
 
     return result;

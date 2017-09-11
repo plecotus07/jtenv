@@ -4,21 +4,19 @@
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvcmodelconfig_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
-#include "mvcmodelworkspace_jtenv.hpp"
-#include "mvcmodelproject_jtenv.hpp"
+#include "mvcmodelitemselection_jtenv.hpp"
 #include "addressparser_jtenv.hpp"
 
 #include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliCommon::MvcViewCliCommon (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWssModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel) :
+MvcViewCliCommon::MvcViewCliCommon (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWssModel, MvcModelItemSelection& aItemSelModel) :
     MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
     m_configModel {aConfigModel},
     m_wssModel {aWssModel},
-    m_wsModel {aWsModel},
-    m_projModel {aProjModel},
+    m_itemSelModel {aItemSelModel},
     m_handlers {{"path",  [] (MvcViewCliCommon* aView) -> bool {return aView->onPath();}},
                 {"list",  [] (MvcViewCliCommon* aView) -> bool {return aView->onListItems();}},
                 {"init",  [] (MvcViewCliCommon* aView) -> bool {return aView->onInitItem();}},
@@ -52,9 +50,7 @@ bool MvcViewCliCommon::containsCommand (const std::string& aCmd)
 // -----------------------------------------------------------------------------
 bool MvcViewCliCommon::onPath ()
 {
-	Item::SPtr item {};
-    if (auto ws = m_wsModel.getWorkspace(); ws) item = ws;
-    else if (auto proj = m_projModel.getProject(); proj) item = proj;
+	Item::SPtr item {m_itemSelModel.getItem()};
 
 	if (!item) {
         std::cerr << "Invalid address.\n";

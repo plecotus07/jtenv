@@ -5,7 +5,7 @@
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvceditorcliconfig_jtenv.hpp"
 #include "mvcviewclicommon_jtenv.hpp"
-#include "mvcviewcliproject_jtenv.hpp"
+#include "mvceditorcliproject_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
 #include "addressparser_jtenv.hpp"
 
@@ -13,12 +13,12 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliMain::MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcEditorCliConfig& aConfigEditor, MvcViewCliCommon& aCommonView, MvcViewCliProject& aProjView, MvcModelWorkspaces& aWssModel) :
+MvcViewCliMain::MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcViewCliCommon& aCommonView, MvcEditorCliItem& aItemEditor, MvcModelWorkspaces& aWssModel) :
     MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
     m_configEditor {aConfigEditor},
     m_commonView {aCommonView},
-    m_projView {aProjView},
+    m_itemEditor {aItemEditor},
     m_wssModel {aWssModel}
 {
 }

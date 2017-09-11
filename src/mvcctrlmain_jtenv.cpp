@@ -3,8 +3,7 @@
 
 #include "mvcmodelconfig_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
-#include "mvcmodelproject_jtenv.hpp"
-#include "mvcmodelworkspace_jtenv.hpp"
+#include "mvcmodelitemselection_jtenv.hpp"
 #include "projectconf_jtenv.hpp"
 
 #include <git_jkpp.hpp>
@@ -12,11 +11,10 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcCtrlMain::MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel, jkpp::GitBuilder& aGitBuilder) :
+MvcCtrlMain::MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelItemSelection& aItemSelModel, jkpp::GitBuilder& aGitBuilder) :
     m_configModel {aConfigModel},
     m_workspacesModel {aWorkspacesModel},
-    m_wsModel {aWsModel},
-    m_projModel {aProjModel},
+    m_itemSelModel {aItemSelModel},
     m_gitBuilder {aGitBuilder}
 {
 ///\todo assert (m_git != nullptr)
@@ -66,31 +64,6 @@ bool MvcCtrlMain::saveConfig ()
             && m_workspacesModel.save());
 }
 // -----------------------------------------------------------------------------
-bool MvcCtrlMain::setUserName (const std::string& aUserName)
-{
-    m_configModel.setUserName(aUserName);
-
-    return saveConfig();
-}
-// -----------------------------------------------------------------------------
-bool MvcCtrlMain::setUserEmail (const std::string& aUserEmail)
-{
-    m_configModel.setUserEmail(aUserEmail);
-    return saveConfig();
-}
-// -----------------------------------------------------------------------------
-void MvcCtrlMain::selectProject (Project::SPtr aProject)
-{
-    m_wsModel.setWorkspace(nullptr);
-    m_projModel.setProject(aProject);
-}
-// -----------------------------------------------------------------------------
-void MvcCtrlMain::selectWorkspace (Workspace::SPtr aWorkspace)
-{
-    m_projModel.setProject(nullptr);
-    m_wsModel.setWorkspace(aWorkspace);
-}
-// -----------------------------------------------------------------------------
 bool MvcCtrlMain::initWorkspace (const std::string& aName, const fs::path& aPath)
 {
     if (m_workspacesModel.getWorkspace(aName)) return false;
@@ -134,27 +107,22 @@ bool MvcCtrlMain::initProject (const std::string& aWsName, const std::string& aN
 	return true;
 }
 // -----------------------------------------------------------------------------
+void MvcCtrlMain::selectItem (Item::SPtr aItem)
+{
+	m_itemSelModel.setItem(aItem);
+}
+// -----------------------------------------------------------------------------
 bool MvcCtrlMain::cloneItem (const fs::path& aPath)
 {
-	MvcModelItem* model {};
-    if (m_wsModel.getWorkspace()) model = &m_wsModel;
-    else if (m_projModel.getProject()) model = &m_projModel;
-    if (!model) return false;
-
-	if (!model->clone(m_configModel.getUserName(), m_configModel.getUserEmail(), aPath)) return false;
+	if (!m_itemSelModel->clone(m_configModel.getUserName(), m_configModel.getUserEmail(), aPath)) return false;
 
     return m_workspacesModel.save();
 }
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::clearItem (bool aForce, std::string& aDetails)
 {
-	MvcModelItem* model;
-    if (m_wsModel.getWorkspace()) model = &m_wsModel;
-    else if (m_projModel.getProject()) model = &m_projModel;
-    if (!model) return false;
-
     bool result {true};
-	if (!model->clear(aForce, aDetails)) result = false;
+	if (!m_itemSelModel->clear(aForce, aDetails)) result = false;
     if (!m_workspacesModel.save()) result = false;
 
     return result;
@@ -162,27 +130,7 @@ bool MvcCtrlMain::clearItem (bool aForce, std::string& aDetails)
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::git (const std::string& aGitCmd)
 {
-	MvcModelItem* model;
-    if (m_wsModel.getWorkspace()) model = &m_wsModel;
-    else if (m_projModel.getProject()) model = &m_projModel;
-    if (!model) return false;
-
-    return model->git(aGitCmd);
-}
-// -----------------------------------------------------------------------------
-bool MvcCtrlMain::cmakeAdd (const std::string& , const std::string&)
-{
-	return true;
-}
-// -----------------------------------------------------------------------------
-bool MvcCtrlMain::cmakeRemove (const std::string&)
-{
-	return true;
-}
-// -----------------------------------------------------------------------------
-bool MvcCtrlMain::cmakeExecute (const std::string&)
-{
-	return true;
+    return m_itemSelModel->git(aGitCmd);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

@@ -1,27 +1,19 @@
 // +++ -------------------------------------------------------------------------
-#ifndef MVCMODELWORKSPACE_JTENV_HPP
-#define MVCMODELWORKSPACE_JTENV_HPP
-// +++ -------------------------------------------------------------------------
-#include "workspace_jtenv.hpp"
-
-#include "mvcmodelitem_jtenv.hpp"
+#ifndef MVCMODELPROJECTEDIT_JTENV_HPP
+#define MVCMODELPROJECTEDIT_JTENV_HPP
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class MvcModelWorkspace : public MvcModelItem {
+class MvcModelProjectEdit : public jkpp::MvcModelImpl {
 	public:
-		MvcModelWorkspace ();
-
-		void            setWorkspace (Workspace::SPtr aWs);
-		Workspace::SPtr getWorkspace () const { return m_ws; }
+		MvcModelProjectEdit ();
 
 	protected:
-    	Item::SPtr getItem () { return m_ws; };
+		std::string     m_fullName;
 
-        Workspace::SPtr m_ws;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------
-#endif // MVCMODELWORKSPACE_JTENV_HPP
+#endif // MVCMODELPROJECTEDIT_JTENV_HPP
 // +++ -------------------------------------------------------------------------

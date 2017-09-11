@@ -9,23 +9,21 @@ namespace jtenv {
 class MvcCtrlMain;
 class MvcModelConfig;
 class MvcModelWorkspaces;
-class MvcModelWorkspace;
-class MvcModelProject;
+class MvcModelItemSelection;
 // +++ -------------------------------------------------------------------------
 class MvcViewCliCommon : public jkpp::MvcViewCli {
 	public:
-		MvcViewCliCommon (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWssModel, MvcModelWorkspace& aWsModel, MvcModelProject& aProjModel);
+		MvcViewCliCommon (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWssModel, MvcModelItemSelection& aItemSelModel);
 
 		virtual void update () {};
 		virtual bool parse ();
         virtual bool containsCommand (const std::string& aCmd);
 
 	protected:
-		MvcCtrlMain&        m_ctrl;
-        MvcModelConfig&     m_configModel;
-		MvcModelWorkspaces& m_wssModel;
-		MvcModelWorkspace&  m_wsModel;
-		MvcModelProject&    m_projModel;
+		MvcCtrlMain&           m_ctrl;
+        MvcModelConfig&        m_configModel;
+		MvcModelWorkspaces&    m_wssModel;
+		MvcModelItemSelection& m_itemSelModel;
 
 		bool onPath ();
 		bool onListItems ();

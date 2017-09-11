@@ -9,12 +9,12 @@ namespace jtenv {
 class MvcCtrlMain;
 class MvcEditorCliConfig;
 class MvcViewCliCommon;
-class MvcViewCliProject;
+class MvcEditorCliItem;
 class MvcModelWorkspaces;
 // +++ -------------------------------------------------------------------------
 class MvcViewCliMain : public jkpp::MvcViewCli {
 	public:
-		MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcEditorCliConfig& aConfigEditor, MvcViewCliCommon& aCommonView, MvcViewCliProject& aProjView, MvcModelWorkspaces& aWssModel);
+		MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcEditorCliConfig& aConfigEditor, MvcViewCliCommon& aCommonView, MvcEditorCliItem& aItemEditor, MvcModelWorkspaces& aWssModel);
 
 		virtual void update () {};
 		virtual bool parse ();
@@ -24,7 +24,7 @@ class MvcViewCliMain : public jkpp::MvcViewCli {
 		MvcCtrlMain&        m_ctrl;
 		MvcEditorCliConfig& m_configEditor;
     	MvcViewCliCommon&   m_commonView;
-		MvcViewCliProject&  m_projView;
+		MvcEditorCliItem&   m_itemEditor;
 		MvcModelWorkspaces& m_wssModel;
 
 		void onDisplayHelp () const;
