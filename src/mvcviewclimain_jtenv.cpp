@@ -5,7 +5,7 @@
 #include "mvcctrlmain_jtenv.hpp"
 #include "mvceditorcliconfig_jtenv.hpp"
 #include "mvcviewclicommon_jtenv.hpp"
-#include "mvceditorcliproject_jtenv.hpp"
+#include "mvceditorcliitem_jtenv.hpp"
 #include "mvcmodelworkspaces_jtenv.hpp"
 #include "addressparser_jtenv.hpp"
 
@@ -13,7 +13,9 @@
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcViewCliMain::MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcViewCliCommon& aCommonView, MvcEditorCliItem& aItemEditor, MvcModelWorkspaces& aWssModel) :
+MvcViewCliMain::MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl,
+                                MvcEditorCliConfig& aConfigEditor, MvcViewCliCommon& aCommonView,
+								MvcEditorCliItem& aItemEditor, MvcModelWorkspaces& aWssModel) :
     MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
     m_configEditor {aConfigEditor},
@@ -68,16 +70,10 @@ bool MvcViewCliMain::parse ()
     if (cmd == "config") return m_configEditor.edit();
 
     auto names {AddressParser{m_wssModel.getWorkspaces()}(addr)};
-    Workspace::SPtr ws {m_wssModel.getWorkspace(names.first)};
-    Project::SPtr proj {};
-    if (ws) proj = ws->getProject(names.second);
 
-    if (!proj) m_ctrl.selectWorkspace(ws);
-    else m_ctrl.selectProject(proj);
+    m_ctrl.selectItem(m_wssModel.getItem(names.first, names.second));
 
 	if (m_commonView.containsCommand(cmd)) return m_commonView.parse();
-
-    if (proj && m_projView.containsCommand(cmd)) return m_projView.parse();
 
     std::cerr << "Invalid command: " << cmd << '\n';
     return false;

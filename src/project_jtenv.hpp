@@ -36,7 +36,7 @@ class Project : public Item {
         virtual std::string          getCMakeCmd (const std::string& aName) const;
         virtual const CMakeCmdsMap&  getCMakeCmds () const { return m_cmakeCmds; }
 
-        virtual void Accept (ItemVisitor& aVisitor) { aVisitor.Visit(this); }
+        virtual void accept (ItemVisitor& aVisitor) { aVisitor.Visit(this); }
 
     protected:
 		std::string     m_wsName;

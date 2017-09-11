@@ -2,6 +2,8 @@
 #ifndef MVCVIEWCLICOMMON_JTENV_HPP
 #define MVCVIEWCLICOMMON_JTENV_HPP
 // +++ -------------------------------------------------------------------------
+#include "item_jtenv.hpp"
+
 #include <mvcviewcli_jkpp.hpp>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
@@ -35,6 +37,18 @@ class MvcViewCliCommon : public jkpp::MvcViewCli {
 
 		const Handlers<MvcViewCliCommon> m_handlers;
 
+};
+// +++ -------------------------------------------------------------------------
+class ItemsLister : public ItemVisitor {
+	public:
+		ItemsLister (bool aClonedOnly, bool aWithPath);
+
+		virtual void Visit (Workspace* aWs);
+		virtual void Visit (Project* aProj);
+
+	protected:
+		bool m_clonedOnly;
+		bool m_withPath;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

@@ -14,7 +14,9 @@ class MvcModelWorkspaces;
 // +++ -------------------------------------------------------------------------
 class MvcViewCliMain : public jkpp::MvcViewCli {
 	public:
-		MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl, MvcEditorCliConfig& aConfigEditor, MvcViewCliCommon& aCommonView, MvcEditorCliItem& aItemEditor, MvcModelWorkspaces& aWssModel);
+		MvcViewCliMain (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlMain& aCtrl,
+		                MvcEditorCliConfig& aConfigEditor, MvcViewCliCommon& aCommonView,
+						MvcEditorCliItem& aItemEditor, MvcModelWorkspaces& aWssModel);
 
 		virtual void update () {};
 		virtual bool parse ();

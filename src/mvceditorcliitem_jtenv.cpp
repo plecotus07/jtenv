@@ -1,25 +1,26 @@
 // +++ -------------------------------------------------------------------------
-#include "mvceditorcliconfig_jtenv.hpp"
+#include "mvceditorcliitem_jtenv.hpp"
+#include "mvcmodelitemselection_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-MvcEditorCliItem::MvcEditorCliItem(jkpp::MvcViewCli::ArgIterator& aArg, const jkpp::MvcViewCli::ArgIterator& aArgsEnd, MvcModelItemSelection& aItemModel) :
-    m_itemModel {aItemModel}
+MvcEditorCliItem::MvcEditorCliItem(jkpp::MvcViewCli::ArgIterator& aArg, const jkpp::MvcViewCli::ArgIterator& aArgsEnd, MvcModelItemSelection& aItemSelModel) :
+    m_itemSelModel {aItemSelModel},
     m_projModel {},
-    m_projCtrl {m_projModel, m_itemModel},
-    m_projView {aArg, aArgsEnd, m_projCtrl, m_projModel}
+    m_projCtrl {m_projModel, m_itemSelModel},
+    m_projView {aArg, aArgsEnd, m_projCtrl, m_projModel},
     m_result {true}
 {
 }
 // -----------------------------------------------------------------------------
 bool MvcEditorCliItem::edit ()
 {
-	Visit(m_itemModel.getItem());
+	m_itemSelModel.getItem()->accept(*this);
 
 	return m_result;
 }
 // -----------------------------------------------------------------------------
-void MvcEditorCliItem::Visit (Workspace* aWs)
+void MvcEditorCliItem::Visit (Workspace*)
 {
 }
 // -----------------------------------------------------------------------------

@@ -11,6 +11,10 @@ class MvcCtrlProjectEdit {
 	public:
 		MvcCtrlProjectEdit (MvcModelProjectEdit& aModel, MvcModelItemSelection& aItemSelModel);
 
+        void prepareEdit ();
+        bool submitEdit ();
+
+
 	protected:
 	    MvcModelProjectEdit&   m_model;
         MvcModelItemSelection& m_itemSelModel;

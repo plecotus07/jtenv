@@ -2,6 +2,8 @@
 #ifndef MVCMODELPROJECTEDIT_JTENV_HPP
 #define MVCMODELPROJECTEDIT_JTENV_HPP
 // +++ -------------------------------------------------------------------------
+#include <mvcmodelimpl_jkpp.hpp>
+// +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class MvcModelProjectEdit : public jkpp::MvcModelImpl {

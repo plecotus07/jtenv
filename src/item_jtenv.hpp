@@ -28,7 +28,7 @@ class Item {
 
 		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const = 0;
 
-        virtual void Accept (ItemVisitor& aVisitor) = 0;
+        virtual void accept (ItemVisitor& aVisitor) = 0;
 
 };
 // +++ -------------------------------------------------------------------------

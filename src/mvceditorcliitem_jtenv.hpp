@@ -2,6 +2,7 @@
 #ifndef MVCEDITORCLIITEM_JTENV_HPP
 #define MVCEDITORCLIITEM_JTENV_HPP
 // +++ -------------------------------------------------------------------------
+#include "item_jtenv.hpp"
 #include "mvcmodelprojectedit_jtenv.hpp"
 #include "mvcctrlprojectedit_jtenv.hpp"
 #include "mvcviewcliproject_jtenv.hpp"
@@ -12,7 +13,7 @@ class MvcModelItemSelection;
 // +++ -------------------------------------------------------------------------
 class MvcEditorCliItem : public ItemVisitor {
 	public:
-        MvcEditorCliItem (jkpp::MvcViewCli::ArgIterator& aArg, const jkpp::MvcViewCli::ArgIterator& aArgsEnd, MvcModelItemSelection& aItemModel);
+        MvcEditorCliItem (jkpp::MvcViewCli::ArgIterator& aArg, const jkpp::MvcViewCli::ArgIterator& aArgsEnd, MvcModelItemSelection& aItemSelModel);
 
 		bool edit ();
 
@@ -20,7 +21,7 @@ class MvcEditorCliItem : public ItemVisitor {
 		virtual void Visit (Project* aProj);
 
     protected:
-		MvcModelItemSelection& m_itemModel;
+		MvcModelItemSelection& m_itemSelModel;
 		MvcModelProjectEdit    m_projModel;
 		MvcCtrlProjectEdit     m_projCtrl;
 		MvcViewCliProject      m_projView;

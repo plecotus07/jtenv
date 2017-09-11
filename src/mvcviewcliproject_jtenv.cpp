@@ -11,9 +11,20 @@ namespace jtenv {
 MvcViewCliProject::MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlProjectEdit& aCtrl, MvcModelProjectEdit& aModel) :
     MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
-    m_model {aModel}
+    m_model {aModel},
+	m_handlers {}
 //    , m_handlers {{"cmake", [] (MvcViewCliProject* aView) -> bool {return aView->onCMake();}}}
 {
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliProject::submitEdit ()
+{
+	if (!m_ctrl.submitEdit()) {
+        std::cerr << "Edit project error.\n";
+        return false;
+    }
+
+    return true;
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliProject::parse ()

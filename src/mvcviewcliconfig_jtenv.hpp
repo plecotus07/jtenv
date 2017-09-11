@@ -13,7 +13,7 @@ class MvcViewCliConfig : public jkpp::MvcViewCli {
 	public:
 		MvcViewCliConfig (ArgIterator& aArg, const ArgIterator& aArgsEnd, MvcCtrlConfigEdit& aCtrl, MvcModelConfigEdit& aConfigEditModel);
 
-        bool submitEdit ();
+		bool submitEdit ();
 
 		virtual void update () {};
 		virtual bool parse ();

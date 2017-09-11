@@ -114,7 +114,7 @@ void MvcCtrlMain::selectItem (Item::SPtr aItem)
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::cloneItem (const fs::path& aPath)
 {
-	if (!m_itemSelModel->clone(m_configModel.getUserName(), m_configModel.getUserEmail(), aPath)) return false;
+	if (!m_itemSelModel.clone(m_configModel.getUserName(), m_configModel.getUserEmail(), aPath)) return false;
 
     return m_workspacesModel.save();
 }
@@ -122,7 +122,7 @@ bool MvcCtrlMain::cloneItem (const fs::path& aPath)
 bool MvcCtrlMain::clearItem (bool aForce, std::string& aDetails)
 {
     bool result {true};
-	if (!m_itemSelModel->clear(aForce, aDetails)) result = false;
+	if (!m_itemSelModel.clear(aForce, aDetails)) result = false;
     if (!m_workspacesModel.save()) result = false;
 
     return result;
@@ -130,7 +130,7 @@ bool MvcCtrlMain::clearItem (bool aForce, std::string& aDetails)
 // -----------------------------------------------------------------------------
 bool MvcCtrlMain::git (const std::string& aGitCmd)
 {
-    return m_itemSelModel->git(aGitCmd);
+    return m_itemSelModel.git(aGitCmd);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

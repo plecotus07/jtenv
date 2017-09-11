@@ -13,6 +13,8 @@ class MvcViewCliProject : public jkpp::MvcViewCli {
 	public:
 		MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgsEnd, MvcCtrlProjectEdit& aCtrl, MvcModelProjectEdit& aModel);
 
+		bool submitEdit ();
+
 		virtual void update () {};
 		virtual bool parse ();
         virtual bool containsCommand (const std::string& aCmd);

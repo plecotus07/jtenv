@@ -93,26 +93,15 @@ bool MvcViewCliCommon::onListItems ()
         }
     }
 
-	Workspace::SPtr sel_ws {m_wsModel.getWorkspace()};
-
-    if (!sel_ws) {
+	Item::SPtr item {m_itemSelModel.getItem()};
+	if (item) {
+		auto lister {ItemsLister(cloned_only, with_path)};
+		item->accept(lister);
+	} else {
     	for (auto ws : m_wssModel) {
         	if (!cloned_only || !ws.second->getPath().empty()) {
             	std::cout << ws.first;
                 if (with_path) std::cout << " : " << ws.second->getPath().string();
-                std::cout << '\n';
-            }
-        }
-    } else if (!(m_projModel.getProject())) {
-        if (sel_ws->getPath().empty()) {
-            std::cerr << "Workspace " << sel_ws->getName() << " is not cloned\n";
-            return false;
-        }
-
-        for (auto proj : *sel_ws) {
-            if (!cloned_only || (!proj.second->getRepoPath().empty())) {
-                std::cout << proj.first;
-                if (with_path) std::cout << " : " << proj.second->getPath().string();
                 std::cout << '\n';
             }
         }
@@ -192,10 +181,7 @@ bool MvcViewCliCommon::onStatusItem ()
         show_details = true;
     }
 
-	Item::SPtr item {};
-    if (auto ws = m_wsModel.getWorkspace(); ws) item = ws;
-    else if (auto proj = m_projModel.getProject(); proj) item = proj;
-
+	Item::SPtr item {m_itemSelModel.getItem()};
 	if (!item) {
         std::cerr << "Invalid address.\n";
         return false;
@@ -282,6 +268,33 @@ bool MvcViewCliCommon::onGit ()
     }
 
     return true;
+}
+// +++ -------------------------------------------------------------------------
+ItemsLister::ItemsLister (bool aClonedOnly, bool aWithPath) :
+	m_clonedOnly {aClonedOnly},
+	m_withPath {aWithPath}
+{
+}
+// -----------------------------------------------------------------------------
+void ItemsLister::Visit (Workspace* aWs)
+{
+    if (aWs->getPath().empty()) {
+        std::cerr << "Workspace " << aWs->getName() << " is not cloned\n";
+        return;
+    }
+
+    for (auto proj : *aWs) {
+        if (!m_clonedOnly || (!proj.second->getRepoPath().empty())) {
+            std::cout << proj.first;
+            if (m_withPath) std::cout << " : " << proj.second->getPath().string();
+            std::cout << '\n';
+        }
+    }
+}
+// -----------------------------------------------------------------------------
+void ItemsLister::Visit (Project*)
+{
+
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv
