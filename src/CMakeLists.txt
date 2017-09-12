@@ -54,7 +54,8 @@ add_executable (utjtenv EXCLUDE_FROM_ALL
 	addressparser_jtenv.cpp
 	addressparser_test_jtenv.cpp
 	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
-	jkpp/filesystem_jkpp.cpp)
+	jkpp/filesystem_jkpp.cpp
+  jkpp/gitsubproc_jkpp.cpp)
 
 target_include_directories(utjtenv PRIVATE ${Catch_INCLUDE_DIRS})
 target_include_directories(utjtenv PRIVATE ${CMAKE_CURRENT_LIST_DIR})

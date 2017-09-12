@@ -1,16 +1,17 @@
 // +++ -------------------------------------------------------------------------
 #include "addressparser_jtenv.hpp"
 #include "workspace_jtenv.hpp"
+#include <gitsubproc_jkpp.hpp>
 
 #include <catch/catch.hpp>
 // +++ -------------------------------------------------------------------------
 SCENARIO ("Address parser") {
 	GIVEN ("Parser with given workspaces") {
-
+        jkpp::GitSubProcBuilder git_builder {};
     	jtenv::Workspace::SPtrByStrMap workspaces {
-        	{"ws1", std::make_shared<jtenv::Workspace>("ws1", nullptr, fs::current_path()/"workspaces"/"ws1")},
+        	{"ws1", std::make_shared<jtenv::Workspace>("ws1", nullptr, git_builder.create((fs::current_path()/"workspaces"/"ws1").string()))},
 	        {"ws2", std::make_shared<jtenv::Workspace>("ws2", nullptr)},
-	        {"ws3", std::make_shared<jtenv::Workspace>("ws3", nullptr, fs::current_path()/"workspaces"/"ws3")},
+	        {"ws3", std::make_shared<jtenv::Workspace>("ws3", nullptr, git_builder.create((fs::current_path()/"workspaces"/"ws3").string()))},
         };
         jtenv::AddressParser parser {workspaces};
 
