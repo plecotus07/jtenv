@@ -32,20 +32,17 @@ bool MvcCtrlConfigEdit::submitEdit ()
 	m_model.setUserName(m_editModel.getUserName());
 	m_model.setUserEmail(m_editModel.getUserEmail());
 
-    m_model.endUpdate();
-
+    bool result {true};
     if (!m_model.save()) {
-        m_model.beginUpdate();
 
 		m_model.setUserName(old_user_name);
 		m_model.setUserEmail(old_user_email);
 
-	    m_model.endUpdate();
-
-    	return false;
+    	result = false;
     }
+    m_model.endUpdate();
 
-	return true;
+	return result;
 }
 // -----------------------------------------------------------------------------
 void MvcCtrlConfigEdit::setUserName (const std::string& aUserName)

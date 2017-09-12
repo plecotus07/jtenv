@@ -14,6 +14,7 @@ class MvcEditorCliConfig {
 	public:
 		MvcEditorCliConfig (jkpp::MvcViewCli::ArgIterator& aArg, const jkpp::MvcViewCli::ArgIterator& aArgsEnd, MvcModelConfig& aConfigModel);
 
+		bool containsCommand (const std::string& aCmd) { return m_view.containsCommand(aCmd); }
 		bool edit ();
 
 	protected:

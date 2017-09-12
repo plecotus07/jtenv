@@ -12,8 +12,7 @@ MvcViewCliProject::MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgs
     MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
     m_model {aModel},
-	m_handlers {}
-//    , m_handlers {{"cmake", [] (MvcViewCliProject* aView) -> bool {return aView->onCMake();}}}
+    m_handlers {{"name", [] (MvcViewCliProject* aView) -> bool {return aView->onFullName();}}}
 {
 }
 // -----------------------------------------------------------------------------
@@ -48,8 +47,27 @@ bool MvcViewCliProject::containsCommand (const std::string& aCmd)
     return (m_handlers.find(aCmd) != m_handlers.end());
 }
 // -----------------------------------------------------------------------------
-//bool MvcViewCliProject::onCMake ()
-//{
+bool MvcViewCliProject::onFullName ()
+{
+	if (m_arg == m_argsEnd) {
+    	std::cerr << "Missing name.\n";
+        return false;
+    }
+
+    std::string name {*m_arg};
+
+    ++m_arg;
+    if (m_arg != m_argsEnd) {
+    	std::cerr << "Invalid argument: " << *m_arg << '\n';
+        return false;
+    }
+
+    m_ctrl.setFullName(*m_arg);
+    return true;
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliProject::onCMake ()
+{
 //    if (m_arg == m_argsEnd) {
 //    	std::cerr << "Missing arguments\n";
 //        return false;
@@ -82,9 +100,8 @@ bool MvcViewCliProject::containsCommand (const std::string& aCmd)
 //        return false;
 //    }
 //
-//    return true;
-//
-//}
+    return true;
+}
 //// -----------------------------------------------------------------------------
 //bool MvcViewCliProject::onCMakeAdd ()
 //{

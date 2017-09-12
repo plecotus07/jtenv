@@ -8,6 +8,13 @@ MvcModelProjectEdit::MvcModelProjectEdit () :
 	m_fullName {}
 {
 }
+// -----------------------------------------------------------------------------
+void MvcModelProjectEdit::setFullName (const std::string& aFullName)
+{
+	beginUpdate();
+    m_fullName = aFullName;
+    endUpdate();
+}
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------

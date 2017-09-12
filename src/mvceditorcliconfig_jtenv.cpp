@@ -13,6 +13,8 @@ MvcEditorCliConfig::MvcEditorCliConfig (jkpp::MvcViewCli::ArgIterator& aArg, con
 // -----------------------------------------------------------------------------
 bool MvcEditorCliConfig::edit ()
 {
+    m_ctrl.prepareEdit();
+
     m_view.show();
 
 	if (!m_view.getResult()) return false; 	// window->showModeal() == mrok

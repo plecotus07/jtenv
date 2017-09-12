@@ -27,8 +27,6 @@ bool MvcViewCliConfig::submitEdit ()
 // -----------------------------------------------------------------------------
 bool MvcViewCliConfig::parse ()
 {
-    onShow();
-
     if (m_arg == m_argsEnd) {
     	onDisplayConfig();
         return true;
@@ -43,11 +41,6 @@ bool MvcViewCliConfig::parse ()
     std::cerr << "Invalid argument: " << key << '\n';
 
     return false;
-}
-// -----------------------------------------------------------------------------
-void MvcViewCliConfig::onShow ()
-{
-	m_ctrl.prepareEdit();
 }
 // -----------------------------------------------------------------------------
 void MvcViewCliConfig::onDisplayConfig ()

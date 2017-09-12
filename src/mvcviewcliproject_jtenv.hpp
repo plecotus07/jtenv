@@ -23,7 +23,8 @@ class MvcViewCliProject : public jkpp::MvcViewCli {
 		MvcCtrlProjectEdit&  m_ctrl;
 		MvcModelProjectEdit& m_model;
 
-//		bool onCMake ();
+		bool onFullName ();
+		bool onCMake ();
 //		bool onCMakeAdd ();
 //		bool onCMakeRemove ();
 //		bool onCMakeList ();

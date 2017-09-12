@@ -8,24 +8,41 @@ MvcEditorCliItem::MvcEditorCliItem(jkpp::MvcViewCli::ArgIterator& aArg, const jk
     m_itemSelModel {aItemSelModel},
     m_projModel {},
     m_projCtrl {m_projModel, m_itemSelModel},
-    m_projView {aArg, aArgsEnd, m_projCtrl, m_projModel},
-    m_result {true}
+    m_projView {aArg, aArgsEnd, m_projCtrl, m_projModel}
 {
 }
 // -----------------------------------------------------------------------------
 bool MvcEditorCliItem::edit ()
 {
-	m_itemSelModel.getItem()->accept(*this);
+	ItemVisitorEdit visitor {m_projView, m_projCtrl};
+	m_itemSelModel.getItem()->accept(visitor);
 
-	return m_result;
+	return visitor;
 }
-// -----------------------------------------------------------------------------
-void MvcEditorCliItem::Visit (Workspace*)
+// +++ -------------------------------------------------------------------------
+bool MvcEditorCliItem::containsCommand (const std::string& aCmd)
+{
+	ItemVisitorContainsCommand visitor {aCmd, m_projView};
+	m_itemSelModel.getItem()->accept(visitor);
+
+	return visitor;
+}
+// +++ -------------------------------------------------------------------------
+ItemVisitorEdit::ItemVisitorEdit (MvcViewCliProject& aProjView, MvcCtrlProjectEdit& aProjCtrl) :
+	m_projCtrl {aProjCtrl},
+    m_projView {aProjView},
+    m_result {true}
 {
 }
 // -----------------------------------------------------------------------------
-void MvcEditorCliItem::Visit (Project* aProj)
+void ItemVisitorEdit::Visit (Workspace*)
 {
+}
+// -----------------------------------------------------------------------------
+void ItemVisitorEdit::Visit (Project* aProject)
+{
+    m_projCtrl.prepareEdit(aProject);
+
     m_projView.show();
 
     if (!m_projView.getResult()) {
@@ -35,6 +52,22 @@ void MvcEditorCliItem::Visit (Project* aProj)
     if (!m_projView.submitEdit()) {
     	m_result = false;
     }
+}
+// +++ -------------------------------------------------------------------------
+ItemVisitorContainsCommand::ItemVisitorContainsCommand (const std::string& aCmd, MvcViewCliProject& aProjView) :
+    m_cmd {aCmd},
+    m_projView {aProjView},
+    m_result {true}
+{
+}
+// -----------------------------------------------------------------------------
+void ItemVisitorContainsCommand::Visit (Workspace*)
+{
+}
+// -----------------------------------------------------------------------------
+void ItemVisitorContainsCommand::Visit (Project*)
+{
+	m_result = m_projView.containsCommand(m_cmd);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv
