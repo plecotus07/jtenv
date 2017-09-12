@@ -25,6 +25,18 @@ class MvcModelImpl : public MvcModel {
 		int                m_updateCount;
 };
 // +++ -------------------------------------------------------------------------
+class MvcModelUpdateControler {
+	public:
+    	MvcModelUpdateControler (MvcModel* aModel);
+		MvcModelUpdateControler (const MvcModelUpdateControler& aOther) = default;
+    	~MvcModelUpdateControler ();
+
+		MvcModelUpdateControler& operator= (const MvcModelUpdateControler& aOther) = default;
+
+    protected:
+    	MvcModel* m_model;
+};
+// +++ -------------------------------------------------------------------------
 } // jkpp
 // +++ -------------------------------------------------------------------------
 #endif // MVCMODELIMPL_JKPP_HPP

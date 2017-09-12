@@ -33,5 +33,17 @@ void MvcModelImpl::notify ()
 	for (auto view : m_views) view->update();
 }
 // +++ -------------------------------------------------------------------------
+MvcModelUpdateControler::MvcModelUpdateControler (MvcModel* aModel) : m_model(aModel)
+{
+///\todo	assert(m_model != nullptr)
+	if (m_model) m_model->beginUpdate();
+}
+// -----------------------------------------------------------------------------
+MvcModelUpdateControler::~MvcModelUpdateControler ()
+{
+///\todo	assert(m_model != nullptr)
+	if (m_model) m_model->endUpdate();
+}
+// +++ -------------------------------------------------------------------------
 } // jkpp
 // +++ -------------------------------------------------------------------------
