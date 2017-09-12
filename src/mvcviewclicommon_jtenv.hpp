@@ -43,8 +43,8 @@ class ItemsLister : public ItemVisitor {
 	public:
 		ItemsLister (bool aClonedOnly, bool aWithPath);
 
-		virtual void Visit (Workspace* aWs);
-		virtual void Visit (Project* aProj);
+		virtual void visit (Workspace* aWs);
+		virtual void visit (Project* aProj);
 
 	protected:
 		bool m_clonedOnly;

@@ -5,7 +5,6 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 Workspace::Workspace (const std::string& aName, jkpp::Git::UPtr&& aRemoteGit, jkpp::Git::UPtr&& aGit) :
 	m_name{aName},
-	m_path{},
 	m_remoteGit{std::move(aRemoteGit)},
 	m_git{std::move(aGit)},
 	m_projects{}

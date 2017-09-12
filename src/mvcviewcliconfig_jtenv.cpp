@@ -11,7 +11,11 @@ namespace jtenv {
 MvcViewCliConfig::MvcViewCliConfig (ArgIterator& aArg, const ArgIterator& aArgsEnd, MvcCtrlConfigEdit& aCtrl, MvcModelConfigEdit& aModel) :
     MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
-    m_model {aModel}
+    m_model {aModel},
+    m_handlers {{"config", [] (MvcViewCliConfig* aView) -> bool {return aView->onDisplayConfig();}},
+	            {"user-name", [] (MvcViewCliConfig* aView) -> bool {return aView->onUserName();}},
+	            {"user-email", [] (MvcViewCliConfig* aView) -> bool {return aView->onUserEmail();}}}
+
 {
 }
 // -----------------------------------------------------------------------------
@@ -27,26 +31,33 @@ bool MvcViewCliConfig::submitEdit ()
 // -----------------------------------------------------------------------------
 bool MvcViewCliConfig::parse ()
 {
-    if (m_arg == m_argsEnd) {
-    	onDisplayConfig();
-        return true;
-	}
+    if ( (m_arg == m_argsEnd)
+    	 || (m_arg->substr(0, 2) != "--") ) {
+    	std::cerr << "Missing command.\n";
+        return false;
+    }
 
-    std::string key {*m_arg};
-	++m_arg;
+    auto handler = m_handlers.find(m_arg->substr(2));
+    if (handler == m_handlers.end()) {
+    	std::cerr << "Invalid command: " << *m_arg << '\n';
+        return false;
+    }
 
-    if (key == "user-name") return onUserName();
-	else if (key == "user-email") return onUserEmail();
+    ++m_arg;
 
-    std::cerr << "Invalid argument: " << key << '\n';
-
-    return false;
+    return (handler->second)(this);
 }
 // -----------------------------------------------------------------------------
-void MvcViewCliConfig::onDisplayConfig ()
+bool MvcViewCliConfig::containsCommand (const std::string& aCmd)
+{
+    return (m_handlers.find(aCmd) != m_handlers.end());
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliConfig::onDisplayConfig ()
 {
 	std::cout << "user-name = " << m_model.getUserName() << '\n'
               << "user-email = " << m_model.getUserEmail() << '\n';
+    return true;
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliConfig::onUserName ()
@@ -56,7 +67,14 @@ bool MvcViewCliConfig::onUserName ()
     	return false;
     }
 
-	m_ctrl.setUserName(*m_arg);
+    std::string name {*m_arg};
+    ++m_arg;
+    if (m_arg != m_argsEnd) {
+    	std::cerr << "Invalid argument: " << *m_arg << '\n';
+        return false;
+    }
+
+	m_ctrl.setUserName(name);
 
     return true;
 }
@@ -68,7 +86,14 @@ bool MvcViewCliConfig::onUserEmail ()
     	return false;
     }
 
-    m_ctrl.setUserEmail(*m_arg);
+    std::string email {*m_arg};
+    ++m_arg;
+    if (m_arg != m_argsEnd) {
+    	std::cerr << "Invalid argument: " << *m_arg << '\n';
+        return false;
+    }
+
+    m_ctrl.setUserEmail(email);
 
     return true;
 }

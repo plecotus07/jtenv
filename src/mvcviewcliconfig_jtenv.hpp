@@ -17,16 +17,17 @@ class MvcViewCliConfig : public jkpp::MvcViewCli {
 
 		virtual void update () {};
 		virtual bool parse ();
-        virtual bool containsCommand (const std::string& aCmd) { return (aCmd == "config"); };
+        virtual bool containsCommand (const std::string& aCmd);
 
 	protected:
 		MvcCtrlConfigEdit&  m_ctrl;
 		MvcModelConfigEdit& m_model;
 
-		void onShow ();
-		void onDisplayConfig ();
+		bool onDisplayConfig ();
    		bool onUserName ();
 		bool onUserEmail ();
+
+		const Handlers<MvcViewCliConfig> m_handlers;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

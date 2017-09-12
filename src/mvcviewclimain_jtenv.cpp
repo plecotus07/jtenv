@@ -66,18 +66,18 @@ bool MvcViewCliMain::parse ()
 
     std::string cmd {m_arg->substr(2)};
 
-    ++m_arg;
     if (m_configEditor.containsCommand(cmd)) return m_configEditor.edit();
 
     auto names {AddressParser{m_wssModel.getWorkspaces()}(addr)};
-
     m_ctrl.selectItem(m_wssModel.getItem(names.first, names.second));
 
 	if (m_commonView.containsCommand(cmd)) return m_commonView.parse();
-
     if (m_itemEditor.containsCommand(cmd)) return m_itemEditor.edit();
 
-    std::cerr << "Invalid command: " << cmd << '\n';
+    std::cerr << "Invalid command: '" << cmd << "'";
+    if (!addr.empty()) std::cerr << " for item: " << addr;
+    std::cerr << '\n';
+
     return false;
 }
 // -----------------------------------------------------------------------------

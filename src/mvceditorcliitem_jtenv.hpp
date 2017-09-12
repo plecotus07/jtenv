@@ -31,8 +31,8 @@ class ItemVisitorEdit : public ItemVisitor {
 
         operator bool () const { return m_result; };
 
-		virtual void Visit (Workspace* aWs);
-		virtual void Visit (Project* aProj);
+		virtual void visit (Workspace* aWs);
+		virtual void visit (Project* aProj);
 
     protected:
 		MvcCtrlProjectEdit& m_projCtrl;
@@ -46,8 +46,8 @@ class ItemVisitorContainsCommand : public ItemVisitor {
 
         operator bool () const { return m_result; };
 
-		virtual void Visit (Workspace* aWs);
-		virtual void Visit (Project* aProj);
+		virtual void visit (Workspace* aWs);
+		virtual void visit (Project* aProj);
 
     protected:
 		std::string        m_cmd;

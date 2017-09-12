@@ -1,6 +1,7 @@
 // +++ -------------------------------------------------------------------------
 #include "mvceditorcliitem_jtenv.hpp"
 #include "mvcmodelitemselection_jtenv.hpp"
+#include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -15,7 +16,11 @@ MvcEditorCliItem::MvcEditorCliItem(jkpp::MvcViewCli::ArgIterator& aArg, const jk
 bool MvcEditorCliItem::edit ()
 {
 	ItemVisitorEdit visitor {m_projView, m_projCtrl};
-	m_itemSelModel.getItem()->accept(visitor);
+
+    Item::SPtr item {m_itemSelModel.getItem()};
+    if (!item) return false;
+
+	item->accept(visitor);
 
 	return visitor;
 }
@@ -23,7 +28,11 @@ bool MvcEditorCliItem::edit ()
 bool MvcEditorCliItem::containsCommand (const std::string& aCmd)
 {
 	ItemVisitorContainsCommand visitor {aCmd, m_projView};
-	m_itemSelModel.getItem()->accept(visitor);
+
+    Item::SPtr item {m_itemSelModel.getItem()};
+    if (!item) return false;
+
+	item->accept(visitor);
 
 	return visitor;
 }
@@ -35,11 +44,11 @@ ItemVisitorEdit::ItemVisitorEdit (MvcViewCliProject& aProjView, MvcCtrlProjectEd
 {
 }
 // -----------------------------------------------------------------------------
-void ItemVisitorEdit::Visit (Workspace*)
+void ItemVisitorEdit::visit (Workspace*)
 {
 }
 // -----------------------------------------------------------------------------
-void ItemVisitorEdit::Visit (Project* aProject)
+void ItemVisitorEdit::visit (Project* aProject)
 {
     m_projCtrl.prepareEdit(aProject);
 
@@ -61,11 +70,11 @@ ItemVisitorContainsCommand::ItemVisitorContainsCommand (const std::string& aCmd,
 {
 }
 // -----------------------------------------------------------------------------
-void ItemVisitorContainsCommand::Visit (Workspace*)
+void ItemVisitorContainsCommand::visit (Workspace*)
 {
 }
 // -----------------------------------------------------------------------------
-void ItemVisitorContainsCommand::Visit (Project*)
+void ItemVisitorContainsCommand::visit (Project*)
 {
 	m_result = m_projView.containsCommand(m_cmd);
 }

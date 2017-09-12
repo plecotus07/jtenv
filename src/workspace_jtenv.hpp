@@ -26,7 +26,7 @@ class Workspace : public Item {
 		virtual fs::path           getRepoPath () const { return m_git ? m_git->getUrl() : fs::path{}; }
 		virtual jkpp::Git::Status  getStatus (std::string& aStatusDetails) const;
 
-        virtual void               accept (ItemVisitor& aVisitor) { aVisitor.Visit(this); }
+        virtual void               accept (ItemVisitor& aVisitor) { aVisitor.visit(this); }
 
 		Project::SPtr              addProject (const std::string& aName);
 		Project::SPtr              getProject (const std::string& aName);
@@ -36,7 +36,6 @@ class Workspace : public Item {
 
     protected:
     	std::string     m_name;
-        fs::path        m_path;
         jkpp::Git::UPtr m_remoteGit;
         jkpp::Git::UPtr m_git;
 

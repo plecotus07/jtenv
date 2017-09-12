@@ -39,8 +39,8 @@ class ItemVisitor {
 	public:
     	virtual ~ItemVisitor () = default;
 
-		virtual void Visit (Workspace* aWs) = 0;
-		virtual void Visit (Project* aProj) = 0;
+		virtual void visit (Workspace* aWs) = 0;
+		virtual void visit (Project* aProj) = 0;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

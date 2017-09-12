@@ -36,7 +36,10 @@ bool MvcViewCliCommon::parse ()
     }
 
     auto handler = m_handlers.find(m_arg->substr(2));
-///\todo assert (handler != m_handlers.end();
+    if (handler == m_handlers.end()) {
+    	std::cerr << "Invalid command: " << *m_arg << '\n';
+        return false;
+    }
 
     ++m_arg;
 
@@ -86,8 +89,7 @@ bool MvcViewCliCommon::onListItems ()
 		            std::cerr << "Invalid option: -" << *c << '\n';
                 }
             }
-        }
-        else {
+        } else {
             std::cerr << "Invalid argument: " << *m_arg << '\n';
             return false;
         }
@@ -276,7 +278,7 @@ ItemsLister::ItemsLister (bool aClonedOnly, bool aWithPath) :
 {
 }
 // -----------------------------------------------------------------------------
-void ItemsLister::Visit (Workspace* aWs)
+void ItemsLister::visit (Workspace* aWs)
 {
     if (aWs->getPath().empty()) {
         std::cerr << "Workspace " << aWs->getName() << " is not cloned\n";
@@ -292,7 +294,7 @@ void ItemsLister::Visit (Workspace* aWs)
     }
 }
 // -----------------------------------------------------------------------------
-void ItemsLister::Visit (Project*)
+void ItemsLister::visit (Project*)
 {
 
 }

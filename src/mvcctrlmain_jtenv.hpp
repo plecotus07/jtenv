@@ -22,7 +22,8 @@ class MvcModelItemSelection;
 // +++ -------------------------------------------------------------------------
 class MvcCtrlMain {
 	public:
-		MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel, MvcModelItemSelection& aItemSelModel, jkpp::GitBuilder& aGitBuilder);
+		MvcCtrlMain (MvcModelConfig& aConfigModel, MvcModelWorkspaces& aWorkspacesModel,
+		             MvcModelItemSelection& aItemSelModel, jkpp::GitBuilder& aGitBuilder);
 
 		bool loadConfig ();
 		bool saveConfig ();

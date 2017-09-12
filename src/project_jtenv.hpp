@@ -33,13 +33,13 @@ class Project : public Item {
 
         const std::string&   getFullName () const { return m_fullName; }
 		void                 setFullName (const std::string& aFullName) { m_fullName = aFullName; }
-        
+
 		bool                 addCMakeCmd (const std::string& aName, const std::string& aCmd);
 		bool                 removeCMakeCmd (const std::string& aName);
         std::string          getCMakeCmd (const std::string& aName) const;
         const CMakeCmdsMap&  getCMakeCmds () const { return m_cmakeCmds; }
 
-        virtual void accept (ItemVisitor& aVisitor) { aVisitor.Visit(this); }
+        virtual void accept (ItemVisitor& aVisitor) { aVisitor.visit(this); }
 
     protected:
 		std::string     m_wsName;

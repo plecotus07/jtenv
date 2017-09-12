@@ -33,10 +33,11 @@ bool MvcViewCliProject::parse ()
         std::cerr << "Missing command.\n";
         return false;
     }
-
     auto handler = m_handlers.find(m_arg->substr(2));
-///\todo assert (handler != m_handlers.end();
-
+    if (handler == m_handlers.end()) {
+    	std::cerr << "Invalid command: " << *m_arg << '\n';
+        return false;
+    }
     ++m_arg;
 
     return (handler->second)(this);
@@ -62,7 +63,8 @@ bool MvcViewCliProject::onFullName ()
         return false;
     }
 
-    m_ctrl.setFullName(*m_arg);
+    m_ctrl.setFullName(name);
+
     return true;
 }
 // -----------------------------------------------------------------------------
