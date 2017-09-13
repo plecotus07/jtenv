@@ -18,6 +18,7 @@ class MvcCtrlProjectEdit {
         bool submitEdit ();
 
 		void setFullName (const std::string& aFullName) { m_editModel.setFullName(aFullName); }
+		void setRemoteRepoUrl (const std::string& aUrl) { m_editModel.setRemoteRepoUrl(aUrl); }
 
 	protected:
 		Project*               m_project;

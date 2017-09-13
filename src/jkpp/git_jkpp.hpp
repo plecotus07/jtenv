@@ -20,6 +20,7 @@ class Git {
 		virtual ~Git () = default;
 
 		virtual const std::string& getUrl () const = 0;
+		virtual void               setUrl (const std::string& aUrl) = 0;
 
 		virtual bool   init (const std::string& aPath, bool aBare) = 0;
 		virtual UPtr   clone (const std::string& aPath, bool aBare) = 0;

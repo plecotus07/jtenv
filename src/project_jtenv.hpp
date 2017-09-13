@@ -33,6 +33,8 @@ class Project : public Item {
 
         const std::string&   getFullName () const { return m_fullName; }
 		void                 setFullName (const std::string& aFullName) { m_fullName = aFullName; }
+        std::string          getRemoteRepoUrl () const { return (m_remoteGit ? m_remoteGit->getUrl() : ""); }
+		void                 setRemoteRepoUrl (const std::string& aUrl);
 
 		bool                 addCMakeCmd (const std::string& aName, const std::string& aCmd);
 		bool                 removeCMakeCmd (const std::string& aName);

@@ -11,6 +11,7 @@ class GitSubProc : public Git {
 		GitSubProc (const std::string& aUrl = {});
 
 		virtual const std::string& getUrl () const  { return m_url; }
+		virtual void               setUrl (const std::string& aUrl) { m_url = aUrl; }
 
 		virtual bool   init (const std::string& aUrl, bool aBare);
 		virtual UPtr   clone (const std::string& aUrl, bool aBare);

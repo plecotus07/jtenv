@@ -135,6 +135,12 @@ jkpp::Git::Status Project::getStatus (std::string& aStatusDetails) const
     return m_git->getStatus(aStatusDetails);
 }
 // -----------------------------------------------------------------------------
+void Project::setRemoteRepoUrl (const std::string& aUrl)
+{
+///\todo assert (m_remoteGit)
+	m_remoteGit->setUrl(aUrl);
+}
+// -----------------------------------------------------------------------------
 bool Project::addCMakeCmd (const std::string& aName, const std::string& aCmd)
 {
 	if (aName.empty() || aCmd.empty()) return false;

@@ -20,6 +20,7 @@ void MvcCtrlProjectEdit::prepareEdit (Project* aProject)
 
 	m_editModel.beginUpdate();
     m_editModel.setFullName(aProject->getFullName());
+    m_editModel.setRemoteRepoUrl(aProject->getRemoteRepoUrl());
     m_editModel.endUpdate();
 }
 // -----------------------------------------------------------------------------
@@ -28,13 +29,16 @@ bool MvcCtrlProjectEdit::submitEdit ()
 	if (!m_project) return false;
 
 	std::string old_fullname {m_project->getFullName()};
+    std::string old_remote_url {m_project->getRemoteRepoUrl()};
 
     m_itemSelModel.beginUpdate();
     m_project->setFullName(m_editModel.getFullName());
+    m_project->setRemoteRepoUrl(m_editModel.getRemoteRepoUrl());
 
     bool result {true};
     if (!m_project->save()) {
     	m_project->setFullName(old_fullname);
+        m_project->setRemoteRepoUrl(old_remote_url);
         result = false;
     }
 

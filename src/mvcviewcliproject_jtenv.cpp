@@ -12,7 +12,8 @@ MvcViewCliProject::MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgs
     MvcViewCli(aArg, aArgsEnd),
     m_ctrl {aCtrl},
     m_model {aModel},
-    m_handlers {{"name", [] (MvcViewCliProject* aView) -> bool {return aView->onFullName();}}}
+    m_handlers {{"name", [] (MvcViewCliProject* aView) -> bool {return aView->onFullName();}},
+			    {"url", [] (MvcViewCliProject* aView) -> bool {return aView->onRemoteRepoUrl();}}}
 {
 }
 // -----------------------------------------------------------------------------
@@ -28,7 +29,7 @@ bool MvcViewCliProject::submitEdit ()
 // -----------------------------------------------------------------------------
 bool MvcViewCliProject::parse ()
 {
-    if ( (m_arg == m_argsEnd)
+    if ( (m_arg == m_argsEnd) ///\todo displayProjInfo
              || (m_arg->substr(0,2) != "--") ) {
         std::cerr << "Missing command.\n";
         return false;
@@ -66,6 +67,27 @@ bool MvcViewCliProject::onFullName ()
     m_ctrl.setFullName(name);
 
     return true;
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliProject::onRemoteRepoUrl ()
+{
+	if (m_arg == m_argsEnd) {
+    	std::cerr << "Missing url.\n";
+        return false;
+    }
+
+    std::string url {*m_arg};
+
+    ++m_arg;
+    if (m_arg != m_argsEnd) {
+    	std::cerr << "Invalid argument: " << *m_arg << '\n';
+        return false;
+    }
+
+    m_ctrl.setRemoteRepoUrl(url);
+
+    return true;
+
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliProject::onCMake ()

@@ -24,6 +24,7 @@ class MvcViewCliProject : public jkpp::MvcViewCli {
 		MvcModelProjectEdit& m_model;
 
 		bool onFullName ();
+		bool onRemoteRepoUrl ();
 		bool onCMake ();
 //		bool onCMakeAdd ();
 //		bool onCMakeRemove ();
