@@ -60,7 +60,14 @@ bool Project::load (jkpp::GitBuilder& aGitBuilder)
             if (key == "repo_url") m_remoteGit = aGitBuilder.create(value);
             else if (key == "full_name") m_fullName = value;
             else if (key == "default_branch") m_defaultBranch = value;
-            else return false;
+			else if (key == "cmake_cmd") {
+				auto ccpos {value.find_first_of('|')};
+				if (pos == std::string::npos) return false;
+				std::string cc_name {line.substr(0, ccpos)};
+				std::string cc_cmd {line.substr(ccpos + 1)};
+				if (cc_name.empty() || cc_cmd.empty()) return false;
+				m_cmakeCmds.insert(std::make_pair(cc_name, cc_cmd));
+			} else return false;
         }
     }
 
@@ -82,6 +89,8 @@ bool Project::save ()
     file << "repo_url=" << m_remoteGit->getUrl() << '\n';
     file << "default_branch=" << m_defaultBranch << '\n';
 
+	for (auto cc : m_cmakeCmds) file << "cmake_cmd=" << cc.first << "|" << cc.second << '\n';
+	
     file.close();
 
     return true;

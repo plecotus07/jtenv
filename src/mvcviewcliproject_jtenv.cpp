@@ -14,7 +14,8 @@ MvcViewCliProject::MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgs
     m_model {aModel},
     m_handlers {{"name", [] (MvcViewCliProject* aView) -> bool {return aView->onFullName();}},
                 {"url", [] (MvcViewCliProject* aView) -> bool {return aView->onRemoteRepoUrl();}},
-                {"branch", [] (MvcViewCliProject* aView) -> bool {return aView->onDefaultBranch();}}}
+                {"branch", [] (MvcViewCliProject* aView) -> bool {return aView->onDefaultBranch();}},
+				{"cmake", [] (MvcViewCliProject* aView) -> bool {return aView->onCMake();}}}
 {
 }
 // -----------------------------------------------------------------------------
@@ -40,6 +41,7 @@ bool MvcViewCliProject::parse ()
     	std::cerr << "Invalid command: " << *m_arg << '\n';
         return false;
     }
+
     ++m_arg;
 
     return (handler->second)(this);
@@ -113,103 +115,96 @@ bool MvcViewCliProject::onDefaultBranch ()
 // -----------------------------------------------------------------------------
 bool MvcViewCliProject::onCMake ()
 {
-//    if (m_arg == m_argsEnd) {
-//    	std::cerr << "Missing arguments\n";
-//        return false;
-//    }
-//
-//    std::string arg {*m_arg};
-//
-//    ++m_arg;
-//
-//    if (*m_arg == "add") return onCMakeAdd ();
-//    else if (*m_arg == "rem") return onCMakeRemove ();
-//    else if (*m_arg == "list") return onCMakeList ();
-//
-//    if (m_arg == m_argsEnd) {
-//    	std::cout << "Missing CMake command name.\n";
-//    	return false;
-//    }
-//
-//    std::string name {*m_arg};
-//
-//    ++m_arg;
-//    if (m_arg != m_argsEnd) {
-//    	std::cerr << "Invalid argument: " << *m_arg << '\n';
-//        return false;
-//    }
-//
-//
-//    if (!m_ctrl.cmakeExecute(name)) {
-//    	std::cerr << "CMake command execute error\n";
-//        return false;
-//    }
-//
-    return true;
+	if (m_arg == m_argsEnd) {
+		std::cerr << "Missing arguments\n";
+		return false;
+	}
+
+	std::string arg {*m_arg};
+
+	++m_arg;
+
+	if (arg == "add") return onCMakeAdd ();
+	else if (arg == "rem") return onCMakeRemove ();
+	else if (arg == "list") return onCMakeList ();
+
+
+	if (m_arg != m_argsEnd) {
+		std::cerr << "Invalid argument: " << *m_arg << '\n';
+	   return false;
+	}
+
+	if (!m_ctrl.executeCMakeCmd(arg)) {
+		std::cerr << "CMake command execute error\n";
+		return false;
+	}
+
+	return true;
 }
 //// -----------------------------------------------------------------------------
-//bool MvcViewCliProject::onCMakeAdd ()
-//{
-//    if (m_arg == m_argsEnd) {
-//    	std::cerr << "Missing arguments.\n";
-//        return false;
-//    }
-//    std::string name {*m_arg};
-//
-//    ++m_arg;
-//    if (m_arg == m_argsEnd) {
-//    	std::cerr << "Missing arguments.\n";
-//        return false;
-//    }
-//    std::string cmd {*m_arg};
-//
-//    ++m_arg;
-//    if (m_arg != m_argsEnd) {
-//    	std::cerr << "Invalid argument: " << *m_arg << '\n';
-//        return false;
-//    }
-//
-//    if (!m_ctrl.cmakeAdd(name, cmd)) {
-//    	std::cerr << "Add CMake command error.\n";
-//        return false;
-//    }
-//
-//    return true;
-//}
-//// -----------------------------------------------------------------------------
-//bool MvcViewCliProject::onCMakeRemove ()
-//{
-//    if (m_arg == m_argsEnd) {
-//    	std::cerr << "Missing arguments.\n";
-//        return false;
-//    }
-//    std::string name {*m_arg};
-//    ++m_arg;
-//    if (m_arg != m_argsEnd) {
-//    	std::cerr << "Invalid argument: " << *m_arg << '\n';
-//        return false;
-//    }
-//
-//    if (!m_ctrl.cmakeRemove(name)) {
-//    	std::cerr << "Remove CMake command error.\n";
-//        return false;
-//    }
-//
-//    return true;
-//}
-//// -----------------------------------------------------------------------------
-//bool MvcViewCliProject::onCMakeList ()
-//{
-//    if (m_arg != m_argsEnd) {
-//    	std::cerr << "Invalid argument: " << *m_arg << '\n';
-//        return false;
-//    }
-//
-//    Project::SPtr proj {m_projModel.getProject()};
-//    for (auto cmake : proj->getCMakeCmds()) std::cout << cmake.first << " : " << cmake.second << '\n';
-//
-//    return true;
-//}
+bool MvcViewCliProject::onCMakeAdd ()
+{
+	if (m_arg == m_argsEnd) {
+		std::cerr << "Missing arguments.\n";
+		return false;
+	}
+	std::string name {*m_arg};
+
+	++m_arg;
+	if (m_arg == m_argsEnd) {
+		std::cerr << "Missing arguments.\n";
+		return false;
+	}
+	std::string cmd {*m_arg};
+
+	++m_arg;
+	if (m_arg != m_argsEnd) {
+		std::cerr << "Invalid argument: " << *m_arg << '\n';
+	   return false;
+	}
+
+	if (!m_ctrl.addCMakeCmd(name, cmd)) {
+		std::cerr << "Add CMake command error.\n";
+	   return false;
+	}
+
+	return true;
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliProject::onCMakeRemove ()
+{
+	if (m_arg == m_argsEnd) {
+		std::cerr << "Missing arguments.\n";
+	   return false;
+	}
+
+	std::string name {*m_arg};
+
+	++m_arg;
+	if (m_arg != m_argsEnd) {
+		std::cerr << "Invalid argument: " << *m_arg << '\n';
+	   return false;
+	}
+
+	if (!m_ctrl.removeCMakeCmd(name)) {
+		std::cerr << "Remove CMake command error.\n";
+	   return false;
+	}
+
+	return true;
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliProject::onCMakeList ()
+{
+	if (m_arg != m_argsEnd) {
+		std::cerr << "Invalid argument: " << *m_arg << '\n';
+	   return false;
+	}
+
+	for (auto cc : m_model.getCMakeCmds()) std::cout << cc.first << " : " << cc.second << '\n';
+
+	return true;
+}
 // +++ -------------------------------------------------------------------------
 } // jtenv
 // +++ -------------------------------------------------------------------------

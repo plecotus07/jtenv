@@ -21,11 +21,14 @@ class MvcCtrlProjectEdit {
 		void setRemoteRepoUrl (const std::string& aUrl) { m_editModel.setRemoteRepoUrl(aUrl); }
 		void setDefaultBranch (const std::string& aBranch) { m_editModel.setDefaultBranch(aBranch); }
 
+		bool addCMakeCmd (const std::string& aName, const std::string& aCmd) { return m_editModel.addCMakeCmd(aName, aCmd); };
+		bool removeCMakeCmd (const std::string& aName) { return m_editModel.removeCMakeCmd(aName); }
+		bool executeCMakeCmd (const std::string& aName);
+
 	protected:
 		Project*               m_project;
 	    MvcModelProjectEdit&   m_editModel;
         MvcModelItemSelection& m_itemSelModel;
-
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

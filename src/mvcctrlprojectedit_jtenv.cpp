@@ -3,6 +3,10 @@
 #include "project_jtenv.hpp"
 #include "mvcmodelprojectedit_jtenv.hpp"
 #include "mvcmodelitemselection_jtenv.hpp"
+
+#include <filesystem_jkpp.hpp>
+
+#include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
@@ -22,6 +26,7 @@ void MvcCtrlProjectEdit::prepareEdit (Project* aProject)
     m_editModel.setFullName(aProject->getFullName());
     m_editModel.setRemoteRepoUrl(aProject->getRemoteRepoUrl());
     m_editModel.setDefaultBranch(aProject->getDefaultBranch());
+	m_editModel.setCMakeCmds(aProject->getCMakeCmds());
     m_editModel.endUpdate();
 }
 // -----------------------------------------------------------------------------
@@ -32,23 +37,36 @@ bool MvcCtrlProjectEdit::submitEdit ()
 	std::string old_fullname {m_project->getFullName()};
     std::string old_remote_url {m_project->getRemoteRepoUrl()};
     std::string old_default_branch {m_project->getDefaultBranch()};
+	auto old_cmake_cmds {m_project->getCMakeCmds()};
 
     m_itemSelModel.beginUpdate();
     m_project->setFullName(m_editModel.getFullName());
     m_project->setRemoteRepoUrl(m_editModel.getRemoteRepoUrl());
     m_project->setDefaultBranch(m_editModel.getDefaultBranch());
+	for (auto cc : m_editModel.getCMakeCmds()) m_project->addCMakeCmd(cc.first, cc.second);
 
     bool result {true};
     if (!m_project->save()) {
     	m_project->setFullName(old_fullname);
         m_project->setRemoteRepoUrl(old_remote_url);
         m_project->setDefaultBranch(old_default_branch);
+		for (auto cc : old_cmake_cmds) m_project->addCMakeCmd(cc.first, cc.second);
         result = false;
     }
 
     m_itemSelModel.endUpdate();
     return result;
 
+}
+// -----------------------------------------------------------------------------
+bool MvcCtrlProjectEdit::executeCMakeCmd (const std::string& aName)
+{
+	std::string cmd {m_editModel.getCMakeCmd(aName)};
+	if (cmd.empty()) return false;
+
+	std::cerr << "not implemented\n";
+
+	return false;
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv
