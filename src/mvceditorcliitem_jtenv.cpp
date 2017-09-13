@@ -72,6 +72,7 @@ ItemVisitorContainsCommand::ItemVisitorContainsCommand (const std::string& aCmd,
 // -----------------------------------------------------------------------------
 void ItemVisitorContainsCommand::visit (Workspace*)
 {
+    m_result = false;
 }
 // -----------------------------------------------------------------------------
 void ItemVisitorContainsCommand::visit (Project*)
