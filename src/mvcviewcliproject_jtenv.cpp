@@ -13,7 +13,8 @@ MvcViewCliProject::MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgs
     m_ctrl {aCtrl},
     m_model {aModel},
     m_handlers {{"name", [] (MvcViewCliProject* aView) -> bool {return aView->onFullName();}},
-			    {"url", [] (MvcViewCliProject* aView) -> bool {return aView->onRemoteRepoUrl();}}}
+                {"url", [] (MvcViewCliProject* aView) -> bool {return aView->onRemoteRepoUrl();}},
+                {"branch", [] (MvcViewCliProject* aView) -> bool {return aView->onDefaultBranch();}}}
 {
 }
 // -----------------------------------------------------------------------------
@@ -88,6 +89,26 @@ bool MvcViewCliProject::onRemoteRepoUrl ()
 
     return true;
 
+}
+// -----------------------------------------------------------------------------
+bool MvcViewCliProject::onDefaultBranch ()
+{
+	if (m_arg == m_argsEnd) {
+    	std::cerr << "Missing branch name.\n";
+        return false;
+    }
+
+    std::string branch {*m_arg};
+
+    ++m_arg;
+    if (m_arg != m_argsEnd) {
+    	std::cerr << "Invalid argument: " << *m_arg << '\n';
+        return false;
+    }
+
+    m_ctrl.setDefaultBranch(branch);
+
+    return true;
 }
 // -----------------------------------------------------------------------------
 bool MvcViewCliProject::onCMake ()

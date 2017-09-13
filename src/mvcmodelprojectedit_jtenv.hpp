@@ -14,10 +14,13 @@ class MvcModelProjectEdit : public jkpp::MvcModelImpl {
 		void               setFullName (const std::string& aFullName);
 		const std::string& getRemoteRepoUrl () const { return m_remoteRepoUrl; }
 		void               setRemoteRepoUrl (const std::string& aUrl);
+		const std::string& getDefaultBranch () const { return m_defaultBranch; }
+		void               setDefaultBranch (const std::string& aBranch);
 
 	protected:
 		std::string m_fullName;
 		std::string m_remoteRepoUrl;
+		std::string m_defaultBranch;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

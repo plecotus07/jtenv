@@ -19,6 +19,7 @@ class MvcCtrlProjectEdit {
 
 		void setFullName (const std::string& aFullName) { m_editModel.setFullName(aFullName); }
 		void setRemoteRepoUrl (const std::string& aUrl) { m_editModel.setRemoteRepoUrl(aUrl); }
+		void setDefaultBranch (const std::string& aBranch) { m_editModel.setDefaultBranch(aBranch); }
 
 	protected:
 		Project*               m_project;

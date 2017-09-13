@@ -21,6 +21,7 @@ void MvcCtrlProjectEdit::prepareEdit (Project* aProject)
 	m_editModel.beginUpdate();
     m_editModel.setFullName(aProject->getFullName());
     m_editModel.setRemoteRepoUrl(aProject->getRemoteRepoUrl());
+    m_editModel.setDefaultBranch(aProject->getDefaultBranch());
     m_editModel.endUpdate();
 }
 // -----------------------------------------------------------------------------
@@ -30,15 +31,18 @@ bool MvcCtrlProjectEdit::submitEdit ()
 
 	std::string old_fullname {m_project->getFullName()};
     std::string old_remote_url {m_project->getRemoteRepoUrl()};
+    std::string old_default_branch {m_project->getDefaultBranch()};
 
     m_itemSelModel.beginUpdate();
     m_project->setFullName(m_editModel.getFullName());
     m_project->setRemoteRepoUrl(m_editModel.getRemoteRepoUrl());
+    m_project->setDefaultBranch(m_editModel.getDefaultBranch());
 
     bool result {true};
     if (!m_project->save()) {
     	m_project->setFullName(old_fullname);
         m_project->setRemoteRepoUrl(old_remote_url);
+        m_project->setDefaultBranch(old_default_branch);
         result = false;
     }
 

@@ -6,7 +6,8 @@ namespace jtenv {
 MvcModelProjectEdit::MvcModelProjectEdit () :
     MvcModelImpl(),
 	m_fullName {},
-    m_remoteRepoUrl {}
+    m_remoteRepoUrl {},
+    m_defaultBranch {}
 {
 }
 // -----------------------------------------------------------------------------
@@ -21,6 +22,13 @@ void MvcModelProjectEdit::setRemoteRepoUrl (const std::string& aUrl)
 {
 	beginUpdate();
     m_remoteRepoUrl = aUrl;
+    endUpdate();
+}
+// -----------------------------------------------------------------------------
+void MvcModelProjectEdit::setDefaultBranch (const std::string& aBranch)
+{
+	beginUpdate();
+    m_defaultBranch = aBranch;
     endUpdate();
 }
 // +++ -------------------------------------------------------------------------

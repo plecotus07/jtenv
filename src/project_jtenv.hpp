@@ -35,6 +35,9 @@ class Project : public Item {
 		void                 setFullName (const std::string& aFullName) { m_fullName = aFullName; }
         std::string          getRemoteRepoUrl () const { return (m_remoteGit ? m_remoteGit->getUrl() : ""); }
 		void                 setRemoteRepoUrl (const std::string& aUrl);
+        const std::string&   getDefaultBranch () const { return m_defaultBranch; }
+		void                 setDefaultBranch (const std::string& aDefaultBranch) { m_defaultBranch = aDefaultBranch; }
+
 
 		bool                 addCMakeCmd (const std::string& aName, const std::string& aCmd);
 		bool                 removeCMakeCmd (const std::string& aName);
