@@ -155,6 +155,13 @@ bool MvcViewCliProject::onCMakeAdd ()
 		std::cerr << "Missing arguments.\n";
 		return false;
 	}
+	std::string mode_str {*m_arg};
+
+	++m_arg;
+	if (m_arg == m_argsEnd) {
+		std::cerr << "Missing arguments.\n";
+		return false;
+	}
 	std::string cmd {*m_arg};
 
 	++m_arg;
@@ -163,7 +170,13 @@ bool MvcViewCliProject::onCMakeAdd ()
 	   return false;
 	}
 
-	if (!m_ctrl.addCMakeCmd(name, cmd)) {
+    Project::CMakeMode mode {Project::getCMakeModeFromString(mode_str)};
+    if (mode == Project::CMakeMode::invalid) {
+    	std::cerr << "Invalid CMake mode.\n";
+        return false;
+    }
+
+	if (!m_ctrl.addCMakeCmd(name, mode, cmd)) {
 		std::cerr << "Add CMake command error.\n";
 	   return false;
 	}
@@ -201,7 +214,7 @@ bool MvcViewCliProject::onCMakeList ()
 	   return false;
 	}
 
-	for (auto cc : m_model.getCMakeCmds()) std::cout << cc.first << " : " << cc.second << '\n';
+	for (auto cc : m_model.getCMakeCmds()) std::cout << cc.first << " : " << Project::getStringFromCMakeMode(cc.second.first) << " - " << cc.second.second << '\n';
 
 	return true;
 }

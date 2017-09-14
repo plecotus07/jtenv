@@ -61,12 +61,37 @@ bool MvcCtrlProjectEdit::submitEdit ()
 // -----------------------------------------------------------------------------
 bool MvcCtrlProjectEdit::executeCMakeCmd (const std::string& aName)
 {
-	std::string cmd {m_editModel.getCMakeCmd(aName)};
-	if (cmd.empty()) return false;
+	if (!m_project) return false;
 
-	std::cerr << "not implemented\n";
+	Project::CMakeCmd cmd {m_editModel.getCMakeCmd(aName)};
+    switch (cmd.first) {
+    	case Project::CMakeMode::invalid: return false;
+    	case Project::CMakeMode::conf: return executeCMakeConfCmd(cmd.second);
+    	case Project::CMakeMode::build: return executeCMakeBuildCmd(cmd.second);
+    }
 
-	return false;
+    return false;
+}
+// -----------------------------------------------------------------------------
+bool MvcCtrlProjectEdit::executeCMakeConfCmd (const std::string& aCmd)
+{
+    fs::path build_path {m_project->getPath() / "build"};
+    fs::path repo_path {m_project->getRepoPath()};
+
+    if (!fs::exists(build_path)) {
+    	try { fs::create_directories(build_path); } catch (...) { return false; };
+    }
+
+	try { fs::current_path(build_path); } catch (...) { return false; };
+
+    return jkpp::executeCommand("cmake " +repo_path.string() + " " + aCmd);
+}
+// -----------------------------------------------------------------------------
+bool MvcCtrlProjectEdit::executeCMakeBuildCmd (const std::string& aCmd)
+{
+    fs::path build_path {m_project->getPath() / "build"};
+
+    return jkpp::executeCommand("cmake --build " +build_path.string() + " " + aCmd);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

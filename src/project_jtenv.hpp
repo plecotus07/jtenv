@@ -10,10 +10,13 @@ namespace jtenv {
 // +++ -------------------------------------------------------------------------
 class Project : public Item {
     public:
-    	using SPtr = std::shared_ptr<Project>;
+        enum class CMakeMode {invalid = 0, conf, build};
+
+    	using SPtr         = std::shared_ptr<Project>;
 		using SPtrByStrMap = std::map<std::string, SPtr>;
-		using Iterator = SPtrByStrMap::iterator;
-        using CMakeCmdsMap = std::map<std::string, std::string>;
+		using Iterator     = SPtrByStrMap::iterator;
+        using CMakeCmd     = std::pair<CMakeMode, std::string>;
+        using CMakeCmdsMap = std::map<std::string, CMakeCmd>;
 
         Project (const std::string& aWsName, const std::string& aName, const fs::path& aPath);
 
@@ -39,13 +42,16 @@ class Project : public Item {
 		void                 setDefaultBranch (const std::string& aDefaultBranch) { m_defaultBranch = aDefaultBranch; }
 
 
-		bool                 addCMakeCmd (const std::string& aName, const std::string& aCmd);
+		bool                 addCMakeCmd (const std::string& aName, CMakeMode aMode, const std::string& aCmd);
 		bool                 removeCMakeCmd (const std::string& aName);
-        std::string          getCMakeCmd (const std::string& aName) const;
+        CMakeCmd             getCMakeCmd (const std::string& aName) const;
         const CMakeCmdsMap&  getCMakeCmds () const { return m_cmakeCmds; }
         void                 setCMakeCmds (const CMakeCmdsMap& aCMakeCmds) { m_cmakeCmds = aCMakeCmds; }
 
         virtual void accept (ItemVisitor& aVisitor) { aVisitor.visit(this); }
+
+        static CMakeMode   getCMakeModeFromString (const std::string aString);
+        static std::string getStringFromCMakeMode (CMakeMode aMode);
 
     protected:
 		std::string     m_wsName;

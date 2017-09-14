@@ -61,12 +61,20 @@ bool Project::load (jkpp::GitBuilder& aGitBuilder)
             else if (key == "full_name") m_fullName = value;
             else if (key == "default_branch") m_defaultBranch = value;
 			else if (key == "cmake_cmd") {
-				auto ccpos {value.find_first_of('|')};
-				if (pos == std::string::npos) return false;
-				std::string cc_name {value.substr(0, ccpos)};
-				std::string cc_cmd {value.substr(ccpos + 1)};
-				if (cc_name.empty() || cc_cmd.empty()) return false;
-				m_cmakeCmds.insert(std::make_pair(cc_name, cc_cmd));
+				auto ccnpos {value.find_first_of('|')};
+				if (ccnpos == std::string::npos) return false;
+                auto ccmpos {value.find_last_of('|')};
+				if (ccmpos == std::string::npos) return false;
+
+				std::string cc_name {value.substr(0, ccnpos)};
+				std::string mode_str {value.substr(ccnpos + 1, ccmpos)};
+				std::string cc_cmd {value.substr(ccmpos + 1)};
+
+				if (cc_name.empty() || mode_str.empty() || cc_cmd.empty()) return false;
+                CMakeMode cc_mode {getCMakeModeFromString(mode_str)};
+                if (cc_mode == CMakeMode::invalid) return false;
+
+				m_cmakeCmds.insert(std::make_pair(cc_name, std::make_pair(cc_mode, cc_cmd)));
 			} else return false;
         }
     }
@@ -89,8 +97,8 @@ bool Project::save ()
     file << "repo_url=" << m_remoteGit->getUrl() << '\n';
     file << "default_branch=" << m_defaultBranch << '\n';
 
-	for (auto cc : m_cmakeCmds) file << "cmake_cmd=" << cc.first << "|" << cc.second << '\n';
-	
+	for (auto cc : m_cmakeCmds) file << "cmake_cmd=" << cc.first << "|" << getStringFromCMakeMode(cc.second.first) << "|" << cc.second.second << '\n';
+
     file.close();
 
     return true;
@@ -150,14 +158,14 @@ void Project::setRemoteRepoUrl (const std::string& aUrl)
 	m_remoteGit->setUrl(aUrl);
 }
 // -----------------------------------------------------------------------------
-bool Project::addCMakeCmd (const std::string& aName, const std::string& aCmd)
+bool Project::addCMakeCmd (const std::string& aName, CMakeMode aMode, const std::string& aCmd)
 {
 	if (aName.empty() || aCmd.empty()) return false;
 
     auto found {m_cmakeCmds.find(aName)};
     if (found != m_cmakeCmds.end()) return false;
 
-	m_cmakeCmds.insert(std::make_pair(aName, aCmd));
+	m_cmakeCmds.insert(std::make_pair(aName, std::make_pair(aMode,aCmd)));
 
     return true;
 }
@@ -172,12 +180,30 @@ bool Project::removeCMakeCmd (const std::string& aName)
     return true;
 }
 // -----------------------------------------------------------------------------
-std::string Project::getCMakeCmd (const std::string& aName) const
+Project::CMakeCmd Project::getCMakeCmd (const std::string& aName) const
 {
     auto found {m_cmakeCmds.find(aName)};
-    if (found != m_cmakeCmds.end()) return std::string{};
+    if (found != m_cmakeCmds.end()) return std::make_pair(CMakeMode::invalid, std::string{});
 
     return found->second;
+}
+// -----------------------------------------------------------------------------
+Project::CMakeMode Project::getCMakeModeFromString (const std::string aString)
+{
+	if (aString == "conf") return CMakeMode::conf;
+    else if (aString == "build") return CMakeMode::build;
+
+    return CMakeMode::invalid;
+}
+// -----------------------------------------------------------------------------
+std::string Project::getStringFromCMakeMode (CMakeMode aMode)
+{
+	switch (aMode) {
+    case CMakeMode::invalid: return std::string{};
+        case CMakeMode::conf: return "conf";
+        case CMakeMode::build: return "build";
+    }
+    return std::string{};
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

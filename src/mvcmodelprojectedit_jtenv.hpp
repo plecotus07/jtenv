@@ -18,9 +18,9 @@ class MvcModelProjectEdit : public jkpp::MvcModelImpl {
 		const std::string& getDefaultBranch () const { return m_defaultBranch; }
 		void               setDefaultBranch (const std::string& aBranch);
 
-		bool                         addCMakeCmd (const std::string& aName, const std::string& aCmd);
+		bool                         addCMakeCmd (const std::string& aName, Project::CMakeMode aMode, const std::string& aCmd);
 		bool                         removeCMakeCmd (const std::string& aName);
-        std::string                  getCMakeCmd (const std::string& aName) const;
+        Project::CMakeCmd            getCMakeCmd (const std::string& aName) const;
 		const Project::CMakeCmdsMap& getCMakeCmds () const { return m_cmakeCmds; }
 		void                         setCMakeCmds (const Project::CMakeCmdsMap& aCMakeCmds) { m_cmakeCmds = aCMakeCmds; }
 

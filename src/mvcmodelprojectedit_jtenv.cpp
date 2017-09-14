@@ -33,7 +33,7 @@ void MvcModelProjectEdit::setDefaultBranch (const std::string& aBranch)
     endUpdate();
 }
 // -----------------------------------------------------------------------------
-bool MvcModelProjectEdit::addCMakeCmd (const std::string& aName, const std::string& aCmd)
+bool MvcModelProjectEdit::addCMakeCmd (const std::string& aName, Project::CMakeMode aMode, const std::string& aCmd)
 {
 	if (aName.empty() || aCmd.empty()) return false;
 
@@ -41,7 +41,7 @@ bool MvcModelProjectEdit::addCMakeCmd (const std::string& aName, const std::stri
     if (found != m_cmakeCmds.end()) return false;
 
 	beginUpdate();
-	m_cmakeCmds.insert(std::make_pair(aName, aCmd));
+	m_cmakeCmds.insert(std::make_pair(aName, std::make_pair(aMode, aCmd)));
 	endUpdate();
 
     return true;
@@ -60,10 +60,10 @@ bool MvcModelProjectEdit::removeCMakeCmd (const std::string& aName)
 
 }
 // -----------------------------------------------------------------------------
-std::string MvcModelProjectEdit::getCMakeCmd (const std::string& aName) const
+Project::CMakeCmd MvcModelProjectEdit::getCMakeCmd (const std::string& aName) const
 {
     auto found {m_cmakeCmds.find(aName)};
-    if (found != m_cmakeCmds.end()) return std::string{};
+    if (found == m_cmakeCmds.end()) return std::make_pair(Project::CMakeMode::invalid, std::string{});
 
     return found->second;
 }
