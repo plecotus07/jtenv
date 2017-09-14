@@ -67,7 +67,7 @@ bool Project::load (jkpp::GitBuilder& aGitBuilder)
 				if (ccmpos == std::string::npos) return false;
 
 				std::string cc_name {value.substr(0, ccnpos)};
-				std::string mode_str {value.substr(ccnpos + 1, ccmpos)};
+				std::string mode_str {value.substr(ccnpos + 1, ccmpos - ccnpos - 1)};
 				std::string cc_cmd {value.substr(ccmpos + 1)};
 
 				if (cc_name.empty() || mode_str.empty() || cc_cmd.empty()) return false;

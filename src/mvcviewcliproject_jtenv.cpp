@@ -214,7 +214,7 @@ bool MvcViewCliProject::onCMakeList ()
 	   return false;
 	}
 
-	for (auto cc : m_model.getCMakeCmds()) std::cout << cc.first << " : " << Project::getStringFromCMakeMode(cc.second.first) << " - " << cc.second.second << '\n';
+	for (auto cc : m_model.getCMakeCmds()) std::cout << cc.first << "(" << Project::getStringFromCMakeMode(cc.second.first) << "): " << cc.second.second << '\n';
 
 	return true;
 }

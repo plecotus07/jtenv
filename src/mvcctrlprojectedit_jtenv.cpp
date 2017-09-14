@@ -91,7 +91,8 @@ bool MvcCtrlProjectEdit::executeCMakeBuildCmd (const std::string& aCmd)
 {
     fs::path build_path {m_project->getPath() / "build"};
 
-    return jkpp::executeCommand("cmake --build " +build_path.string() + " " + aCmd);
+
+    return jkpp::executeCommand("cmake --build " + build_path.string() + " " + aCmd);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv
