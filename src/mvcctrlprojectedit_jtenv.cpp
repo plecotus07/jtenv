@@ -43,14 +43,14 @@ bool MvcCtrlProjectEdit::submitEdit ()
     m_project->setFullName(m_editModel.getFullName());
     m_project->setRemoteRepoUrl(m_editModel.getRemoteRepoUrl());
     m_project->setDefaultBranch(m_editModel.getDefaultBranch());
-	for (auto cc : m_editModel.getCMakeCmds()) m_project->addCMakeCmd(cc.first, cc.second);
+    m_project->setCMakeCmds(m_editModel.getCMakeCmds());
 
     bool result {true};
     if (!m_project->save()) {
     	m_project->setFullName(old_fullname);
         m_project->setRemoteRepoUrl(old_remote_url);
         m_project->setDefaultBranch(old_default_branch);
-		for (auto cc : old_cmake_cmds) m_project->addCMakeCmd(cc.first, cc.second);
+        m_project->setCMakeCmds(old_cmake_cmds);
         result = false;
     }
 

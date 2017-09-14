@@ -63,8 +63,8 @@ bool Project::load (jkpp::GitBuilder& aGitBuilder)
 			else if (key == "cmake_cmd") {
 				auto ccpos {value.find_first_of('|')};
 				if (pos == std::string::npos) return false;
-				std::string cc_name {line.substr(0, ccpos)};
-				std::string cc_cmd {line.substr(ccpos + 1)};
+				std::string cc_name {value.substr(0, ccpos)};
+				std::string cc_cmd {value.substr(ccpos + 1)};
 				if (cc_name.empty() || cc_cmd.empty()) return false;
 				m_cmakeCmds.insert(std::make_pair(cc_name, cc_cmd));
 			} else return false;

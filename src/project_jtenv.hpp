@@ -43,6 +43,7 @@ class Project : public Item {
 		bool                 removeCMakeCmd (const std::string& aName);
         std::string          getCMakeCmd (const std::string& aName) const;
         const CMakeCmdsMap&  getCMakeCmds () const { return m_cmakeCmds; }
+        void                 setCMakeCmds (const CMakeCmdsMap& aCMakeCmds) { m_cmakeCmds = aCMakeCmds; }
 
         virtual void accept (ItemVisitor& aVisitor) { aVisitor.visit(this); }
 
