@@ -83,42 +83,41 @@ bool MvcViewCliMain::parse ()
 // -----------------------------------------------------------------------------
 void MvcViewCliMain::onDisplayHelp () const
 {
-	std::cout << "\n  jtpm [-v | --version] [-h | --help] [COMMAND]\n\n"
+	std::cout << "\n  jtpm [-v | --version] [-h | --help] [ADDR] [COMMAND]\n\n"
 	               "    -v, --version                      - Display version.\n"
 	               "    -h, --help                         - Display help.\n"
-                 "\n    --config [ARG]                     - Config manager\n"
-                   "                            - Display configuration\n"
-                   "    user-name [USER_NAME]   - Set or get user name.\n"
-                   "    user-email [USER_EMAIL] - Set or get user email.\n"
 
-                 "\n    [ADDR] path                        - Get item path.\n"
+                 "\n    --config                           - Display configuration\n"
+                   "    --user-name USER_NAME              - Set or get user name.\n"
+                   "    --user-email USER_EMAIL            - Set or get user email.\n"
 
-                 "\n    list [-c]                          - List workspaces.\n"
+                 "\n    [ADDR] --path                      - Get item path.\n"
+
+                 "\n    --list [-cp]                       - List workspaces.\n"
+                   "    WS_NAME --list [-cp]               - List workspace projects.\n"
                    "      -c - only cloned\n"
                    "      -p - with path\n"
-                   "    WS_NAME list [-c]                  - List workspace projects.\n"
-                   "      -c - only cloned\n"
-                   "      -p - with path\n"
 
-                 "\n    init WS_NAME                       - Init workspace.\n"
-	               "    init ADDR FULL_NAME REPO_URL [-c]  - Init project.\n"
+                 "\n    --init WS_NAME                     - Init workspace.\n"
+	               "    --init ADDR REPO_URL [-c]          - Init project.\n"
                    "      -c - clone\n"
 
-                 "\n    [ADDR] status [-d]                 - get item status\n"
+                 "\n    [ADDR] --status [-d]               - get item status\n"
                    "      -d - display details\n"
 
-                 "\n    [ADDR] clone                       - clone item\n"
+                 "\n    [ADDR] --clone                     - clone item\n"
 
-                 "\n    [ADDR] clear [-f]                  - clear item\n"
+                 "\n    [ADDR] --clear [-f]                - clear item\n"
                    "      -f - force\n"
 
-                 "\n    [ADDR] git [COMMAND]               - execute Git command\n"
+                 "\n    [ADDR] --git [COMMAND]             - execute Git command\n"
 
-                 "\n    [ADDR] cmake [add] [rem] [list] [NAME] - CMake commands manager\n"
-                   "      NAME             - execute NAME command in ADDR project\n"
-                   "      add NAME COMMAND - add command\n"
-                   "      rem NAME         - remove command\n"
-                   "      list             - list commands\n"
+                 "\n  If ADDR item is project:\n"
+                   "    [ADDR] --ccmd [add] [rem] [list]   - Custom commands manager\n"
+                   "      NAME                 - execute NAME command in ADDR pr\n"
+                   "      add NAME DIR COMMAND - add command\n"
+                   "      rem NAME             - remove command\n"
+                   "      list                 - list commands\n"
 			  	 "\n";
 }
 // -----------------------------------------------------------------------------
