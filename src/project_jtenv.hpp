@@ -12,11 +12,11 @@ class Project : public Item {
     public:
         enum class CMakeMode {invalid = 0, conf, build};
 
-    	using SPtr         = std::shared_ptr<Project>;
-		using SPtrByStrMap = std::map<std::string, SPtr>;
-		using Iterator     = SPtrByStrMap::iterator;
-        using CMakeCmd     = std::pair<CMakeMode, std::string>;
-        using CMakeCmdsMap = std::map<std::string, CMakeCmd>;
+    	using SPtr          = std::shared_ptr<Project>;
+		using SPtrByStrMap  = std::map<std::string, SPtr>;
+		using Iterator      = SPtrByStrMap::iterator;
+        using CustomCmd     = std::pair<std::string, std::string>;
+        using CustomCmdsMap = std::map<std::string, CustomCmd>;
 
         Project (const std::string& aWsName, const std::string& aName, const fs::path& aPath);
 
@@ -41,17 +41,13 @@ class Project : public Item {
         const std::string&   getDefaultBranch () const { return m_defaultBranch; }
 		void                 setDefaultBranch (const std::string& aDefaultBranch) { m_defaultBranch = aDefaultBranch; }
 
-
-		bool                 addCMakeCmd (const std::string& aName, CMakeMode aMode, const std::string& aCmd);
-		bool                 removeCMakeCmd (const std::string& aName);
-        CMakeCmd             getCMakeCmd (const std::string& aName) const;
-        const CMakeCmdsMap&  getCMakeCmds () const { return m_cmakeCmds; }
-        void                 setCMakeCmds (const CMakeCmdsMap& aCMakeCmds) { m_cmakeCmds = aCMakeCmds; }
+		bool                 addCustomCmd (const std::string& aName, const std::string& aDir, const std::string& aCmd);
+		bool                 removeCustomCmd (const std::string& aName);
+        CustomCmd            getCustomCmd (const std::string& aName) const;
+        const CustomCmdsMap& getCustomCmds () const { return m_customCmds; }
+        void                 setCustomCmds (const CustomCmdsMap& aCustomCmds) { m_customCmds = aCustomCmds; }
 
         virtual void accept (ItemVisitor& aVisitor) { aVisitor.visit(this); }
-
-        static CMakeMode   getCMakeModeFromString (const std::string aString);
-        static std::string getStringFromCMakeMode (CMakeMode aMode);
 
     protected:
 		std::string     m_wsName;
@@ -62,8 +58,7 @@ class Project : public Item {
         jkpp::Git::UPtr m_git;
 		std::string     m_defaultBranch;
 
-        CMakeCmdsMap    m_cmakeCmds;
-
+        CustomCmdsMap m_customCmds;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

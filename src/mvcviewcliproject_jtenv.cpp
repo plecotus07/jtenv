@@ -15,7 +15,7 @@ MvcViewCliProject::MvcViewCliProject (ArgIterator& aArg, const ArgIterator aArgs
     m_handlers {{"name", [] (MvcViewCliProject* aView) -> bool {return aView->onFullName();}},
                 {"url", [] (MvcViewCliProject* aView) -> bool {return aView->onRemoteRepoUrl();}},
                 {"branch", [] (MvcViewCliProject* aView) -> bool {return aView->onDefaultBranch();}},
-				{"cmake", [] (MvcViewCliProject* aView) -> bool {return aView->onCMake();}}}
+				{"ccmd", [] (MvcViewCliProject* aView) -> bool {return aView->onCustomCmd();}}}
 {
 }
 // -----------------------------------------------------------------------------
@@ -113,7 +113,7 @@ bool MvcViewCliProject::onDefaultBranch ()
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliProject::onCMake ()
+bool MvcViewCliProject::onCustomCmd ()
 {
 	if (m_arg == m_argsEnd) {
 		std::cerr << "Missing arguments\n";
@@ -124,9 +124,9 @@ bool MvcViewCliProject::onCMake ()
 
 	++m_arg;
 
-	if (arg == "add") return onCMakeAdd ();
-	else if (arg == "rem") return onCMakeRemove ();
-	else if (arg == "list") return onCMakeList ();
+	if (arg == "add") return onCustomCmdAdd ();
+	else if (arg == "rem") return onCustomCmdRemove ();
+	else if (arg == "list") return onCustomCmdList ();
 
 
 	if (m_arg != m_argsEnd) {
@@ -134,32 +134,32 @@ bool MvcViewCliProject::onCMake ()
 	   return false;
 	}
 
-	if (!m_ctrl.executeCMakeCmd(arg)) {
-		std::cerr << "CMake command execute error\n";
+	if (!m_ctrl.executeCustomCmd(arg)) {
+		std::cerr << "Custom command execute error\n";
 		return false;
 	}
 
 	return true;
 }
 //// -----------------------------------------------------------------------------
-bool MvcViewCliProject::onCMakeAdd ()
+bool MvcViewCliProject::onCustomCmdAdd ()
 {
 	if (m_arg == m_argsEnd) {
-		std::cerr << "Missing arguments.\n";
+		std::cerr << "1Missing arguments.\n";
 		return false;
 	}
 	std::string name {*m_arg};
 
 	++m_arg;
 	if (m_arg == m_argsEnd) {
-		std::cerr << "Missing arguments.\n";
+		std::cerr << "2Missing arguments.\n";
 		return false;
 	}
-	std::string mode_str {*m_arg};
+	std::string dir {*m_arg};
 
 	++m_arg;
 	if (m_arg == m_argsEnd) {
-		std::cerr << "Missing arguments.\n";
+		std::cerr << "3Missing arguments.\n";
 		return false;
 	}
 	std::string cmd {*m_arg};
@@ -170,21 +170,15 @@ bool MvcViewCliProject::onCMakeAdd ()
 	   return false;
 	}
 
-    Project::CMakeMode mode {Project::getCMakeModeFromString(mode_str)};
-    if (mode == Project::CMakeMode::invalid) {
-    	std::cerr << "Invalid CMake mode.\n";
-        return false;
-    }
-
-	if (!m_ctrl.addCMakeCmd(name, mode, cmd)) {
-		std::cerr << "Add CMake command error.\n";
+	if (!m_ctrl.addCustomCmd(name, dir, cmd)) {
+		std::cerr << "Add custom command error.\n";
 	   return false;
 	}
 
 	return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliProject::onCMakeRemove ()
+bool MvcViewCliProject::onCustomCmdRemove ()
 {
 	if (m_arg == m_argsEnd) {
 		std::cerr << "Missing arguments.\n";
@@ -199,22 +193,22 @@ bool MvcViewCliProject::onCMakeRemove ()
 	   return false;
 	}
 
-	if (!m_ctrl.removeCMakeCmd(name)) {
-		std::cerr << "Remove CMake command error.\n";
+	if (!m_ctrl.removeCustomCmd(name)) {
+		std::cerr << "Remove custom command error.\n";
 	   return false;
 	}
 
 	return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcViewCliProject::onCMakeList ()
+bool MvcViewCliProject::onCustomCmdList ()
 {
 	if (m_arg != m_argsEnd) {
 		std::cerr << "Invalid argument: " << *m_arg << '\n';
 	   return false;
 	}
 
-	for (auto cc : m_model.getCMakeCmds()) std::cout << cc.first << "(" << Project::getStringFromCMakeMode(cc.second.first) << "): " << cc.second.second << '\n';
+	for (auto cc : m_model.getCustomCmds()) std::cout << cc.first << "(" << cc.second.first << "): " << cc.second.second << '\n';
 
 	return true;
 }

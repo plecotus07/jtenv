@@ -18,18 +18,18 @@ class MvcModelProjectEdit : public jkpp::MvcModelImpl {
 		const std::string& getDefaultBranch () const { return m_defaultBranch; }
 		void               setDefaultBranch (const std::string& aBranch);
 
-		bool                         addCMakeCmd (const std::string& aName, Project::CMakeMode aMode, const std::string& aCmd);
-		bool                         removeCMakeCmd (const std::string& aName);
-        Project::CMakeCmd            getCMakeCmd (const std::string& aName) const;
-		const Project::CMakeCmdsMap& getCMakeCmds () const { return m_cmakeCmds; }
-		void                         setCMakeCmds (const Project::CMakeCmdsMap& aCMakeCmds) { m_cmakeCmds = aCMakeCmds; }
+		bool                          addCustomCmd (const std::string& aName, const std::string& aDir, const std::string& aCmd);
+		bool                          removeCustomCmd (const std::string& aName);
+        Project::CustomCmd            getCustomCmd (const std::string& aName) const;
+		const Project::CustomCmdsMap& getCustomCmds () const { return m_customCmds; }
+		void                          setCustomCmds (const Project::CustomCmdsMap& aCmds) { m_customCmds = aCmds; }
 
 	protected:
 		std::string m_fullName;
 		std::string m_remoteRepoUrl;
 		std::string m_defaultBranch;
 
-		Project::CMakeCmdsMap m_cmakeCmds;
+		Project::CustomCmdsMap m_customCmds;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv

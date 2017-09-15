@@ -8,7 +8,7 @@ MvcModelProjectEdit::MvcModelProjectEdit () :
 	m_fullName {},
     m_remoteRepoUrl {},
     m_defaultBranch {},
-	m_cmakeCmds {}
+	m_customCmds {}
 {
 }
 // -----------------------------------------------------------------------------
@@ -33,37 +33,37 @@ void MvcModelProjectEdit::setDefaultBranch (const std::string& aBranch)
     endUpdate();
 }
 // -----------------------------------------------------------------------------
-bool MvcModelProjectEdit::addCMakeCmd (const std::string& aName, Project::CMakeMode aMode, const std::string& aCmd)
+bool MvcModelProjectEdit::addCustomCmd (const std::string& aName, const std::string& aDir, const std::string& aCmd)
 {
-	if (aName.empty() || aCmd.empty()) return false;
+	if (aName.empty() || aDir.empty() || aCmd.empty()) return false;
 
-    auto found {m_cmakeCmds.find(aName)};
-    if (found != m_cmakeCmds.end()) return false;
+    auto found {m_customCmds.find(aName)};
+    if (found != m_customCmds.end()) return false;
 
 	beginUpdate();
-	m_cmakeCmds.insert(std::make_pair(aName, std::make_pair(aMode, aCmd)));
+	m_customCmds.insert(std::make_pair(aName, std::make_pair(aDir, aCmd)));
 	endUpdate();
 
     return true;
 }
 // -----------------------------------------------------------------------------
-bool MvcModelProjectEdit::removeCMakeCmd (const std::string& aName)
+bool MvcModelProjectEdit::removeCustomCmd (const std::string& aName)
 {
-	auto found (m_cmakeCmds.find(aName));
-    if (found == m_cmakeCmds.end()) return false;
+	auto found (m_customCmds.find(aName));
+    if (found == m_customCmds.end()) return false;
 
 	beginUpdate();
-	m_cmakeCmds.erase(found);
+	m_customCmds.erase(found);
 	endUpdate();
 
     return true;
 
 }
 // -----------------------------------------------------------------------------
-Project::CMakeCmd MvcModelProjectEdit::getCMakeCmd (const std::string& aName) const
+Project::CustomCmd MvcModelProjectEdit::getCustomCmd (const std::string& aName) const
 {
-    auto found {m_cmakeCmds.find(aName)};
-    if (found == m_cmakeCmds.end()) return std::make_pair(Project::CMakeMode::invalid, std::string{});
+    auto found {m_customCmds.find(aName)};
+    if (found == m_customCmds.end()) return std::make_pair(std::string{}, std::string{});
 
     return found->second;
 }

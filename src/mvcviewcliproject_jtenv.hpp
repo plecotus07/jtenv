@@ -26,10 +26,10 @@ class MvcViewCliProject : public jkpp::MvcViewCli {
 		bool onFullName ();
 		bool onRemoteRepoUrl ();
 		bool onDefaultBranch ();
-		bool onCMake ();
-		bool onCMakeAdd ();
-		bool onCMakeRemove ();
-		bool onCMakeList ();
+		bool onCustomCmd ();
+		bool onCustomCmdAdd ();
+		bool onCustomCmdRemove ();
+		bool onCustomCmdList ();
 
 		const Handlers<MvcViewCliProject> m_handlers;
 
