@@ -12,7 +12,11 @@ std::string getFullName ()
 // -----------------------------------------------------------------------------
 std::string getVersion ()
 {
+#ifdef DEBUG_BUILD
 	return "@PROJECT_VERSION@";
+#else
+	return "@PROJECT_RELEASE_VERSION@";
+#endif
 }
 // -----------------------------------------------------------------------------
 boost::filesystem::path getConfDirPath ()

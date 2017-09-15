@@ -145,21 +145,21 @@ bool MvcViewCliProject::onCustomCmd ()
 bool MvcViewCliProject::onCustomCmdAdd ()
 {
 	if (m_arg == m_argsEnd) {
-		std::cerr << "1Missing arguments.\n";
+		std::cerr << "Missing arguments.\n";
 		return false;
 	}
 	std::string name {*m_arg};
 
 	++m_arg;
 	if (m_arg == m_argsEnd) {
-		std::cerr << "2Missing arguments.\n";
+		std::cerr << "Missing arguments.\n";
 		return false;
 	}
 	std::string dir {*m_arg};
 
 	++m_arg;
 	if (m_arg == m_argsEnd) {
-		std::cerr << "3Missing arguments.\n";
+		std::cerr << "Missing arguments.\n";
 		return false;
 	}
 	std::string cmd {*m_arg};
