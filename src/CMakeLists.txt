@@ -52,7 +52,9 @@ add_executable (utjtenv EXCLUDE_FROM_ALL
 	project_jtenv.cpp
 	workspace_jtenv.cpp
 	addressparser_jtenv.cpp
+    variablesmanager_jtenv.cpp
 	addressparser_test_jtenv.cpp
+    variablesmanager_test_jtenv.cpp
 	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
 	jkpp/filesystem_jkpp.cpp
   jkpp/gitsubproc_jkpp.cpp)
