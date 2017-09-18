@@ -59,7 +59,7 @@ bool MvcCtrlProjectEdit::submitEdit ()
     return result;
 }
 // -----------------------------------------------------------------------------
-bool MvcCtrlProjectEdit::executeCustomCmd (const std::string& aName)
+bool MvcCtrlProjectEdit::executeCustomCmd (const std::string& aName, const std::string aArgs)
 {
 	if (!m_project) return false;
 
@@ -74,7 +74,7 @@ bool MvcCtrlProjectEdit::executeCustomCmd (const std::string& aName)
 
 	try { fs::current_path(execute_path); } catch (...) { return false; };
 
-    return jkpp::executeCommand(cmd.second);
+    return jkpp::executeCommand(cmd.second + " " + aArgs);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

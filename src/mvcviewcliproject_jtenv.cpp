@@ -129,12 +129,11 @@ bool MvcViewCliProject::onCustomCmd ()
 	else if (arg == "list") return onCustomCmdList ();
 
 
-	if (m_arg != m_argsEnd) {
-		std::cerr << "Invalid argument: " << *m_arg << '\n';
-	   return false;
-	}
+	std::string args {};
 
-	if (!m_ctrl.executeCustomCmd(arg)) {
+    for (;m_arg != m_argsEnd; ++m_arg) args += *m_arg + " ";
+
+	if (!m_ctrl.executeCustomCmd(arg, args)) {
 		std::cerr << "Custom command execute error\n";
 		return false;
 	}

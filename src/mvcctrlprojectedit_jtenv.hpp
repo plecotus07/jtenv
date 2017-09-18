@@ -23,7 +23,7 @@ class MvcCtrlProjectEdit {
 
 		bool addCustomCmd (const std::string& aName, const std::string& aDir, const std::string& aCmd) { return m_editModel.addCustomCmd(aName, aDir, aCmd); };
 		bool removeCustomCmd (const std::string& aName) { return m_editModel.removeCustomCmd(aName); }
-		bool executeCustomCmd (const std::string& aName);
+		bool executeCustomCmd (const std::string& aName, const std::string aArgs);
 
 	protected:
 		Project*               m_project;

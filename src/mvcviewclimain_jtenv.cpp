@@ -114,7 +114,7 @@ void MvcViewCliMain::onDisplayHelp () const
 
                  "\n  If ADDR item is project:\n"
                    "    [ADDR] --ccmd [add] [rem] [list]   - Custom commands manager\n"
-                   "      NAME                 - execute NAME command in ADDR pr\n"
+                   "      NAME                 - execute NAME command in ADDR project\n"
                    "      add NAME DIR COMMAND - add command\n"
                    "      rem NAME             - remove command\n"
                    "      list                 - list commands\n"
