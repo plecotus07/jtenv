@@ -36,7 +36,9 @@ add_executable (jtenv
   jkpp/mvcviewcli_jkpp.cpp
 	jkpp/mvcmodelimpl_jkpp.cpp
 	jkpp/filesystem_jkpp.cpp
-	jkpp/gitsubproc_jkpp.cpp)
+	jkpp/gitsubproc_jkpp.cpp
+    jkpp/serializerconf_jkpp.cpp
+    jkpp/serializer_jkpp.cpp)
 
 find_package(Boost COMPONENTS system filesystem REQUIRED)
 target_link_libraries(jtenv
@@ -53,8 +55,11 @@ add_executable (utjtenv EXCLUDE_FROM_ALL
 	workspace_jtenv.cpp
 	addressparser_jtenv.cpp
     variablesmanager_jtenv.cpp
+    jkpp/serializerconf_jkpp.cpp
+    jkpp/serializer_jkpp.cpp
 	addressparser_test_jtenv.cpp
     variablesmanager_test_jtenv.cpp
+    jkpp/serializerconf_test_jkpp.cpp
 	${CMAKE_BINARY_DIR}/projectconf_jtenv.cpp
 	jkpp/filesystem_jkpp.cpp
   jkpp/gitsubproc_jkpp.cpp)
