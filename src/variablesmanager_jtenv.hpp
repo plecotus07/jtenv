@@ -2,25 +2,24 @@
 #ifndef VARIABLESMANAGER_JTENV_HPP
 #define VARIABLESMANAGER_JTENV_HPP
 // +++ -------------------------------------------------------------------------
-#include <map>
+#include "variablesmanageriface_jtenv.hpp"
 // +++ -------------------------------------------------------------------------
 namespace jtenv {
 // +++ -------------------------------------------------------------------------
-class VariablesManager {
+class VariablesManager : public VariablesManagerIface {
 	public:
-    	using Variable = std::pair<std::string, std::string>;
-    	using VariablesMap = std::map<std::string, std::string>;
-
 		VariablesManager ();
 
-        const VariablesMap& getVariables () const { return m_variables; }
+        virtual const VariablesMap& getVariables () const { return m_variables; }
 
-        void        addVariable (const std::string& aName, const std::string& aValue);
-        std::string getVariable (const std::string& aName) const;
+        virtual void        addVariable (const std::string& aName, const std::string& aValue);
+        virtual std::string getVariable (const std::string& aName) const;
+
+		virtual void        addSubManager (SPtr aSubManager);
 
 	protected:
         VariablesMap m_variables;
-
+		SPtr         m_subManager;
 };
 // +++ -------------------------------------------------------------------------
 } // jtenv
