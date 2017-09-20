@@ -66,20 +66,14 @@ SCENARIO ("Conf file serializer") {
         ser.openForRead(ss);
         WHEN ("Serialize single line string") {
         	ss << "name1=\"value1\"\nname2=\"value2\"\n";
-        	std::string s {};
+        	std::string value1 {};
+        	std::string value2 {};
         	THEN ("No exception throws") {
-            	REQUIRE_NOTHROW(ser.serializeString("name1", s));
-                AND_THEN ("Value is valid") {
-                    REQUIRE(s == "value1");
-                    AND_WHEN("Serialize next value") {
-						s.clear();
-                        THEN ("No exception throws") {
-                            REQUIRE_NOTHROW(ser.serializeString("name2", s));
-                            AND_THEN ("Value is valid") {
-                                REQUIRE(s == "value2");
-                            }
-                        }
-                    }
+            	REQUIRE_NOTHROW(ser.serializeString("name1", value1));
+                REQUIRE_NOTHROW(ser.serializeString("name2", value2));
+                AND_THEN ("Values are valid") {
+                    REQUIRE(value1 == "value1");
+                    REQUIRE(value2 == "value2");
                 }
 			}
         }
@@ -105,6 +99,27 @@ SCENARIO ("Conf file serializer") {
                     REQUIRE(sv[2] == "value3");
                 }
 			}
+        }
+        WHEN ("Serialize file with line breaks.") {
+        	ss << "\n\nname1=\"value1\"\n\n\nname2=\"value2\"\n";
+            std::string value1 {};
+            std::string value2 {};
+            THEN ("No exception throws") {
+            	REQUIRE_NOTHROW(ser.serializeString("name1", value1));
+            	REQUIRE_NOTHROW(ser.serializeString("name2", value2));
+                AND_THEN ("Value is valid") {
+                	REQUIRE(value1 == "value1");
+                	REQUIRE(value2 == "value2");
+				}
+            }
+        }
+        WHEN ("Serialize broken file: invalid name") {
+        	ss << "name1=\"value1\"\nname2=\"value2\"\nname3=\"value3\"";
+            std::string value {};
+            THEN ("Exception throws") {
+            	REQUIRE_THROWS(ser.serializeString("name4", value));
+            	REQUIRE_THROWS(ser.serializeString("name3", value));
+            }
         }
     }
 }
