@@ -16,7 +16,7 @@ class Serializer : public SerializerIface {
         virtual void close ();
 
         virtual void serializeString (const std::string& aName, std::string& aValue);
-        virtual void serializeCsvString (const std::string& aName, char aDelim, std::vector<std::string> aValues);
+        virtual void serializeCsvString (const std::string& aName, const std::string& aDelims, std::vector<std::string>& aValues);
 
 	protected:
         virtual SerializerIface::SPtr getMode () = 0;

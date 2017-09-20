@@ -27,9 +27,9 @@ void Serializer::serializeString (const std::string& aName, std::string& aValue)
 	getMode()->serializeString(aName, aValue);
 }
 // -----------------------------------------------------------------------------
-void Serializer::serializeCsvString (const std::string& aName, char aDelim, std::vector<std::string> aValues)
+void Serializer::serializeCsvString (const std::string& aName, const std::string& aDelims, std::vector<std::string>& aValues)
 {
-	getMode()->serializeCsvString(aName, aDelim, aValues);
+	getMode()->serializeCsvString(aName, aDelims, aValues);
 }
 // +++ -------------------------------------------------------------------------
 } // jtenv

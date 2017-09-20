@@ -19,7 +19,7 @@ class SerializerIface {
         virtual void close () = 0;
 
         virtual void serializeString (const std::string& aName, std::string& aValue) = 0;
-        virtual void serializeCsvString (const std::string& aName, char aDelim, std::vector<std::string> aValues) = 0;
+        virtual void serializeCsvString (const std::string& aName, const std::string& aDelims, std::vector<std::string>& aValues) = 0;
 };
 // +++ -------------------------------------------------------------------------
 } // jkpp

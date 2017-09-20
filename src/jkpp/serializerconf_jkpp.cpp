@@ -1,7 +1,8 @@
 // +++ -------------------------------------------------------------------------
 #include "serializerconf_jkpp.hpp"
-#include <istream>
-#include <ostream>
+//#include <istream>
+//#include <ostream>
+#include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jkpp {
 // +++ -------------------------------------------------------------------------
@@ -34,7 +35,7 @@ void SerializerConfModeClosed::serializeString (const std::string& , std::string
 	throw std::runtime_error("SerializerConfModeClosed::serializeString");
 }
 // -----------------------------------------------------------------------------
-void SerializerConfModeClosed::serializeCsvString (const std::string& , char , std::vector<std::string> )
+void SerializerConfModeClosed::serializeCsvString (const std::string& , const std::string& , std::vector<std::string>& )
 {
 	throw std::runtime_error("SerializerConfModeClosed::serializeCsvString");
 }
@@ -63,31 +64,46 @@ void SerializerConfModeRead::close ()
 void SerializerConfModeRead::serializeString (const std::string& aName, std::string& aValue)
 {
 	auto kv {serializeKeyValue(true)};
+    std::cerr << "+++: name=" << kv.first << '\n';
 
     if (kv.first != aName) throw std::runtime_error("SerializerConfModeRead::serializeString: invalid name");
 
 	aValue = kv.second;
 }
 // -----------------------------------------------------------------------------
-void SerializerConfModeRead::serializeCsvString (const std::string& aName, char aDelim, std::vector<std::string> aValues)
+void SerializerConfModeRead::serializeCsvString (const std::string& aName, const std::string& aDelims, std::vector<std::string>& aValues)
 {
 	auto kv {serializeKeyValue(true)};
     if (kv.first != aName) throw std::runtime_error("SerializerConfModeRead::serializeCsvString: invalid name");
+    std::string delims {aDelims};
 
-    for (unsigned int pos = kv.second.find_first_of(aDelim), prev = 0; pos != std::string::npos; prev = pos, pos = kv.second.find_first_of(pos, aDelim))
-    	aValues.push_back(kv.second.substr(prev + 1, pos));
+    std::string::size_type prev {};
+    std::string::size_type pos {};
+
+    do {
+	    pos = kv.second.find_first_of(delims, prev);
+        aValues.push_back(kv.second.substr(prev, pos - prev));
+        prev = pos + 1;
+    } while (pos != std::string::npos);
 }
 // -----------------------------------------------------------------------------
 std::pair<std::string, std::string> SerializerConfModeRead::serializeKeyValue (bool aQuoted)
 {
-	std::string buf;
+	std::string buf {};
+    char c {};
 
-    char c;
-	while (m_stream.get(c) && (c != '=')) {
+	while (m_stream.get(c) && (c == '\n'));
+
+    if (!m_stream) throw std::runtime_error("SerializerConfModeRead::serializeKeyValue: file error");
+    m_stream.putback(c);
+
+	while (m_stream.get(c) && (c != '=') && (c != '\n')) {
 		buf += c;
     }
 
     if (!m_stream) throw std::runtime_error("SerializerConfModeRead::serializeKeyValue: file error");
+    if (buf.empty()) throw std::runtime_error("SerializerConfModeRead::serializeKeyValue: empty key");
+    if (c == '\n') throw std::runtime_error("SerializerConfModeRead::serializeKeyValue: invalid key");
 
     std::string name {buf};
 
@@ -135,13 +151,13 @@ void SerializerConfModeWrite::serializeString (const std::string& aName, std::st
 	m_stream << aName << "=\"" << aValue << "\"\n";
 }
 // -----------------------------------------------------------------------------
-void SerializerConfModeWrite::serializeCsvString (const std::string& aName, char aDelim, std::vector<std::string> aValues)
+void SerializerConfModeWrite::serializeCsvString (const std::string& aName, const std::string& aDelims, std::vector<std::string>& aValues)
 {
 	m_stream << aName << "=\"";
     bool first {true};
     for (auto v : aValues) {
     	if (first) first = false;
-        else m_stream << aDelim;
+        else m_stream << aDelims;
 
     	m_stream << v;
     }
