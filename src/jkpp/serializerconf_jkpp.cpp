@@ -1,7 +1,5 @@
 // +++ -------------------------------------------------------------------------
 #include "serializerconf_jkpp.hpp"
-//#include <istream>
-//#include <ostream>
 #include <iostream>
 // +++ -------------------------------------------------------------------------
 namespace jkpp {
@@ -64,7 +62,6 @@ void SerializerConfModeRead::close ()
 void SerializerConfModeRead::serializeString (const std::string& aName, std::string& aValue)
 {
 	auto kv {serializeKeyValue(true)};
-    std::cerr << "+++: name=" << kv.first << '\n';
 
     if (kv.first != aName) throw std::runtime_error("SerializerConfModeRead::serializeString: invalid name");
 

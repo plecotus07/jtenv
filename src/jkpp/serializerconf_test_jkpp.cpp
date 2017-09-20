@@ -100,6 +100,17 @@ SCENARIO ("Conf file serializer") {
                 }
 			}
         }
+		WHEN ("Serialize CSV string with one element") {
+        	std::vector<std::string> sv {};
+            ss << "name4=\"value1\"\n";
+        	THEN ("No exception throws") {
+            	REQUIRE_NOTHROW(ser.serializeCsvString("name4", "|", sv));
+                AND_THEN ("Value is valid") {
+                    REQUIRE(sv.size() == 1);
+                    REQUIRE(sv[0] == "value1");
+                }
+			}
+        }
         WHEN ("Serialize file with line breaks.") {
         	ss << "\n\nname1=\"value1\"\n\n\nname2=\"value2\"\n";
             std::string value1 {};
@@ -113,7 +124,7 @@ SCENARIO ("Conf file serializer") {
 				}
             }
         }
-        WHEN ("Serialize broken file: invalid name") {
+        WHEN ("Serialize string with invalid name") {
         	ss << "name1=\"value1\"\nname2=\"value2\"\nname3=\"value3\"";
             std::string value {};
             THEN ("Exception throws") {
@@ -121,6 +132,39 @@ SCENARIO ("Conf file serializer") {
             	REQUIRE_THROWS(ser.serializeString("name3", value));
             }
         }
+		WHEN ("Serialize broken file: EOF in key") {
+        	ss << "name1=\"value1\"\nna";
+            std::string value {};
+			ser.serializeString("name1", value);
+            THEN ("Exception throws") {
+            	REQUIRE_THROWS(ser.serializeString("name2", value));
+            }
+        }
+		WHEN ("Serialize broken file: line break in key") {
+        	ss << "nam\ne1=\"value1\"\n";
+            std::string value {};
+            THEN ("Exception throws") {
+            	REQUIRE_THROWS(ser.serializeString("name1", value));
+            }
+        }
+		WHEN ("Serialize broken file: EOF in value") {
+        	ss << "name1=\"value1\"\nname2=\"val";
+            std::string value {};
+			ser.serializeString("name1", value);
+            THEN ("Exception throws") {
+            	REQUIRE_THROWS(ser.serializeString("name2", value));
+            }
+        }
+		WHEN ("Serialize broken file: Missing quote") {
+			ss << "name1=\"value1\"\nname2=\"value2\nname3=\"value3\"";
+			std::string value {};
+			ser.serializeString("name1", value);
+			THEN ("Exception throws") {
+				REQUIRE_NOTHROW(ser.serializeString("name2", value));
+				REQUIRE(value == "value2\nname3=");
+				REQUIRE_THROWS(ser.serializeString("name3", value));
+			}
+		}
     }
 }
 // +++ -------------------------------------------------------------------------
